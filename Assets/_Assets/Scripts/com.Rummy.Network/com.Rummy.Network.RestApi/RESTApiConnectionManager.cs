@@ -22,7 +22,7 @@ namespace com.Rummy.Network
 
         private Dictionary<string, string> payloadKeyValuePairs = new Dictionary<string, string>();
 
-        //internal void GetPaymentStatus<T>(string val, Action<string, string> errorResponse = null, Action<T> successResponse = null)
+        //internal void Example<T>(string val, Action<string, string> errorResponse = null, Action<T> successResponse = null)
         //{
         //    payloadKeyValuePairs.Clear();
         //    payloadKeyValuePairs.Add(GameConstants.ACCESS_TOKEN, "example");
