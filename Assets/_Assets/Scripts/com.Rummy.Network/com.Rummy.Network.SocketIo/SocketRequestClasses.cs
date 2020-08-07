@@ -1,6 +1,6 @@
 ﻿namespace com.Rummy.Network
 {
-    public class Request
+    public class SocketRequest
     {
 
     }

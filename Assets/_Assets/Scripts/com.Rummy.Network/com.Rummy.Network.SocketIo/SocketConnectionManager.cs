@@ -1,7 +1,8 @@
 ﻿using UnityEngine;
 using System;
 using BestHTTP.SocketIO;
-using com.Rummy.Constants;
+using com.Rummy.GameVariable;
+using System.Collections.Generic;
 
 namespace com.Rummy.Network
 {
@@ -21,38 +22,85 @@ namespace com.Rummy.Network
         }
 
         private SocketManager socketManager;
+        private readonly object lockResponseInputQ = new object();
+        private readonly List<SocketResponse> responseInputQ = new List<SocketResponse>();
+
+        internal event Action<SocketResponse> SocketResponse;
 
         #region UnityCallbacks
 
-            void Start()
+        void Start()
+        {
+            ConnectToSocket();
+        }
+
+        private void Update()
+        {
+            lock (lockResponseInputQ)
             {
-                ConnectToSocket();
+                while (responseInputQ.Count > 0)
+                {
+                    var response = responseInputQ[0];
+                    responseInputQ.RemoveAt(0);
+                    if (response != null)
+                    {
+                        OnSocketResponseReceived(response);
+                    }
+                }
             }
 
-            void OnDestroy()
+            void OnSocketResponseReceived(SocketResponse response)
             {
-                socketManager.Close();
+                switch(response.socketResponseType)
+                {
+                    case GameVariables.SocketResponseType.onRoomJoin:
+                        break;
+                    case GameVariables.SocketResponseType.userRoomJoin:
+                        break;
+                    case GameVariables.SocketResponseType.gameStart:
+                        break;
+                    case GameVariables.SocketResponseType.cardDrawRes:
+                        break;
+                    case GameVariables.SocketResponseType.cardDiscardRes:
+                        break;
+                    case GameVariables.SocketResponseType.playerLeftRes:
+                        break;
+                    case GameVariables.SocketResponseType.roundComplete:
+                        break;
+                    default:
+                        SocketResponse?.Invoke(response);
+                        break;
+                }
             }
+        }
+
+
+        void OnDestroy()
+        {
+            socketManager.Close();
+        }
 
         #endregion
 
         internal void ConnectToSocket()
         {
-            SocketOptions options = new SocketOptions();
-            options.AutoConnect = false;
+            SocketOptions options = new SocketOptions
+            {
+                AutoConnect = false
+            };
 
-            socketManager = new SocketManager(new Uri(GetSocketUrl()), options);
+            socketManager = new SocketManager(new Uri(GameVariables.GetSocketUrl()), options);
             socketManager.Socket.On(SocketIOEventTypes.Connect, OnConnect);
             socketManager.Socket.On(SocketIOEventTypes.Disconnect, OndisConnect);
             socketManager.Socket.On(SocketIOEventTypes.Error, OnError);
-            //socketManager.Socket.On("OnResponse", OnResponse);
-            socketManager.Socket.On("userRoomJoin", OnResponse);
+            socketManager.Socket.On(GameVariables.SocketResponseType.onRoomJoin.ToString(), (Socket socket, Packet packet, object[] args) => { });
+            socketManager.Socket.On(GameVariables.SocketResponseType.userRoomJoin.ToString(), (Socket socket, Packet packet, object[] args) => { });
+            socketManager.Socket.On(GameVariables.SocketResponseType.gameStart.ToString(), (Socket socket, Packet packet, object[] args) => { });
+            socketManager.Socket.On(GameVariables.SocketResponseType.cardDrawRes.ToString(), (Socket socket, Packet packet, object[] args) => { });
+            socketManager.Socket.On(GameVariables.SocketResponseType.cardDiscardRes.ToString(), (Socket socket, Packet packet, object[] args) => { });
+            socketManager.Socket.On(GameVariables.SocketResponseType.playerLeftRes.ToString(), (Socket socket, Packet packet, object[] args) => { });
+            socketManager.Socket.On(GameVariables.SocketResponseType.roundComplete.ToString(), (Socket socket, Packet packet, object[] args) => { });
             socketManager.Open();
-        }
-
-        private string GetSocketUrl()
-        {
-            return GameConstants.SOCKET_URL_PREFIX + GameConstants.SOCKET_HOST_ADDRESS + GameConstants.SOCKET_URL_SEPARATOR + GameConstants.SOCKET_PORT_NUMBER + GameConstants.SOCKET_URL_SUFFIX;
         }
 
         private void OnConnect(Socket socket, Packet packet, params object[] args)
@@ -98,7 +146,18 @@ namespace com.Rummy.Network
             Debug.Log($"<color=red>Error Message : {error.Message}</color>");
         }
 
-        private void SendSocketRequest(GameConstants.SocketRequestType requestType, Request requestObject)
+        T Deserialize<T>(string msg)
+        {
+            return JsonUtility.FromJson<T>(msg);
+        }
+
+        void QueueResponse(SocketResponse response)
+        {
+            lock (lockResponseInputQ)
+                responseInputQ.Add(response);
+        }
+
+        private void SendSocketRequest(GameVariables.SocketRequestType requestType, SocketRequest requestObject)
         {
             socketManager.Socket.Emit(requestType.ToString(), Serialize(requestObject));
 
@@ -106,11 +165,6 @@ namespace com.Rummy.Network
             {
                 return JsonUtility.ToJson(o);
             }
-        }
-
-        private void OnResponse(Socket socket, Packet packet, params object[] args)
-        {
-            Debug.Log(args[0]);
         }
     }
 }
