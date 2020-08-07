@@ -1,12 +1,13 @@
 ﻿using UnityEngine;
 using System;
 using BestHTTP.SocketIO;
+using com.Rummy.Constants;
 
 namespace com.Rummy.SocketIo
 {
-    public class SocketConnectManager : MonoBehaviour
+    public class SocketConnectionManager : MonoBehaviour
     {
-        private SocketManager manager;
+        private SocketManager socketManager;
 
         #region UnityCallbacks
 
@@ -17,27 +18,28 @@ namespace com.Rummy.SocketIo
 
             void OnDestroy()
             {
-                manager.Close();
+                socketManager.Close();
             }
 
         #endregion
 
         public void ConnectToSocket()
         {
-            SocketOptions options = new SocketOptions();
-            options.AutoConnect = false;
+            SocketOptions options = new SocketOptions
+            {
+                AutoConnect = false
+            };
 
-            manager = new SocketManager(new Uri(GetSocketUrl()), options);
-            manager.Socket.On(SocketIOEventTypes.Connect, OnConnect);
-            manager.Socket.On(SocketIOEventTypes.Disconnect, OndisConnect);
-            manager.Socket.On(SocketIOEventTypes.Error, OnError);
-            manager.Open();
+            socketManager = new SocketManager(new Uri(GetSocketUrl()), options);
+            socketManager.Socket.On(SocketIOEventTypes.Connect, OnConnect);
+            socketManager.Socket.On(SocketIOEventTypes.Disconnect, OndisConnect);
+            socketManager.Socket.On(SocketIOEventTypes.Error, OnError);
+            socketManager.Open();
         }
 
         private string GetSocketUrl()
         {
-            string url;
-            url = SocketConstants.URL_PREFIX + SocketConstants.HOST_ADDRESS + SocketConstants.URL_SEPERATOR + SocketConstants.PORT_NUMBER + SocketConstants.URL_SUFFIX;
+            string url = GameConstants.SOCKET_URL_PREFIX + GameConstants.SOCKET_HOST_ADDRESS + GameConstants.SOCKET_URL_SEPARATOR + GameConstants.SOCKET_PORT_NUMBER + GameConstants.SOCKET_URL_PREFIX;
             return url;
         }
 
