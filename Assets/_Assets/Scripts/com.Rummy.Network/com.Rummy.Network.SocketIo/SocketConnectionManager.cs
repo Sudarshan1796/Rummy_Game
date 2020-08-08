@@ -40,11 +40,10 @@ namespace com.Rummy.Network
             {
                 while (responseInputQ.Count > 0)
                 {
-                    var response = responseInputQ[0];
-                    responseInputQ.RemoveAt(0);
-                    if (response != null)
+                    if (responseInputQ[0] != null)
                     {
-                        OnSocketResponseReceived(response);
+                        OnSocketResponseReceived(responseInputQ[0]);
+                        responseInputQ.RemoveAt(0);
                     }
                 }
             }
