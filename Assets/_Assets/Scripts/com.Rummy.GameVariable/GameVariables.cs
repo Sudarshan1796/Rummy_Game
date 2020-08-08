@@ -56,5 +56,28 @@ namespace com.Rummy.GameVariable
         {
             return GameConstants.SOCKET_URL_PREFIX + GameConstants.SOCKET_HOST_ADDRESS + GameConstants.SOCKET_URL_SEPARATOR + GameConstants.SOCKET_PORT_NUMBER + GameConstants.SOCKET_URL_SUFFIX;
         }
+        public enum SuitTypee
+        {
+            Spades = 1,
+            Hearts,
+            Clubs,
+            Diamonds
+        }
+        public enum CardValue
+        {
+            Ace = 1,
+            Two,
+            Three,
+            Four,
+            Five,
+            Six,
+            Seven,
+            Eight,
+            Nine,
+            Ten,
+            Jack,
+            Queen,
+            King
+        }
     }
 }
