@@ -92,13 +92,28 @@ namespace com.Rummy.Network
             socketManager.Socket.On(SocketIOEventTypes.Connect, OnConnect);
             socketManager.Socket.On(SocketIOEventTypes.Disconnect, OndisConnect);
             socketManager.Socket.On(SocketIOEventTypes.Error, OnError);
-            socketManager.Socket.On(GameVariables.SocketResponseType.onRoomJoin.ToString(), (Socket socket, Packet packet, object[] args) => { });
-            socketManager.Socket.On(GameVariables.SocketResponseType.userRoomJoin.ToString(), (Socket socket, Packet packet, object[] args) => { });
-            socketManager.Socket.On(GameVariables.SocketResponseType.gameStart.ToString(), (Socket socket, Packet packet, object[] args) => { });
-            socketManager.Socket.On(GameVariables.SocketResponseType.cardDrawRes.ToString(), (Socket socket, Packet packet, object[] args) => { });
-            socketManager.Socket.On(GameVariables.SocketResponseType.cardDiscardRes.ToString(), (Socket socket, Packet packet, object[] args) => { });
-            socketManager.Socket.On(GameVariables.SocketResponseType.playerLeftRes.ToString(), (Socket socket, Packet packet, object[] args) => { });
-            socketManager.Socket.On(GameVariables.SocketResponseType.roundComplete.ToString(), (Socket socket, Packet packet, object[] args) => { });
+
+            socketManager.Socket.On(GameVariables.SocketResponseType.onRoomJoin.ToString(), (Socket socket, Packet packet, object[] args) => 
+            { QueueResponse(Deserialize<OnRoomJoin>(GameVariables.SocketResponseType.onRoomJoin, args[0] as string)); });
+
+            socketManager.Socket.On(GameVariables.SocketResponseType.userRoomJoin.ToString(), (Socket socket, Packet packet, object[] args) =>
+            { QueueResponse(Deserialize<UserRoomJoin>(GameVariables.SocketResponseType.userRoomJoin, args[0] as string)); });
+
+            socketManager.Socket.On(GameVariables.SocketResponseType.gameStart.ToString(), (Socket socket, Packet packet, object[] args) => 
+            { QueueResponse(Deserialize<GameStart>(GameVariables.SocketResponseType.gameStart, args[0] as string)); });
+
+            socketManager.Socket.On(GameVariables.SocketResponseType.cardDrawRes.ToString(), (Socket socket, Packet packet, object[] args) => 
+            { QueueResponse(Deserialize<CardDrawRes>(GameVariables.SocketResponseType.cardDrawRes, args[0] as string)); });
+            
+            socketManager.Socket.On(GameVariables.SocketResponseType.cardDiscardRes.ToString(), (Socket socket, Packet packet, object[] args) => 
+            { QueueResponse(Deserialize<CardDiscardRes>(GameVariables.SocketResponseType.cardDiscardRes, args[0] as string)); });
+            
+            socketManager.Socket.On(GameVariables.SocketResponseType.playerLeftRes.ToString(), (Socket socket, Packet packet, object[] args) =>
+            { QueueResponse(Deserialize<PlayerLeftRes>(GameVariables.SocketResponseType.playerLeftRes, args[0] as string)); });
+            
+            socketManager.Socket.On(GameVariables.SocketResponseType.roundComplete.ToString(), (Socket socket, Packet packet, object[] args) => 
+            { QueueResponse(Deserialize<RoundComplete>(GameVariables.SocketResponseType.roundComplete, args[0] as string)); });
+            
             socketManager.Open();
         }
 
@@ -145,9 +160,11 @@ namespace com.Rummy.Network
             Debug.Log($"<color=red>Error Message : {error.Message}</color>");
         }
 
-        T Deserialize<T>(string msg)
+        T Deserialize<T>(GameVariables.SocketResponseType responseType, string msg) where T : SocketResponse
         {
-            return JsonUtility.FromJson<T>(msg);
+            var obj = JsonUtility.FromJson<T>(msg);
+            obj.socketResponseType = responseType;
+            return obj;
         }
 
         void QueueResponse(SocketResponse response)
