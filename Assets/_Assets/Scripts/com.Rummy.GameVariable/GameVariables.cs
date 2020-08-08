@@ -27,6 +27,9 @@ namespace com.Rummy.GameVariable
             return GameConstants.SOCKET_URL_PREFIX + GameConstants.SOCKET_HOST_ADDRESS + GameConstants.SOCKET_URL_SEPARATOR + GameConstants.SOCKET_PORT_NUMBER + GameConstants.SOCKET_URL_SUFFIX;
         }
 
+        public static string userId;
+        public static string AccessToken;
+
         public enum SocketRequestType : short
         {
             roomJoin,
@@ -57,7 +60,7 @@ namespace com.Rummy.GameVariable
             verify,
         }
 
-        public enum SuitType: int
+        public enum SuitType: short
         {
             Spades = 1,
             Hearts,
@@ -65,7 +68,7 @@ namespace com.Rummy.GameVariable
             Diamonds
         }
 
-        public enum CardType: int
+        public enum CardType: short
         {
             Ace = 1,
             Two,
@@ -80,6 +83,14 @@ namespace com.Rummy.GameVariable
             Jack,
             Queen,
             King
+        }
+
+        public enum GameMode: short
+        {
+            Points = 1,
+            Pool101,
+            Deals,
+            Pool201
         }
     }
 }

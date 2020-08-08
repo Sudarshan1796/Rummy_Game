@@ -29,11 +29,11 @@ namespace com.Rummy.Network
     public class RESTApiService
     {
         // Generic method to send your request to server through POST method.
-        internal static IEnumerator UnityWebRequestInPostMethod<T>(string baseUrl, Dictionary<string, string> payLoadKeyValuePairs, Action<string, string> errorResponse = null, Action<T> successResponse = null,bool shouldPrintResponseString = true)
+        internal static IEnumerator UnityWebRequestInPostMethod<T>(string url, Dictionary<string, string> payLoadKeyValuePairs, Action<T> successResponse = null, Action<string, string> errorResponse = null,bool shouldPrintResponseString = true) where T : ResponseMessage
         {
             UnityWebRequest unityWebRequest;
             var bodyJsonString               = SerializeDictionary(payLoadKeyValuePairs);
-            unityWebRequest                  = UnityWebRequest.Post(baseUrl, bodyJsonString);
+            unityWebRequest                  = UnityWebRequest.Post(url, bodyJsonString);
             unityWebRequest.method           = UnityWebRequest.kHttpVerbPOST;
             unityWebRequest.downloadHandler  = new DownloadHandlerBuffer();
             unityWebRequest.uploadHandler    = new UploadHandlerRaw(Encoding.UTF8.GetBytes(bodyJsonString));
@@ -43,22 +43,23 @@ namespace com.Rummy.Network
 
             if (unityWebRequest.isNetworkError)
             {
-                errorResponse.Invoke(baseUrl, unityWebRequest.error);
+                errorResponse.Invoke(url, unityWebRequest.error);
             }
             else
             {
                 if(shouldPrintResponseString)
                 {
-                    Debug.Log($"<Color=blue>Base Url : {baseUrl} \n Response : {unityWebRequest.downloadHandler.text}</Color>");
+                    Debug.Log($"<Color=blue>Base Url : {url} \n Response : {unityWebRequest.downloadHandler.text}</Color>");
                 }
 
-                T response = Deserialize<T>(unityWebRequest.downloadHandler.text);
-                successResponse.Invoke(response);
+                //T response = Deserialize<T>(unityWebRequest.downloadHandler.text);
+                ResponseData<T> responseData = JsonUtility.FromJson<ResponseData<T>>(unityWebRequest.downloadHandler.text);
+                successResponse.Invoke(responseData.responseMsg);
             }
         }
 
         // Generic method to send your request to server through GET method.
-        internal static IEnumerator UnityWebRequestInGetMethod<T>(string baseUrl, Dictionary<string, string> payLoadKeyValuePairs, Action<string, string> errorResponse = null, Action<T> successResponse = null, bool shouldPrintResponseString = true)
+        internal static IEnumerator UnityWebRequestInGetMethod<T>(string baseUrl, Dictionary<string, string> payLoadKeyValuePairs, Action<T> successResponse = null, Action<string, string> errorResponse = null, bool shouldPrintResponseString = true) where T : ResponseMessage
         {
             StringBuilder url = new StringBuilder();
             url.Append(baseUrl).Append("?");
@@ -84,8 +85,8 @@ namespace com.Rummy.Network
                     Debug.Log($"<Color=blue>Base Url : {baseUrl} \n Response : {unityWebRequest.downloadHandler.text}</Color>");
                 }
 
-                T response = Deserialize<T>(unityWebRequest.downloadHandler.text);
-                successResponse?.Invoke(response);
+                ResponseData<T> responseData = JsonUtility.FromJson<ResponseData<T>>(unityWebRequest.downloadHandler.text);
+                successResponse.Invoke(responseData.responseMsg);
             }
         }
 
