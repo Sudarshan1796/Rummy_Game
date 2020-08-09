@@ -73,7 +73,6 @@ namespace com.Rummy.Network
             }
         }
 
-
         void OnDestroy()
         {
             socketManager.Close();
@@ -87,32 +86,32 @@ namespace com.Rummy.Network
             {
                 AutoConnect = false
             };
-
+       
             socketManager = new SocketManager(new Uri(GameVariables.GetSocketUrl()), options);
             socketManager.Socket.On(SocketIOEventTypes.Connect, OnConnect);
             socketManager.Socket.On(SocketIOEventTypes.Disconnect, OndisConnect);
             socketManager.Socket.On(SocketIOEventTypes.Error, OnError);
 
             socketManager.Socket.On(GameVariables.SocketResponseType.onRoomJoin.ToString(), (Socket socket, Packet packet, object[] args) => 
-            { QueueResponse(Deserialize<OnRoomJoin>(GameVariables.SocketResponseType.onRoomJoin, args[0] as string)); });
+            { QueueResponse(Deserialize<OnRoomJoinResponse>(GameVariables.SocketResponseType.onRoomJoin, args[0] as string)); });
 
             socketManager.Socket.On(GameVariables.SocketResponseType.userRoomJoin.ToString(), (Socket socket, Packet packet, object[] args) =>
-            { QueueResponse(Deserialize<UserRoomJoin>(GameVariables.SocketResponseType.userRoomJoin, args[0] as string)); });
+            { QueueResponse(Deserialize<UserRoomJoinResponse>(GameVariables.SocketResponseType.userRoomJoin, args[0] as string)); });
 
             socketManager.Socket.On(GameVariables.SocketResponseType.gameStart.ToString(), (Socket socket, Packet packet, object[] args) => 
-            { QueueResponse(Deserialize<GameStart>(GameVariables.SocketResponseType.gameStart, args[0] as string)); });
+            { QueueResponse(Deserialize<GameStartResponse>(GameVariables.SocketResponseType.gameStart, args[0] as string)); });
 
             socketManager.Socket.On(GameVariables.SocketResponseType.cardDrawRes.ToString(), (Socket socket, Packet packet, object[] args) => 
             { QueueResponse(Deserialize<CardDrawRes>(GameVariables.SocketResponseType.cardDrawRes, args[0] as string)); });
             
             socketManager.Socket.On(GameVariables.SocketResponseType.cardDiscardRes.ToString(), (Socket socket, Packet packet, object[] args) => 
-            { QueueResponse(Deserialize<CardDiscardRes>(GameVariables.SocketResponseType.cardDiscardRes, args[0] as string)); });
+            { QueueResponse(Deserialize<CardDiscardResResponse>(GameVariables.SocketResponseType.cardDiscardRes, args[0] as string)); });
             
             socketManager.Socket.On(GameVariables.SocketResponseType.playerLeftRes.ToString(), (Socket socket, Packet packet, object[] args) =>
-            { QueueResponse(Deserialize<PlayerLeftRes>(GameVariables.SocketResponseType.playerLeftRes, args[0] as string)); });
+            { QueueResponse(Deserialize<PlayerLeftResResponse>(GameVariables.SocketResponseType.playerLeftRes, args[0] as string)); });
             
             socketManager.Socket.On(GameVariables.SocketResponseType.roundComplete.ToString(), (Socket socket, Packet packet, object[] args) => 
-            { QueueResponse(Deserialize<RoundComplete>(GameVariables.SocketResponseType.roundComplete, args[0] as string)); });
+            { QueueResponse(Deserialize<RoundCompleteResponse>(GameVariables.SocketResponseType.roundComplete, args[0] as string)); });
             
             socketManager.Open();
         }

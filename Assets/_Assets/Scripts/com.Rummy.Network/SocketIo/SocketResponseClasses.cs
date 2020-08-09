@@ -1,4 +1,5 @@
 ﻿using com.Rummy.GameVariable;
+using System;
 using System.Collections.Generic;
 
 namespace com.Rummy.Network
@@ -8,12 +9,13 @@ namespace com.Rummy.Network
         public GameVariables.SocketResponseType socketResponseType;
     }
 
-    public class OnRoomJoin: SocketResponse
+    public class OnRoomJoinResponse: SocketResponse
     {
         public int roomId;
         public List<Player> players;
     }
 
+    [Serializable]
     public class Player
     {
         public int userId;
@@ -21,14 +23,14 @@ namespace com.Rummy.Network
         public int position;
     }
 
-    public class UserRoomJoin: SocketResponse
+    public class UserRoomJoinResponse: SocketResponse
     {
         public int userId;
         public string userName;
         public int position;
     }
 
-    public class GameStart: SocketResponse
+    public class GameStartResponse: SocketResponse
     {
         public int roomId;
         public int playerTurn;
@@ -38,12 +40,14 @@ namespace com.Rummy.Network
         public int remainingTime;
     }
 
+    [Serializable]
     public class DiscardPile
     {
         public GameVariables.CardType cardValue;
         public GameVariables.SuitType suitValue;
     }
 
+    [Serializable]
     public class PlayerCard
     {
         public GameVariables.CardType cardValue;
@@ -59,7 +63,7 @@ namespace com.Rummy.Network
         public DiscardPile discardPile;
     }
 
-    public class CardDiscardRes: SocketResponse
+    public class CardDiscardResResponse: SocketResponse
     {
         public int userId;
         public int position;
@@ -71,14 +75,14 @@ namespace com.Rummy.Network
         public DiscardPile discardPile;
     }
 
-    public class PlayerLeftRes: SocketResponse
+    public class PlayerLeftResResponse: SocketResponse
     {
         public int roomId;
         public int userId;
         public int position;
     }
 
-    public class Declare: SocketResponse
+    public class DeclareResponse: SocketResponse
     {
         public int roomId;
         public int userId;
@@ -88,12 +92,13 @@ namespace com.Rummy.Network
         public int points;
     }
 
-    public class RoundComplete: SocketResponse
+    public class RoundCompleteResponse: SocketResponse
     {
         public int roomId;
         public List<Result> result;
     }
 
+    [Serializable]
     public class Result
     {
         public int userId;
