@@ -31,7 +31,7 @@ namespace com.Rummy.Network
 
         void Start()
         {
-            ConnectToSocket();
+            //ConnectToSocket();
         }
 
         private void Update()
@@ -75,7 +75,7 @@ namespace com.Rummy.Network
 
         void OnDestroy()
         {
-            socketManager.Close();
+            socketManager?.Close();
         }
 
         #endregion

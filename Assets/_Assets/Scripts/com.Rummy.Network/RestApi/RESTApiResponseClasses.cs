@@ -3,24 +3,28 @@ using System.Collections.Generic;
 
 namespace com.Rummy.Network
 {
-    public class UserLoginResponse : ResponseMessage
+    [Serializable]
+    public class UserLoginResponse : ResponseData
     {
         public int next_otp_time_limit;
     }
 
-    public class UserVerifyResponse : ResponseMessage
+    [Serializable]
+    public class UserVerifyResponse : ResponseData
     {
         public int user_id;
         public string access_token;
     }
 
-    public class RoomJoinResponse : ResponseMessage
+    [Serializable]
+    public class RoomJoinResponse : ResponseData
     {
         public int room_id;
         public int time_remaining;
     }
 
-    public class UserUpdateProfile : ResponseMessage
+    [Serializable]
+    public class UserUpdateProfile : ResponseData
     {
         public int user_id;
         public int mob_no;
@@ -34,7 +38,8 @@ namespace com.Rummy.Network
         public int balance;
     }
 
-    public class UserGetProfile : ResponseMessage
+    [Serializable]
+    public class UserGetProfile : ResponseData
     {
         public int user_id;
         public int mob_no;

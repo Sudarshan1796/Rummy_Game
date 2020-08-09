@@ -29,10 +29,10 @@ namespace com.Rummy.Network
     public class RESTApiService
     {
         // Generic method to send your request to server through POST method.
-        internal static IEnumerator UnityWebRequestInPostMethod<T>(string url, Dictionary<string, string> payLoadKeyValuePairs, Action<T> successResponse = null, Action<string, string> errorResponse = null,bool shouldPrintResponseString = true) where T : ResponseMessage
+        internal static IEnumerator UnityWebRequestInPostMethod<T>(string url, Dictionary<string, string> payLoadKeyValuePairs, Action<T> successResponse = null, Action<string, string> errorResponse = null,bool shouldPrintResponseString = true) where T : ResponseData
         {
             UnityWebRequest unityWebRequest;
-            var bodyJsonString               = SerializeDictionary(payLoadKeyValuePairs);
+            var bodyJsonString               = JsonConvert.SerializeObject(payLoadKeyValuePairs);
             unityWebRequest                  = UnityWebRequest.Post(url, bodyJsonString);
             unityWebRequest.method           = UnityWebRequest.kHttpVerbPOST;
             unityWebRequest.downloadHandler  = new DownloadHandlerBuffer();
@@ -49,17 +49,23 @@ namespace com.Rummy.Network
             {
                 if(shouldPrintResponseString)
                 {
-                    Debug.Log($"<Color=blue>Base Url : {url} \n Response : {unityWebRequest.downloadHandler.text}</Color>");
+                    Debug.Log($"<Color=blue>Url : {url} \n Response : {unityWebRequest.downloadHandler.text}</Color>");
                 }
 
-                //T response = Deserialize<T>(unityWebRequest.downloadHandler.text);
-                ResponseData<T> responseData = JsonUtility.FromJson<ResponseData<T>>(unityWebRequest.downloadHandler.text);
-                successResponse.Invoke(responseData.responseMsg);
+                RESTApiResponse<T> responseData = JsonUtility.FromJson<RESTApiResponse<T>>(unityWebRequest.downloadHandler.text);
+                if (responseData.responseCode == 200)
+                {
+                    successResponse?.Invoke(responseData.responseData);
+                }
+                else
+                {
+                    Debug.Log($"<Color=red>Url : {url} \n Response : Error Occurred! \n ResponseCode : {responseData.responseCode} \n ResponseMessage : {responseData.responseMessage}</Color>");
+                }
             }
         }
 
         // Generic method to send your request to server through GET method.
-        internal static IEnumerator UnityWebRequestInGetMethod<T>(string baseUrl, Dictionary<string, string> payLoadKeyValuePairs, Action<T> successResponse = null, Action<string, string> errorResponse = null, bool shouldPrintResponseString = true) where T : ResponseMessage
+        internal static IEnumerator UnityWebRequestInGetMethod<T>(string baseUrl, Dictionary<string, string> payLoadKeyValuePairs, Action<T> successResponse = null, Action<string, string> errorResponse = null, bool shouldPrintResponseString = true) where T : ResponseData
         {
             StringBuilder url = new StringBuilder();
             url.Append(baseUrl).Append("?");
@@ -85,24 +91,16 @@ namespace com.Rummy.Network
                     Debug.Log($"<Color=blue>Base Url : {baseUrl} \n Response : {unityWebRequest.downloadHandler.text}</Color>");
                 }
 
-                ResponseData<T> responseData = JsonUtility.FromJson<ResponseData<T>>(unityWebRequest.downloadHandler.text);
-                successResponse.Invoke(responseData.responseMsg);
+                RESTApiResponse<T> responseData = JsonUtility.FromJson<RESTApiResponse<T>>(unityWebRequest.downloadHandler.text);
+                if (responseData.responseCode == 200)
+                {
+                    successResponse?.Invoke(responseData.responseData);
+                }
+                else
+                {
+                    Debug.Log($"<Color=red>Base Url : {baseUrl} \n Response : Error Occurred! \n ResponseCode : {responseData.responseCode} \n ResponseMessage : {responseData.responseMessage}</Color>");
+                }
             }
-        }
-
-        private static string SerializeObject(object o)
-        {
-            return JsonUtility.ToJson(o);
-        }
-
-        private static string SerializeDictionary(Dictionary<string, string> payLoadKeyValuePairs)
-        {
-            return JsonConvert.SerializeObject(payLoadKeyValuePairs);
-        }
-
-        private static T Deserialize<T>(string msg)
-        {
-            return JsonUtility.FromJson<T>(msg);
         }
     }
 }

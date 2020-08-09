@@ -23,7 +23,12 @@ namespace com.Rummy.Network
 
         private Dictionary<string, string> payloadKeyValuePairs = new Dictionary<string, string>();
 
-        internal void UserLogin<T>(string mobNumber, string deviceId, Action<T> successResponse = null, Action<string, string> errorResponse = null) where T : ResponseMessage
+        //private void Start()
+        //{
+        //    UserLogin<UserLoginResponse>("8494844980", SystemInfo.deviceUniqueIdentifier);
+        //}
+
+        internal void UserLogin<T>(string mobNumber, string deviceId, Action<T> successResponse = null, Action<string, string> errorResponse = null) where T : ResponseData
         {
             payloadKeyValuePairs.Clear();
             payloadKeyValuePairs.Add(GameConstants.MOB_NO, mobNumber);
@@ -32,7 +37,7 @@ namespace com.Rummy.Network
                                                                           payloadKeyValuePairs, successResponse, errorResponse));
         }
 
-        internal void UserVerify<T>(string mobNumber, string otp, Action<T> successResponse = null, Action<string, string> errorResponse = null) where T : ResponseMessage
+        internal void UserVerify<T>(string mobNumber, string otp, Action<T> successResponse = null, Action<string, string> errorResponse = null) where T : ResponseData
         {
             payloadKeyValuePairs.Clear();
             payloadKeyValuePairs.Add(GameConstants.MOB_NO, mobNumber);
@@ -41,7 +46,7 @@ namespace com.Rummy.Network
                                                                           payloadKeyValuePairs, successResponse, errorResponse));
         }
 
-        internal void UserUpdateProfile<T>(string mobNumber, string email, string userName, string firstName, string lastName, Action<T> successResponse = null, Action<string, string> errorResponse = null) where T : ResponseMessage
+        internal void UserUpdateProfile<T>(string mobNumber, string email, string userName, string firstName, string lastName, Action<T> successResponse = null, Action<string, string> errorResponse = null) where T : ResponseData
         {
             payloadKeyValuePairs.Clear();
             payloadKeyValuePairs.Add(GameConstants.USER_ID, GameVariables.userId);
@@ -55,7 +60,7 @@ namespace com.Rummy.Network
                                                                           payloadKeyValuePairs, successResponse, errorResponse));
         }
 
-        internal void UserGetProfile<T>(Action<T> successResponse = null, Action<string, string> errorResponse = null) where T : ResponseMessage
+        internal void UserGetProfile<T>(Action<T> successResponse = null, Action<string, string> errorResponse = null) where T : ResponseData
         {
             payloadKeyValuePairs.Clear();
             payloadKeyValuePairs.Add(GameConstants.USER_ID, GameVariables.userId);
@@ -64,7 +69,7 @@ namespace com.Rummy.Network
                                                                           payloadKeyValuePairs, successResponse, errorResponse));
         }
 
-        internal void RoomJoin<T>(bool isPractice, GameVariables.GameMode gameMode, int maxPlayers, Action<T> successResponse = null, Action<string, string> errorResponse = null) where T : ResponseMessage
+        internal void RoomJoin<T>(bool isPractice, GameVariables.GameMode gameMode, int maxPlayers, Action<T> successResponse = null, Action<string, string> errorResponse = null) where T : ResponseData
         {
             payloadKeyValuePairs.Clear();
             payloadKeyValuePairs.Add(GameConstants.USER_ID, GameVariables.userId);

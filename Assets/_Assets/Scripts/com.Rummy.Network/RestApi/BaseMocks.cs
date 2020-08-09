@@ -3,16 +3,16 @@
 namespace com.Rummy.Network
 {
     [Serializable]
-    public class ResponseMessage
+    public class ResponseData
     {
 		
     }
 
     [Serializable]
-    public class ResponseData<T> where T : ResponseMessage
+    public class RESTApiResponse<T> where T : ResponseData
     {
         public int responseCode;
-        public T responseMsg;
-        public string responseInfo;
+        public T responseData;
+        public string responseMessage;
     }
 }
