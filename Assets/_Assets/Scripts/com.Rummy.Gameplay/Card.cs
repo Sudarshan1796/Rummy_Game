@@ -88,7 +88,7 @@ namespace com.Rummy.Gameplay
                 cardImage.color = Color.grey;
                 cardImage.gameObject.transform.localPosition = activePosition;
             }
-            cardGroupController.OnCardSeelect(this, gameObject, isSelected);
+            cardGroupController.OnCardSelect(this, gameObject, isSelected);
         }
 
         /// <summary>

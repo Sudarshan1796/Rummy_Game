@@ -169,7 +169,7 @@ namespace com.Rummy.Gameplay
         /// <param name="card"></param>
         /// <param name="cardObject"></param>
         /// <param name="isselected"></param>
-        public void OnCardSeelect(Card card, GameObject cardObject, bool isselected)
+        public void OnCardSelect(Card card, GameObject cardObject, bool isselected)
         {
             if (isselected)
             {
