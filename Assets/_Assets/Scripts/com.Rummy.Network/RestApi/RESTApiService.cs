@@ -59,7 +59,14 @@ namespace com.Rummy.Network
                 }
                 else
                 {
-                    Debug.Log($"<Color=red>Url : {url} \n Response : Error Occurred! \n ResponseCode : {responseData.responseCode} \n ResponseMessage : {responseData.responseMessage}</Color>");
+                    if (errorResponse != null)
+                    {
+                        errorResponse.Invoke($"<Color=red>Url : {url}</Color>", $"<Color=red>Response: Error Occurred! \n ResponseCode: {responseData.responseCode} \n ResponseMessage : {responseData.responseMessage}</Color>");
+                    }
+                    else
+                    {
+                        Debug.Log($"<Color=red>Url : {url} \n Response : Error Occurred! \n ResponseCode : {responseData.responseCode} \n ResponseMessage : {responseData.responseMessage}</Color>");
+                    }
                 }
             }
         }
@@ -98,7 +105,14 @@ namespace com.Rummy.Network
                 }
                 else
                 {
-                    Debug.Log($"<Color=red>Base Url : {baseUrl} \n Response : Error Occurred! \n ResponseCode : {responseData.responseCode} \n ResponseMessage : {responseData.responseMessage}</Color>");
+                    if (errorResponse != null)
+                    {
+                        errorResponse.Invoke($"<Color=red>Url : {baseUrl}</Color>", $"<Color=red>Response: Error Occurred! \n ResponseCode: {responseData.responseCode} \n ResponseMessage : {responseData.responseMessage}</Color>");
+                    }
+                    else
+                    {
+                        Debug.Log($"<Color=red>Url : {baseUrl} \n Response : Error Occurred! \n ResponseCode : {responseData.responseCode} \n ResponseMessage : {responseData.responseMessage}</Color>");
+                    }
                 }
             }
         }
