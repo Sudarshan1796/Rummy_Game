@@ -107,7 +107,7 @@ GameObject:
   - component: {fileID: 4096595313991093778}
   - component: {fileID: 4096595313991093871}
   m_Layer: 5
-  m_Name: Card_1
+  m_Name: CardPrefab
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -128,10 +128,10 @@ RectTransform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 208, y: 352.68924}
+  m_SizeDelta: {x: 208, y: 352.6892}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &4096595313991093776
 MonoBehaviour:
@@ -145,8 +145,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cc554ec2594d1d64e8ed754265363a75, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  suitType: 1
-  cardValue: 1
   cardImage: {fileID: 4096595313679970602}
 --- !u!222 &4096595313991093777
 CanvasRenderer:

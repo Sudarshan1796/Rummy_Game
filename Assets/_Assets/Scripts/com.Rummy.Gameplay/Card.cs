@@ -20,21 +20,23 @@ namespace com.Rummy.Gameplay
 
         private readonly Vector3 activePosition     = new Vector3(0, 25, 0);
         private readonly Vector3 inactivePosition  = new Vector3(0, -20, 0);
-
+        private LTDescr leanTweenObject;
+        private float speed = 0.50f;
         private void Start()
         {
             cardGroupController = CardGroupController.GetInstance;
         }
 
-        void ICardManager.Draw()
+        public void Draw()
         {
             throw new System.NotImplementedException();
         }
 
-        void ICardManager.Move()
+        public void Move(Vector3 _destinationPoint)
         {
-            throw new System.NotImplementedException();
+            leanTweenObject = LeanTween.move(gameObject, _destinationPoint, speed * 0.5f).setEase(LeanTweenType.linear);
         }
+        
 
         /// <summary>
         /// This method will be called on the start of the mouse drag
@@ -42,7 +44,7 @@ namespace com.Rummy.Gameplay
         /// <param name="eventData">mouse pointer event data</param>
         public void OnBeginDrag(PointerEventData eventData)
         {
-            Deselect();
+            DeselectCard();
             cardGroupController.OnDragBegin(this, this.gameObject);
         }
 
@@ -78,23 +80,29 @@ namespace com.Rummy.Gameplay
         {
             if (isSelected)
             {
-                isSelected = false;
-                cardImage.color = Color.white;
-                cardImage.gameObject.transform.localPosition = inactivePosition;
+                DeselectCard();
             }
             else
             {
-                isSelected = true;
-                cardImage.color = Color.grey;
-                cardImage.gameObject.transform.localPosition = activePosition;
+                SelectCard();
             }
             cardGroupController.OnCardSelect(this, gameObject, isSelected);
         }
 
         /// <summary>
+        /// Select Item
+        /// </summary>
+        private void SelectCard()
+        {
+            isSelected = true;
+            cardImage.color = Color.grey;
+            cardImage.gameObject.transform.localPosition = activePosition;
+        }
+
+        /// <summary>
         /// Deselect item
         /// </summary>
-        public void Deselect()
+        public void DeselectCard()
         {
             isSelected = false;
             cardImage.color = Color.white;

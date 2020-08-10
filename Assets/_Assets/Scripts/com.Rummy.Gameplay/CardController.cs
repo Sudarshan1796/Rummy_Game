@@ -30,9 +30,9 @@ public class CardController : MonoBehaviour
         return cardSprites[_index];
     }
 
-    public GameObject GetObject(Transform parentTransform)
+    public GameObject GetObject(Transform parentTrasnform)
     {
-        var _gObject = Instantiate(cardPrefab, parentTransform);
+        var _gObject = Instantiate(cardPrefab, parentTrasnform);
         return _gObject;
     }
 }

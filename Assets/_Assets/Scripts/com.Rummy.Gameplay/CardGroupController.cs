@@ -15,6 +15,7 @@ namespace com.Rummy.Gameplay
 
         [SerializeField] private GameVariables.CardType[] tempcardValue;
         [SerializeField] private GameVariables.SuitType[] tempSuitTypes;
+        [SerializeField] private RectTransform[] parentReactTans;
 
         private List<GameObject> cardGameobject;
         private List<Card> cards;
@@ -38,12 +39,10 @@ namespace com.Rummy.Gameplay
         private void Awake()
         {
             instance = this;
-            inActiveGroups = new List<GameObject>();
             selectedObject = new Dictionary<Card, GameObject>();
-            childParentObject = new Dictionary<GameObject, GameObject>();
+
             //Below code is simply generate 13 cards
             //Todo add server init here
-            TempCode();
         }
 
         private void OnEnable()
@@ -58,18 +57,21 @@ namespace com.Rummy.Gameplay
             sortCardBtn.onClick.RemoveListener(SortCards);
         }
 
-        private void TempCode()
+        public void InitilizeGroup(List<GameObject> _cardObject,List<Card> _cards)
         {
             cards = new List<Card>();
             cardGameobject = new List<GameObject>();
-            for (int i = 0; i < 13; i++)
+            childParentObject = new Dictionary<GameObject, GameObject>();
+            inActiveGroups = new List<GameObject>();
+
+            this.cards.Clear();
+            this.cardGameobject.Clear();
+            this.cards = _cards;
+            this.cardGameobject = _cardObject;
+            for (int i = 0; i < _cardObject.Count; i++)
             {
-                var _gameObject = CardController.GetInstance.GetObject(cardGroupGameobject[0].transform);
-                var _card = _gameObject.GetComponent<Card>();
-                _card.Init(i, tempcardValue[i], tempSuitTypes[i]);
-                cards.Add(_card);
-                cardGameobject.Add(_gameObject);
-                childParentObject.Add(_gameObject, cardGroupGameobject[0]);
+                childParentObject.Add(_cardObject[i], cardGroupGameobject[0]);
+                _cardObject[i].transform.SetParent(cardGroupGameobject[0].transform, false);
             }
             inActiveGroups.Clear();
             for (int i = 1; i < cardGroupGameobject.Count; i++)
@@ -90,7 +92,7 @@ namespace com.Rummy.Gameplay
         /// </summary>
         /// <param name="_card"></param>
         /// <param name="_cardGameObject"></param>
-        internal void OnCardDragEnd( Card _card, GameObject _cardGameObject)
+        internal void OnCardDragEnd(Card _card, GameObject _cardGameObject)
         {
 
             if (IsAboveNewGroupPanel(_card, _cardGameObject))
@@ -99,38 +101,44 @@ namespace com.Rummy.Gameplay
             }
             else
             {
-                var tempObject = childParentObject[_cardGameObject];
-                var tempValue = Vector2.Distance(tempObject.transform.localPosition, _card.transform.localPosition);
+                var _oldParentObject = childParentObject[_cardGameObject];
+                var _distanceMidVectot = _oldParentObject.transform.localPosition;
+                _distanceMidVectot.x += (_oldParentObject.GetComponent<RectTransform>().rect.width / 2);
+                var tempValue = Vector2.Distance(_distanceMidVectot, _card.transform.localPosition);
                 float distance = 0;
-                AddCardToNearestGroup(_card, _cardGameObject, ref tempObject, ref tempValue, ref distance);
+                AddCardToNearestGroup(_card, _cardGameObject, ref _oldParentObject, ref tempValue, ref distance);
             }
             createGroupPanel.SetActive(false);
             RemoveAllSelectedCard();
             CheckForInActivaGroup();
         }
+
+        private Vector3 tempVector;
         /// <summary>
         /// Find distance between card and the group and add it to the nearest group
         /// </summary>
         /// <param name="_card"></param>
         /// <param name="_cardGameObject"></param>
-        /// <param name="tempObject"></param>
+        /// <param name="_parentObject"></param>
         /// <param name="_tempValue"></param>
         /// <param name="_distance"></param>
-        private void AddCardToNearestGroup(Card _card, GameObject _cardGameObject, ref GameObject tempObject, ref float _tempValue, ref float _distance)
+        private void AddCardToNearestGroup(Card _card, GameObject _cardGameObject, ref GameObject _parentObject, ref float _tempValue, ref float _distance)
         {
-            foreach (var item in cardGroupGameobject)
+            for (int i = 0; i < cardGroupGameobject.Count; i++)
             {
-                if (item.activeSelf)
+                if (cardGroupGameobject[i].activeSelf)
                 {
-                    _distance = Vector2.Distance(item.transform.localPosition, _card.transform.localPosition);
+                    tempVector = cardGroupGameobject[i].transform.localPosition;
+                    tempVector.x += (parentReactTans[i].rect.width / 2);
+                    _distance = Vector2.Distance(tempVector, _card.transform.localPosition);
                     if (_distance < _tempValue)
                     {
                         _tempValue = _distance;
-                        tempObject = item;
+                        _parentObject = cardGroupGameobject[i];
                     }
                 }
             }
-            childParentObject[_cardGameObject] = tempObject;
+            childParentObject[_cardGameObject] = _parentObject;
             _cardGameObject.transform.SetParent(childParentObject[_cardGameObject].transform, false);
         }
 
@@ -173,7 +181,10 @@ namespace com.Rummy.Gameplay
         {
             if (isselected)
             {
-                selectedObject.Add(card, cardObject);
+                if (!selectedObject.ContainsKey(card))
+                {
+                    selectedObject.Add(card, cardObject);
+                }
             }
             else
             {
@@ -199,7 +210,7 @@ namespace com.Rummy.Gameplay
         {
             foreach (var item in selectedObject)
             {
-                item.Key.Deselect();
+                item.Key.DeselectCard();
             }
             selectedObject.Clear();
             createGroupBtn.gameObject.SetActive(selectedObject.Count > 0);
@@ -259,7 +270,7 @@ namespace com.Rummy.Gameplay
         }
 
         /// <summary>
-        /// Release the group if there is no element in the group and add it to the Lat element
+        /// Release the group if there is no element in the group and add it to the Last element
         /// </summary>
         /// <param name="_gObject"></param>
         private void ReleaseGroup(GameObject _gObject)
@@ -267,6 +278,18 @@ namespace com.Rummy.Gameplay
             inActiveGroups.Add(_gObject);
             _gObject.transform.SetSiblingIndex(cardGroupGameobject.Count - 1);
             _gObject.SetActive(false);
+        }
+
+        /// <summary>
+        /// Release all created group
+        /// </summary>
+        private void ReleaseAllGroup()
+        {
+            inActiveGroups.Clear();
+            for (int i = 0; i < cardGroupGameobject.Count; i++)
+            {
+                ReleaseGroup(cardGroupGameobject[i]);
+            }
         }
 
         /// <summary>
@@ -328,24 +351,23 @@ namespace com.Rummy.Gameplay
                 }
             }
         }
+
         private void SortCards()
         {
             var _spadeDeck = new List<GameObject>();
             var _heartDeck = new List<GameObject>();
             var _clubDeck = new List<GameObject>();
             var _diamondDeck = new List<GameObject>();
+            ReleaseAllGroup();
             for (int i = 0; i < cards.Count; i++)
             {
                 SortDeck(_spadeDeck, _heartDeck, _clubDeck, _diamondDeck, i);
-            }
-            for (int i = 0; i < cardGroupGameobject.Count; i++)
-            {
-                ReleaseGroup(cardGroupGameobject[i]);
             }
             CreateSortedDeck(_spadeDeck);
             CreateSortedDeck(_heartDeck);
             CreateSortedDeck(_clubDeck);
             CreateSortedDeck(_diamondDeck);
+
             sortCardBtn.gameObject.SetActive(false);
         }
 
