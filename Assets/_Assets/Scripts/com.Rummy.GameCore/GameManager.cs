@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using com.Rummy.GameVariable;
 using com.Rummy.Ui;
+using com.Rummy.Network;
 
 namespace com.Rummy.GameCore
 {
@@ -25,12 +26,15 @@ namespace com.Rummy.GameCore
         {
             if (PlayerPrefs.GetInt("isLoggedIn", 0) == 0)
             {
+                SetScreenOrientation(ScreenOrientation.Portrait);
                 //UiManager.GetInstance.EnableLoginUi();
             }
             else
             {
+                SetScreenOrientation(ScreenOrientation.LandscapeRight);
                 GameVariables.userId = PlayerPrefs.GetString("userId");
                 GameVariables.AccessToken = PlayerPrefs.GetString("accessToken");
+                UserGetProfile();
             }
         }
 
@@ -41,6 +45,27 @@ namespace com.Rummy.GameCore
             PlayerPrefs.SetString("userId", userID);
             GameVariables.AccessToken = accessToken;
             PlayerPrefs.SetString("accessToken", accessToken);
+            UserGetProfile();
+        }
+
+        internal void SetScreenOrientation(ScreenOrientation orientationType)
+        {
+            Screen.orientation = orientationType;
+        }
+
+        private void UserGetProfile()
+        {
+            RESTApiConnectionManager.GetInstance.UserGetProfile<UserGetProfile>(OnGetUserProfileSuccess, OnGetUserProfileSuccessFail);
+        }
+
+        private void OnGetUserProfileSuccess(UserGetProfile userGetProfileResponse)
+        {
+            Debug.Log("User Profile Loaded");
+        }
+
+        private void OnGetUserProfileSuccessFail(string url, string errorMessage)
+        {
+            Debug.Log(url + "\n" + errorMessage);
         }
     }
 }

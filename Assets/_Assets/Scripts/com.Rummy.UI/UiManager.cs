@@ -19,7 +19,9 @@ namespace com.Rummy.Ui
             }
         }
 
+        [SerializeField] private LoadingUiController loadingUiController;
         [SerializeField] private LoginUiController loginUiController;
+        [SerializeField] private MainMenuUiController mainMenuUiController;
 
         #region LoginUi
 
