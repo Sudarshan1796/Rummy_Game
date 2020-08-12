@@ -1,9 +1,11 @@
 ﻿using com.Rummy.Gameplay;
 using com.Rummy.GameVariable;
+using com.Rummy.Network;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace com.Rummy.UI
 {
@@ -11,29 +13,41 @@ namespace com.Rummy.UI
     {
         [SerializeField] private GameObject[] cardPosition;
         [SerializeField] private GameObject cardInitPosition;
-        [SerializeField] private GameVariables.CardType[] tempcardValue;
-        [SerializeField] private GameVariables.SuitType[] tempSuitTypes;
-      
-        private List<Card> cards;
+        [SerializeField] private List<Text> userNames;
+        [SerializeField] private List<Image> userProfileImages;
+        [SerializeField] private Button btnDrop, btnExit;
+        private List<Gameplay.Card> cards;
         private List<GameObject> cardgameObject;
 
         private void Awake()
         {
-            cards = new List<Card>();
+            cards = new List<Gameplay.Card>();
             cardgameObject = new List<GameObject>();
-            createCard();
+        }
+
+        private void AddListners()
+        {
+            GamePlayManager.GetInstance.OnGameStart += createCard;
+            btnDrop.onClick.AddListener(OnDropClick);
+            btnExit.onClick.AddListener(OnRoomExit);
+        }
+        private void removeListeners()
+        {
+            GamePlayManager.GetInstance.OnGameStart -= createCard;
+            btnDrop.onClick.RemoveListener(OnDropClick);
+            btnExit.onClick.RemoveListener(OnRoomExit);
         }
 
         /// <summary>
         /// this is Temp card Creation script
         /// </summary>
-        private void createCard()
+        private void createCard(List<PlayerCard> playerCards)
         {
             for (int i = 0; i < 13; i++)
             {
                 var _gameObject = CardController.GetInstance.GetObject(cardInitPosition.transform);
-                var _card = _gameObject.GetComponent<Card>();
-                _card.Init(i, tempcardValue[i], tempSuitTypes[i]);
+                var _card = _gameObject.GetComponent<Gameplay.Card>();
+                _card.Init(i, playerCards[i].cardValue, playerCards[i].suitValue);
                 cards.Add(_card);
                 cardgameObject.Add(_gameObject);
             }
@@ -44,7 +58,7 @@ namespace com.Rummy.UI
         }
 
         /// <summary>
-        /// this is the Starting Card draw animation
+        /// This is the Starting Card draw animation
         /// </summary>
         /// <param name="isDone"></param>
         /// <returns></returns>
@@ -59,6 +73,33 @@ namespace com.Rummy.UI
             }
             yield return new WaitForSeconds(0.50f);
             isDone.Invoke();
+        }
+
+        /// <summary>
+        /// Set Gameplay related  Data
+        /// </summary>
+        /// <param name="players"></param>
+        private void SetScreenData(List<Player> players)
+        {
+            for (int i = 0; i < players.Count; i++)
+            {
+                userNames[i].text = players[i].userName;
+            }
+        }
+
+        private void OnDropClick()
+        {
+
+        }
+
+        private void OnRoomExit()
+        {
+
+        }
+
+        private void OnCardDraw()
+        {
+
         }
     }
 }

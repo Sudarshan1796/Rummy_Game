@@ -12,9 +12,6 @@ namespace com.Rummy.Gameplay
         [SerializeField] private List<CardGroup> cardGroups;
         [SerializeField] private Button createGroupBtn, sortCardBtn;
         [SerializeField] private GameObject createGroupPanel;
-
-        [SerializeField] private GameVariables.CardType[] tempcardValue;
-        [SerializeField] private GameVariables.SuitType[] tempSuitTypes;
         [SerializeField] private RectTransform[] parentReactTans;
 
         private List<GameObject> cardGameobject;
