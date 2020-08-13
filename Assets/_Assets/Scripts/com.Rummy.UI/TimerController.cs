@@ -88,19 +88,19 @@ public class TimerController : MonoBehaviour
     {
         if (remainingTime > 15.0f && !isStartColorSet)
         {
-            SetColor(startTimeColor, startTimeColorFade, ref isStartColorSet);
+            SetColor(ref startTimeColor, ref startTimeColorFade, ref isStartColorSet);
         }
         if (remainingTime < 15.0f && remainingTime > 7.0f && !isMidColorSet)
         {
-            SetColor(midTimeColor, midTimeColorFade, ref isMidColorSet);
+            SetColor(ref midTimeColor, ref midTimeColorFade, ref isMidColorSet);
         }
         if (remainingTime < 7.0f && !isCriticalColorSet)
         {
-            SetColor(criticalColor, criticalColorFade, ref isCriticalColorSet);
+            SetColor(ref criticalColor, ref criticalColorFade, ref isCriticalColorSet);
         }
     }
 
-    private void SetColor(Color color, Color fadeColor, ref bool issetColor)
+    private void SetColor( ref Color color,  ref Color fadeColor, ref bool issetColor)
     {
         insideImage.color = fadeColor;
         borderImage.color = color;
