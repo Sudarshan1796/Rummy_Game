@@ -35,6 +35,7 @@ namespace com.Rummy.GameCore
                 SetScreenOrientation(ScreenOrientation.LandscapeRight);
                 GameVariables.userId = PlayerPrefs.GetString("userId");
                 GameVariables.AccessToken = PlayerPrefs.GetString("accessToken");
+                UiManager.GetInstance.EnableMainMenuUi();
                 UserGetProfile();
             }
         }
@@ -51,11 +52,16 @@ namespace com.Rummy.GameCore
 
         internal void SetScreenOrientation(ScreenOrientation orientationType)
         {
+            if(Screen.orientation == orientationType)
+            {
+                return;
+            }
             Screen.orientation = orientationType;
         }
 
         private void UserGetProfile()
         {
+            UiManager.GetInstance.EnableLoadingUi();
             RESTApiConnectionManager.GetInstance.UserGetProfile<UserGetProfile>(OnGetUserProfileSuccess, OnGetUserProfileSuccessFail);
         }
 
@@ -63,6 +69,8 @@ namespace com.Rummy.GameCore
         {
             Debug.Log("<color=green>User Profile Loaded</color>");
             GameVariables.UserProfile = userGetProfileResponse;
+            UiManager.GetInstance.DisableLoadingUi();
+            SetScreenOrientation(ScreenOrientation.LandscapeRight);
             UiManager.GetInstance.EnableMainMenuUi();
         }
 

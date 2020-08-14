@@ -43,6 +43,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b6cd6bc14f49e774ba06e8963dcc057c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  loadingUiController: {fileID: 0}
+  loadingUiController:
+  - {fileID: 0}
+  - {fileID: 0}
   loginUiController: {fileID: 0}
   mainMenuUiController: {fileID: 0}
