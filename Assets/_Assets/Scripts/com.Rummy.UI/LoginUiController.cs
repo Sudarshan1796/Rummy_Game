@@ -2,21 +2,27 @@
 using UnityEngine.UI;
 using TMPro;
 using System.Collections;
+using System.Collections.Generic;
 
 namespace com.Rummy.Ui
 {
     public class LoginUiController : MonoBehaviour
     {
+        [Header("Mobile Number Input Panel")]
         [SerializeField] private GameObject mobNumberInputPanel;
-        [SerializeField] private GameObject otpInputPanel;
-        [SerializeField] private TextMeshProUGUI mobNumberText;
-        [SerializeField] private TextMeshProUGUI otpText;
+        [SerializeField] private TMP_InputField mobNumberText;
         [SerializeField] private TextMeshProUGUI numberInputPanelErrorText;
-        [SerializeField] private TextMeshProUGUI otpInputPanelErrorText;
-        [SerializeField] private TextMeshProUGUI otpInputPanelTimerText;
         [SerializeField] private Button mobNumberSubmitButton;
-        [SerializeField] private Button otpSubmitButton;
+        [Header("OTP Input Panel")]
+        [SerializeField] private GameObject otpInputPanel;
+        [SerializeField] private GameObject otpResendObject;
+        [SerializeField] private TextMeshProUGUI otpSentText;
+        [SerializeField] private TextMeshProUGUI otpInputPanelTimerText;
+        [SerializeField] private TextMeshProUGUI otpInputPanelErrorText;
+        [SerializeField] private List<TMP_InputField> otpText;
         [SerializeField] private Button otpResendButton;
+        [SerializeField] private Button otpSubmitButton;
+        [SerializeField] private Button backButtonButton;
 
         private Coroutine otpInputPanelTimer;
 
@@ -25,6 +31,7 @@ namespace com.Rummy.Ui
             mobNumberSubmitButton.onClick.AddListener(OnClickMobNumberSubmitButton);
             otpSubmitButton.onClick.AddListener(OnClickOtpSubmitButton);
             otpResendButton.onClick.AddListener(OnClickOtpResendButton);
+            backButtonButton.onClick.AddListener(OnClickOtpPanelBackButton);
         }
 
         internal void EnableMobNumberInputPanel()
@@ -37,6 +44,8 @@ namespace com.Rummy.Ui
         {
             otpInputPanel.SetActive(true);
             mobNumberInputPanel.SetActive(false);
+            ClearDynamicTexts();
+            otpSentText.text = $"OTP sent to {mobNumberText.text}";
             otpInputPanelTimer = StartCoroutine(StartOtpResendTimer(timeToResendOtp));
         }
 
@@ -58,29 +67,48 @@ namespace com.Rummy.Ui
 
         private void OnClickMobNumberSubmitButton()
         {
-            UiManager.GetInstance.OnSubmitMobNumber(mobNumberText.text);
+            if (mobNumberText.text.Length == 10)
+            {
+                ShowErrorMessageInNumberInputPanel("");
+                UiManager.GetInstance.OnSubmitMobNumber(mobNumberText.text);
+            }
+            else
+            {
+                ShowErrorMessageInNumberInputPanel("Please Enter a valid mobile number");
+            }
         }
 
         private void OnClickOtpSubmitButton()
         {
-            UiManager.GetInstance.OnSubmitOtpNumber(mobNumberText.text, otpText.text);
+            string otp = null;
+            foreach(var text in otpText)
+            {
+                otp += text.text;
+            }
+            UiManager.GetInstance.OnSubmitOtpNumber(mobNumberText.text, otp);
         }
 
         private void OnClickOtpResendButton()
         {
-            EnableOtpInputPanelTimerText(true);
             UiManager.GetInstance.OnSubmitMobNumber(mobNumberText.text);
+        }
+
+        private void OnClickOtpPanelBackButton()
+        {
+            mobNumberInputPanel.SetActive(true);
+            StopCoroutine(otpInputPanelTimer);
+            otpInputPanel.SetActive(false);
         }
 
         private IEnumerator StartOtpResendTimer(int remainingTime)
         {
+            otpInputPanelTimerText.text = $"Resend OTP in <color=white>{remainingTime} sec</color>";
             EnableOtpInputPanelTimerText(true);
-            otpInputPanelTimerText.text = $"Resend OTP in {remainingTime} sec";
             while (true)
             {
                 yield return new WaitForSecondsRealtime(1f);
                 remainingTime--;
-                otpInputPanelTimerText.text = $"Resend OTP in {remainingTime} sec";
+                otpInputPanelTimerText.text = $"Resend OTP in <color=white>{remainingTime} sec</color>";
                 if(remainingTime == 0)
                 {
                     EnableOtpInputPanelTimerText(false);
@@ -92,7 +120,17 @@ namespace com.Rummy.Ui
         private void EnableOtpInputPanelTimerText(bool shoulEnable)
         {
             otpInputPanelTimerText.gameObject.SetActive(shoulEnable);
-            otpResendButton.gameObject.SetActive(!shoulEnable);
+            otpResendObject.SetActive(!shoulEnable);
+        }
+
+        private void ClearDynamicTexts()
+        {
+            foreach(var text in otpText)
+            {
+                text.text = "";
+            }
+            numberInputPanelErrorText.text = "";
+            otpInputPanelErrorText.text = "";
         }
     }
 }

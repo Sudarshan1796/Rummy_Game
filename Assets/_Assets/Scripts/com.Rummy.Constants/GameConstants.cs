@@ -29,6 +29,7 @@
         internal const string FIRST_NAME = "first_name";
         internal const string USER_NAME = "user_name";
         internal const string EMAIL = "email";
+        internal const string ROOM_CODE = "room_code";
 
         #endregion
     }

@@ -24,10 +24,11 @@ namespace com.Rummy.GameCore
 
         private void Start()
         {
+            PlayerPrefs.DeleteAll();
             if (PlayerPrefs.GetInt("isLoggedIn", 0) == 0)
             {
                 SetScreenOrientation(ScreenOrientation.Portrait);
-                //UiManager.GetInstance.EnableLoginUi();
+                UiManager.GetInstance.EnableLoginUi();
             }
             else
             {

@@ -23,6 +23,13 @@ namespace com.Rummy.Network
         public int time_remaining;
     }
 
+    public class RoomCreateResponse : ResponseData
+    {
+        public int room_id;
+        public int time_remaining;
+        public string room_code;
+    }
+
     [Serializable]
     public class UserUpdateProfile : ResponseData
     {
