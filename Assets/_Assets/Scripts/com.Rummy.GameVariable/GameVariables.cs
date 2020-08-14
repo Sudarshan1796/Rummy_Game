@@ -1,4 +1,5 @@
 ﻿using com.Rummy.Constants;
+using com.Rummy.Network;
 
 namespace com.Rummy.GameVariable
 {
@@ -29,6 +30,7 @@ namespace com.Rummy.GameVariable
 
         public static string userId;
         public static string AccessToken;
+        public static UserGetProfile UserProfile;
 
         public enum SocketRequestType : short
         {

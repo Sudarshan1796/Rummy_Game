@@ -64,5 +64,14 @@ namespace com.Rummy.Ui
         }
 
         #endregion
+
+        #region MainMenuUi
+
+        internal void EnableMainMenuUi()
+        {
+            mainMenuUiController.EnableMainMenuPanel();
+        }
+
+        #endregion
     }
 }

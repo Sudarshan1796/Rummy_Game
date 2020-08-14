@@ -48,8 +48,8 @@ namespace com.Rummy.Network
     [Serializable]
     public class UserGetProfile : ResponseData
     {
-        public int user_id;
-        public int mob_no;
+        public long user_id;
+        public long mob_no;
         public string email;
         public string user_name;
         public string first_name;

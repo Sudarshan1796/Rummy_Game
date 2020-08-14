@@ -61,7 +61,9 @@ namespace com.Rummy.GameCore
 
         private void OnGetUserProfileSuccess(UserGetProfile userGetProfileResponse)
         {
-            Debug.Log("User Profile Loaded");
+            Debug.Log("<color=green>User Profile Loaded</color>");
+            GameVariables.UserProfile = userGetProfileResponse;
+            UiManager.GetInstance.EnableMainMenuUi();
         }
 
         private void OnGetUserProfileSuccessFail(string url, string errorMessage)

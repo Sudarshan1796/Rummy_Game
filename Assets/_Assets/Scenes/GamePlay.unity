@@ -524,6 +524,10 @@ PrefabInstance:
       propertyPath: loginUiController
       value: 
       objectReference: {fileID: 478086177}
+    - target: {fileID: 4808329398137440118, guid: ff33026dde7f60b4591b4a89adc979ca, type: 3}
+      propertyPath: mainMenuUiController
+      value: 
+      objectReference: {fileID: 6307544866354779059}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: ff33026dde7f60b4591b4a89adc979ca, type: 3}
 --- !u!1001 &4986559556115600344
@@ -680,6 +684,17 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 84c7919aa6aedaf4abee217ad91e2bcf, type: 3}
+--- !u!114 &6307544866354779059 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 1358179426245585927, guid: 84c7919aa6aedaf4abee217ad91e2bcf, type: 3}
+  m_PrefabInstance: {fileID: 6307544866354779058}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c63ddeb4d3bb1e9438894ac53a26978f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &9147124992142024556
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -687,6 +702,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 2305963720986197075, guid: bc8cacaa1145b6b42a952d81eb4b8e53, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 9147124994084282104, guid: bc8cacaa1145b6b42a952d81eb4b8e53, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
