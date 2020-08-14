@@ -34,6 +34,41 @@ namespace com.Rummy.Ui
             backButtonButton.onClick.AddListener(OnClickOtpPanelBackButton);
         }
 
+        private void OnClickMobNumberSubmitButton()
+        {
+            if (mobNumberText.text.Length == 10)
+            {
+                ShowErrorMessageInNumberInputPanel("");
+                UiManager.GetInstance.OnSubmitMobNumber(mobNumberText.text);
+            }
+            else
+            {
+                ShowErrorMessageInNumberInputPanel("Please Enter a valid mobile number");
+            }
+        }
+
+        private void OnClickOtpSubmitButton()
+        {
+            string otp = null;
+            foreach (var text in otpText)
+            {
+                otp += text.text;
+            }
+            UiManager.GetInstance.OnSubmitOtpNumber(mobNumberText.text, otp);
+        }
+
+        private void OnClickOtpResendButton()
+        {
+            UiManager.GetInstance.OnSubmitMobNumber(mobNumberText.text);
+        }
+
+        private void OnClickOtpPanelBackButton()
+        {
+            mobNumberInputPanel.SetActive(true);
+            StopCoroutine(otpInputPanelTimer);
+            otpInputPanel.SetActive(false);
+        }
+
         internal void EnableMobNumberInputPanel()
         {
             mobNumberInputPanel.SetActive(true);
@@ -63,41 +98,6 @@ namespace com.Rummy.Ui
         internal void ShowErrorMessageInOtpInputPanel(string errorMessage)
         {
             otpInputPanelErrorText.text = errorMessage;
-        }
-
-        private void OnClickMobNumberSubmitButton()
-        {
-            if (mobNumberText.text.Length == 10)
-            {
-                ShowErrorMessageInNumberInputPanel("");
-                UiManager.GetInstance.OnSubmitMobNumber(mobNumberText.text);
-            }
-            else
-            {
-                ShowErrorMessageInNumberInputPanel("Please Enter a valid mobile number");
-            }
-        }
-
-        private void OnClickOtpSubmitButton()
-        {
-            string otp = null;
-            foreach(var text in otpText)
-            {
-                otp += text.text;
-            }
-            UiManager.GetInstance.OnSubmitOtpNumber(mobNumberText.text, otp);
-        }
-
-        private void OnClickOtpResendButton()
-        {
-            UiManager.GetInstance.OnSubmitMobNumber(mobNumberText.text);
-        }
-
-        private void OnClickOtpPanelBackButton()
-        {
-            mobNumberInputPanel.SetActive(true);
-            StopCoroutine(otpInputPanelTimer);
-            otpInputPanel.SetActive(false);
         }
 
         private IEnumerator StartOtpResendTimer(int remainingTime)
