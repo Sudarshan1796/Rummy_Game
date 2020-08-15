@@ -113,7 +113,7 @@ namespace com.Rummy.Ui
         {
             roomSizeSelectionScreen.SetActive(false);
             ResetDynamicText();
-            roomJoinWaitingScreenCloseButton.interactable = false;
+            //roomJoinWaitingScreenCloseButton.interactable = false;
             roomJoinWaitingScreen.SetActive(true);
             //StartCoroutine(StartRoomJoinRemainingTimer(timeRemainingToJoinRoom));
         }
