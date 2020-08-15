@@ -31,6 +31,9 @@ namespace com.Rummy.GameVariable
         public static string userId;
         public static string AccessToken;
         public static UserGetProfile UserProfile;
+        public static GameMode userSelectedGameMode;
+        public static RoomType userSelectedRoomType;
+        public static RoomSize userSelectedRoomSize;
 
         public enum SocketRequestType : short
         {
@@ -93,6 +96,18 @@ namespace com.Rummy.GameVariable
             Pool101,
             Deals,
             Pool201
+        }
+
+        public enum RoomType : short
+        {
+            RandomRoom,
+            CustomRoom
+        }
+
+        public enum RoomSize : short
+        {
+            players2 = 2,
+            players6 = 6
         }
     }
 }

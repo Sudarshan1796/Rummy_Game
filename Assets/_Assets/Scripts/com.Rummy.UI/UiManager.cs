@@ -23,6 +23,7 @@ namespace com.Rummy.Ui
         [SerializeField] private List<UiRotator> loadingUiController;
         [SerializeField] private LoginUiController loginUiController;
         [SerializeField] private MainMenuUiController mainMenuUiController;
+        [SerializeField] private RoomJoinUiController roomJoinUiController;
 
         private UiRotator enabledLoadingUi;
 
@@ -101,6 +102,11 @@ namespace com.Rummy.Ui
         {
             loginUiController.DisableOtpInputPanel();
             mainMenuUiController.EnableMainMenuPanel();
+        }
+
+        internal void EnableRoomJoinUi()
+        {
+            roomJoinUiController.EnableRoomTypeSelectionPanel();
         }
 
         #endregion

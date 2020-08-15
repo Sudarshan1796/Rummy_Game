@@ -12,7 +12,19 @@ namespace com.Rummy.Ui
         [SerializeField] private GameObject mainMenuPanel;
         [SerializeField] private Button profileButton;
         [SerializeField] private Button addCashButton;
+        [SerializeField] private Button pool101Button;
         [SerializeField] private TextMeshProUGUI phoneNumberText;
+
+        private void Start()
+        {
+            pool101Button.onClick.AddListener(OnClickPool101Button);
+        }
+
+        private void OnClickPool101Button()
+        {
+            GameVariables.userSelectedGameMode = GameVariables.GameMode.Pool101;
+            UiManager.GetInstance.EnableRoomJoinUi();
+        }
 
         internal void EnableMainMenuPanel()
         {
