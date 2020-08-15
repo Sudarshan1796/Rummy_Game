@@ -2,6 +2,7 @@
 using com.Rummy.Network;
 using com.Rummy.GameCore;
 using System.Collections.Generic;
+using com.Rummy.UI;
 
 namespace com.Rummy.Ui
 {
@@ -24,6 +25,7 @@ namespace com.Rummy.Ui
         [SerializeField] private LoginUiController loginUiController;
         [SerializeField] private MainMenuUiController mainMenuUiController;
         [SerializeField] private RoomJoinUiController roomJoinUiController;
+        [SerializeField] private GameplayController gameplayController;
 
         private UiRotator enabledLoadingUi;
 
@@ -109,6 +111,13 @@ namespace com.Rummy.Ui
             roomJoinUiController.EnableRoomTypeSelectionPanel();
         }
 
+        #endregion
+        #region GameplayUI
+        internal void EnableGameplayScreen(List<Player> players)
+        {
+            gameplayController.Activate();
+            gameplayController.SetScreenData(players);
+        }
         #endregion
     }
 }
