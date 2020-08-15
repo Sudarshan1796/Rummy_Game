@@ -64,7 +64,7 @@ namespace com.Rummy.GameCore
         private void UserGetProfile()
         {
             UiManager.GetInstance.EnableLoadingUi();
-            RESTApiConnectionManager.GetInstance.UserGetProfile<UserGetProfile>(OnGetUserProfileSuccess, OnGetUserProfileSuccessFail);
+            RESTApiConnectionManager.GetInstance.UserGetProfile<UserGetProfile>(OnGetUserProfileSuccess, OnGetUserProfileFail);
         }
 
         private void OnGetUserProfileSuccess(UserGetProfile userGetProfileResponse)
@@ -76,7 +76,7 @@ namespace com.Rummy.GameCore
             UiManager.GetInstance.EnableMainMenuUi();
         }
 
-        private void OnGetUserProfileSuccessFail(string url, string errorMessage)
+        private void OnGetUserProfileFail(string url, string errorMessage)
         {
             Debug.Log(url + "\n" + errorMessage);
         }
