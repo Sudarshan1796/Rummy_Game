@@ -27,6 +27,7 @@ namespace com.Rummy.Network
 
         internal event Action<SocketResponse> SocketResponse;
 
+        private Action onSocketConnect;
         #region UnityCallbacks
 
         void Start()
@@ -80,13 +81,13 @@ namespace com.Rummy.Network
 
         #endregion
 
-        internal void ConnectToSocket()
+        internal void ConnectToSocket(Action onConnect)
         {
             SocketOptions options = new SocketOptions
             {
                 AutoConnect = false
             };
-       
+            onSocketConnect = onConnect;
             socketManager = new SocketManager(new Uri(GameVariables.GetSocketUrl()), options);
             socketManager.Socket.On(SocketIOEventTypes.Connect, OnConnect);
             socketManager.Socket.On(SocketIOEventTypes.Disconnect, OndisConnect);
@@ -119,6 +120,7 @@ namespace com.Rummy.Network
         private void OnConnect(Socket socket, Packet packet, params object[] args)
         {
             Debug.Log("<color=green>Socket Connected Successfully!</color>");
+            onSocketConnect?.Invoke();
         }
 
         private void OndisConnect(Socket socket, Packet packet, params object[] args)
@@ -172,7 +174,7 @@ namespace com.Rummy.Network
                 responseInputQ.Add(response);
         }
 
-        private void SendSocketRequest(GameVariables.SocketRequestType requestType, SocketRequest requestObject)
+        internal void SendSocketRequest(GameVariables.SocketRequestType requestType, SocketRequest requestObject)
         {
             socketManager.Socket.Emit(requestType.ToString(), Serialize(requestObject));
 
