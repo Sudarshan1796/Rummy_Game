@@ -3,6 +3,8 @@ using com.Rummy.Network;
 using com.Rummy.GameCore;
 using System.Collections.Generic;
 using com.Rummy.UI;
+using com.Rummy.GameVariable;
+using com.Rummy.Gameplay;
 
 namespace com.Rummy.Ui
 {
@@ -73,7 +75,7 @@ namespace com.Rummy.Ui
 
         private void OnUserLoginFail(string url, string errorMessage)
         {
-            loginUiController.ShowErrorMessageInNumberInputPanel("Error Occured! \n Plese Try Again.");
+            loginUiController.ShowErrorMessageInNumberInputPanel("Error Occured!, Plese Try Again.");
             Debug.Log(url + "\n" + errorMessage);
             DisableLoadingUi();
         }
@@ -106,9 +108,73 @@ namespace com.Rummy.Ui
             mainMenuUiController.EnableMainMenuPanel();
         }
 
+        #endregion
+
+        #region RoomJoinUi
+
         internal void EnableRoomJoinUi()
         {
             roomJoinUiController.EnableRoomTypeSelectionPanel();
+        }
+
+        internal void CreateRoom()
+        {
+            EnableLoadingUi();
+            roomJoinUiController.PrintRoomJoinErrorMessage("");
+            RESTApiConnectionManager.GetInstance.RoomCreate<RoomCreateResponse>(false, ((short)GameVariables.userSelectedGameMode).ToString(), ((short)GameVariables.userSelectedRoomSize).ToString(), OnSuccessRoomCreate, OnFailRoomCreate);
+        }
+
+        private void OnSuccessRoomCreate(RoomCreateResponse roomCreateResponse)
+        {
+            GameVariables.roomId = roomCreateResponse.room_id;
+            roomJoinUiController.EnableRoomJoinWaitingScreen(roomCreateResponse.time_remaining);
+            GamePlayManager.GetInstance.SocketRoomJoin(roomCreateResponse.room_id);
+            DisableLoadingUi();
+        }
+
+        private void OnFailRoomCreate(string url, string errorMessage)
+        {
+            roomJoinUiController.PrintRoomJoinErrorMessage("Failed to join room!, Please try again.");
+            DisableLoadingUi();
+        }
+
+        internal void JoinRoom(string roomId)
+        {
+            EnableLoadingUi();
+            RESTApiConnectionManager.GetInstance.RoomJoin<RoomJoinResponse>(roomId, OnSuccessRoomJoin, OnFailRoomJoin);
+        }
+
+        private void OnSuccessRoomJoin(RoomJoinResponse roomJoinResponse)
+        {
+            roomJoinUiController.EnableRoomJoinWaitingScreen(roomJoinResponse.time_remaining);
+            GamePlayManager.GetInstance.SocketRoomJoin(roomJoinResponse.room_id);
+            DisableLoadingUi();
+        }
+
+        private void OnFailRoomJoin(string url, string errorMessage)
+        {
+            Debug.Log(url + "\n" + errorMessage);
+            DisableLoadingUi();
+        }
+
+        internal void DisableRoomJoinWaitScreen()
+        {
+            roomJoinUiController.DisableRoomJoinWaitScreen();
+        }
+
+        internal void PrintRoomJoinedPlayersCount(int count)
+        {
+            roomJoinUiController.PrintRoomJoinedPlayersCount(count);
+        }
+
+        internal void PrintRoomJoinedPlayerRoom(string name)
+        {
+            roomJoinUiController.PrintRoomJoinedPlayerRoom(name);
+        }
+
+        internal void LeaveSocketRoom()
+        {
+
         }
 
         #endregion
