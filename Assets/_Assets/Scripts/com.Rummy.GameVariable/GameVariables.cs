@@ -30,6 +30,7 @@ namespace com.Rummy.GameVariable
 
         public static string userId;
         public static string AccessToken;
+        public static int roomId;
         public static UserGetProfile UserProfile;
         public static GameMode userSelectedGameMode;
         public static RoomType userSelectedRoomType;

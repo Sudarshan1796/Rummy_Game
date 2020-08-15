@@ -69,14 +69,14 @@ namespace com.Rummy.Network
                                                                           payloadKeyValuePairs, successResponse, errorResponse));
         }
 
-        internal void RoomCreate<T>(bool isPractice, GameVariables.GameMode gameMode, int maxPlayers, Action<T> successResponse = null, Action<string, string> errorResponse = null) where T : ResponseData
+        internal void RoomCreate<T>(bool isPractice, string gameMode, string maxPlayers, Action<T> successResponse = null, Action<string, string> errorResponse = null) where T : ResponseData
         {
             payloadKeyValuePairs.Clear();
             payloadKeyValuePairs.Add(GameConstants.USER_ID, GameVariables.userId);
             payloadKeyValuePairs.Add(GameConstants.ACCESS_TOKEN, GameVariables.AccessToken);
             payloadKeyValuePairs.Add(GameConstants.IS_PRACTICE, isPractice?"1":"0");
-            payloadKeyValuePairs.Add(GameConstants.GAME_MODE, gameMode.ToString());
-            payloadKeyValuePairs.Add(GameConstants.MAX_PLAYERS, maxPlayers.ToString());
+            payloadKeyValuePairs.Add(GameConstants.GAME_MODE, gameMode);
+            payloadKeyValuePairs.Add(GameConstants.MAX_PLAYERS, maxPlayers);
             _ = StartCoroutine(RESTApiService.UnityWebRequestInPostMethod(GameVariables.GetRestApiUrl(GameVariables.RESTApiType.join),
                                                                           payloadKeyValuePairs, successResponse, errorResponse));
         }

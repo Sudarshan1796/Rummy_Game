@@ -35,6 +35,7 @@ namespace com.Rummy.GameCore
                 SetScreenOrientation(ScreenOrientation.LandscapeRight);
                 GameVariables.userId = PlayerPrefs.GetString("userId");
                 GameVariables.AccessToken = PlayerPrefs.GetString("accessToken");
+                Debug.Log($"<color=blue>User Id : {GameVariables.userId} || Access Token : { GameVariables.AccessToken}</color>");
                 UiManager.GetInstance.EnableMainMenuUi();
                 UserGetProfile();
             }
@@ -47,6 +48,7 @@ namespace com.Rummy.GameCore
             PlayerPrefs.SetString("userId", userID);
             GameVariables.AccessToken = accessToken;
             PlayerPrefs.SetString("accessToken", accessToken);
+            Debug.Log($"<color=blue>User Id : {GameVariables.userId} || Access Token : { GameVariables.AccessToken}</color>");
             UserGetProfile();
         }
 
