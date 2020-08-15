@@ -13,18 +13,20 @@ namespace com.Rummy.Gameplay
 
         private bool isSelected;
         private CardGroupController cardGroupController;
+        private readonly Vector3 activePosition = new Vector3(0, 25, 0);
+        private readonly Vector3 inactivePosition = new Vector3(0, 0, 0);
+        private LTDescr leanTweenObject;
+        private float speed = 0.50f;
 
+        internal Network.Card card;
         internal GameVariables.SuitType suitType;
         internal GameVariables.CardType cardValue;
         internal int cardIndexInParent;
 
-        private readonly Vector3 activePosition     = new Vector3(0, 25, 0);
-        private readonly Vector3 inactivePosition  = new Vector3(0, -20, 0);
-        private LTDescr leanTweenObject;
-        private float speed = 0.50f;
         private void Start()
         {
             cardGroupController = CardGroupController.GetInstance;
+            DeselectCard();
         }
 
         public void Draw()

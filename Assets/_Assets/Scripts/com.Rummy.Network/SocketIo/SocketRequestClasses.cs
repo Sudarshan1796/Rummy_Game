@@ -49,4 +49,9 @@ namespace com.Rummy.Network
         public int room_id;
         public int user_id;
     }
+
+    public class DropRequest:SocketRequest
+    {
+        public int user_id;
+    }
 }

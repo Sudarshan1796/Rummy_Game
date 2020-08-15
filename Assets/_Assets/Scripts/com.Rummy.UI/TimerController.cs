@@ -11,6 +11,7 @@ public class TimerController : MonoBehaviour
     [SerializeField] private Image borderImage;
     [SerializeField] private Image TimerPanel;
     [SerializeField] private TMP_Text timeCount;
+
     [SerializeField] private Color startTimeColor;
     [SerializeField] private Color midTimeColor;
     [SerializeField] private Color criticalColor;
@@ -28,11 +29,12 @@ public class TimerController : MonoBehaviour
     private bool isCriticalColorSet;
 
     private Action timerCompleteAction;
-    private void OnEnable()
+
+    internal void Deactiivate()
     {
-        StartTimer(30, null);
+        gameObject.SetActive(false);
     }
-    public void StartTimer(float _totalTime,Action _action)
+    public void Activate(float _totalTime,Action _action)
     {
         remainingTime = _totalTime;
         totalTime = remainingTime;
@@ -44,11 +46,11 @@ public class TimerController : MonoBehaviour
         isCriticalColorSet = false;
 
         timerCompleteAction = _action;
+        gameObject.SetActive(true);
     }
 
     private void Update()
     {
-        Debug.Log(isTimerActive);
         if (isTimerActive)
         {
             remainingTime = remainingTime - Time.deltaTime;

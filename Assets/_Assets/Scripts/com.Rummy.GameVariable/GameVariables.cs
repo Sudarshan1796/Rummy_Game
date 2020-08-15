@@ -68,6 +68,7 @@ namespace com.Rummy.GameVariable
 
         public enum SuitType: short
         {
+            Joker=0,
             Spades = 1,
             Hearts,
             Clubs,
@@ -76,6 +77,7 @@ namespace com.Rummy.GameVariable
 
         public enum CardType: short
         {
+            Joker=0,
             Ace = 1,
             Two,
             Three,
@@ -109,6 +111,13 @@ namespace com.Rummy.GameVariable
         {
             players2 = 2,
             players6 = 6
+        }
+        public enum SetType : short
+        {
+            pureSequence=1,
+            ImpureSequence,
+            Set,
+            Invalid,
         }
     }
 }

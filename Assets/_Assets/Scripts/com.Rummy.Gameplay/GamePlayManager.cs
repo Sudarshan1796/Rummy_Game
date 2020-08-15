@@ -1,5 +1,6 @@
 ﻿using com.Rummy.GameVariable;
 using com.Rummy.Network;
+using com.Rummy.Ui;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -37,20 +38,19 @@ namespace com.Rummy.Gameplay
                 return instance;
             }
         }
-
-        internal void SocketRoomJoin(int roomId)
+        private void Awake()
         {
-            
-            SocketConnectionManager.GetInstance.ConnectToSocket(()=>
-            {
-                RoomJoinRequest socketRequest = new RoomJoinRequest
-                {
-                    room_id = roomId,
-                    user_id = int.Parse(GameVariables.userId),
-                    access_token = GameVariables.AccessToken
-                };
-                SocketConnectionManager.GetInstance.SendSocketRequest(GameVariables.SocketRequestType.roomJoin, socketRequest);
-            });
+            roomPlayers = new List<Player>();
+        }
+
+        private void OnEnable()
+        {
+            SocketConnectionManager.GetInstance.SocketResponse += OnSocketResponseReceived;
+        }
+
+        private void OnDisable()
+        {
+            SocketConnectionManager.GetInstance.SocketResponse -= OnSocketResponseReceived;
         }
 
         /// <summary>
@@ -61,32 +61,35 @@ namespace com.Rummy.Gameplay
         {
             switch (response.socketResponseType)
             {
-                case GameVariables.SocketResponseType.onRoomJoin        :OnRoomJoin((OnRoomJoinResponse)response);
+                case GameVariables.SocketResponseType.onRoomJoin: OnRoomJoin((OnRoomJoinResponse)response);
                     break;
-                case GameVariables.SocketResponseType.userRoomJoin      :UserRoomJoin((UserRoomJoinResponse)response);
+                case GameVariables.SocketResponseType.userRoomJoin: UserRoomJoin((UserRoomJoinResponse)response);
                     break;
-                case GameVariables.SocketResponseType.gameStart         :GameStart((GameStartResponse)response);
+                case GameVariables.SocketResponseType.gameStart: GameStart((GameStartResponse)response);
                     break;
-                    case GameVariables.SocketResponseType.cardDrawRes   :OncardDraw((CardDrawRes)response);
+                case GameVariables.SocketResponseType.cardDrawRes: OncardDraw((CardDrawRes)response);
                     break;
-                case GameVariables.SocketResponseType.cardDiscardRes    :OnCardDiscard((CardDiscardResResponse)response);
+                case GameVariables.SocketResponseType.cardDiscardRes: OnCardDiscard((CardDiscardResResponse)response);
                     break;
-                case GameVariables.SocketResponseType.playerLeftRes     :OnPlayerLeft((PlayerLeftResResponse)response);
+                case GameVariables.SocketResponseType.playerLeftRes: OnPlayerLeft((PlayerLeftResResponse)response);
                     break;
-                case GameVariables.SocketResponseType.roundComplete     :OnRoundComplete((RoundCompleteResponse)response);
+                case GameVariables.SocketResponseType.roundComplete: OnRoundComplete((RoundCompleteResponse)response);
                     break;
             }
         }
-        #region Socket Events
+        #region Socket 
+
+        #region Recieved Events
         /// <summary>
         /// when you join any room 
         /// </summary>
         private void OnRoomJoin(OnRoomJoinResponse response)
         {
             roomPlayers.Clear();
-            roomPlayers= response.players;
+            roomPlayers = response.players;
             roomId = response.roomId;
-            //Todo add player in the UI
+            Debug.Log(roomId + ":" + response.roomId);
+            UiManager.GetInstance.SetRoomJoinDetails(response.players);
         }
 
         /// <summary>
@@ -101,6 +104,7 @@ namespace com.Rummy.Gameplay
                 position = response.position
             };
             roomPlayers.Add(_player);
+            UiManager.GetInstance.OnPlayerJoinRoom(_player);
         }
 
         private void GameStart(GameStartResponse response)
@@ -131,8 +135,78 @@ namespace com.Rummy.Gameplay
 
         private void OnRoundComplete(RoundCompleteResponse response)
         {
-
+            //Show Results
         }
+        #endregion
+
+        #region SOCKET SEND
+
+        internal void SocketRoomJoin(int roomId)
+        {
+            SocketConnectionManager.GetInstance.ConnectToSocket(() =>
+            {
+                RoomJoinRequest socketRequest = new RoomJoinRequest
+                {
+                    room_id = roomId,
+                    user_id = int.Parse(GameVariables.userId),
+                    access_token = GameVariables.AccessToken
+                };
+                SocketConnectionManager.GetInstance.SendSocketRequest(GameVariables.SocketRequestType.roomJoin, socketRequest);
+            });
+        }
+
+        internal void DrawCard(bool isFromDiscardFile)
+        {
+            CardDrawRequest request = new CardDrawRequest
+            {
+                user_id = int.Parse(GameVariables.userId),
+                room_id = roomId,
+                is_from_discard_pile = isFromDiscardFile,
+            };
+            SocketConnectionManager.GetInstance.SendSocketRequest(GameVariables.SocketRequestType.cardDraw, request);
+        }
+
+        internal void DiscardCard(Network.Card drawCard)
+        {
+            CardDiscardRequest request = new CardDiscardRequest
+            {
+                user_id = int.Parse(GameVariables.userId),
+                room_id = roomId,
+                card = drawCard,
+            };
+            SocketConnectionManager.GetInstance.SendSocketRequest(GameVariables.SocketRequestType.cardDiscard, request);
+        }
+
+        internal void CardShow(List<Network.Card> cards)
+        {
+            ShowCardRequest request = new ShowCardRequest
+            {
+                user_id = int.Parse(GameVariables.userId),
+                room_id = roomId,
+                card_set = cards
+            };
+            SocketConnectionManager.GetInstance.SendSocketRequest(GameVariables.SocketRequestType.show, request);
+        }
+
+        internal void PlayerDrop()
+        {
+            DropRequest request = new DropRequest
+            {
+                user_id = int.Parse(GameVariables.userId),
+            };
+            SocketConnectionManager.GetInstance.SendSocketRequest(GameVariables.SocketRequestType.drop, request);
+        }
+
+        internal void PlayerLeft()
+        {
+            PlayerLeftRequest request = new PlayerLeftRequest
+            {
+                room_id = roomId,
+                user_id = int.Parse(GameVariables.userId),
+            };
+            SocketConnectionManager.GetInstance.SendSocketRequest(GameVariables.SocketRequestType.show, request);
+        }
+        #endregion
         #endregion
     }
 }

@@ -51,26 +51,9 @@ namespace com.Rummy.Network
 
             void OnSocketResponseReceived(SocketResponse response)
             {
-                switch(response.socketResponseType)
-                {
-                    case GameVariables.SocketResponseType.onRoomJoin:
-                        break;
-                    case GameVariables.SocketResponseType.userRoomJoin:
-                        break;
-                    case GameVariables.SocketResponseType.gameStart:
-                        break;
-                    case GameVariables.SocketResponseType.cardDrawRes:
-                        break;
-                    case GameVariables.SocketResponseType.cardDiscardRes:
-                        break;
-                    case GameVariables.SocketResponseType.playerLeftRes:
-                        break;
-                    case GameVariables.SocketResponseType.roundComplete:
-                        break;
-                    default:
-                        SocketResponse?.Invoke(response);
-                        break;
-                }
+
+                SocketResponse?.Invoke(response);
+                
             }
         }
 
@@ -163,6 +146,8 @@ namespace com.Rummy.Network
 
         T Deserialize<T>(GameVariables.SocketResponseType responseType, string msg) where T : SocketResponse
         {
+            Debug.Log("******* Response From Socket *******");
+            Debug.Log(responseType + "---" + msg);
             var obj = JsonUtility.FromJson<T>(msg);
             obj.socketResponseType = responseType;
             return obj;
@@ -176,6 +161,8 @@ namespace com.Rummy.Network
 
         internal void SendSocketRequest(GameVariables.SocketRequestType requestType, SocketRequest requestObject)
         {
+            Debug.Log("********** Send Request **********");
+            Debug.Log(requestType + ":" + JsonUtility.ToJson(requestObject));
             socketManager.Socket.Emit(requestType.ToString(), Serialize(requestObject));
 
             string Serialize(object o)

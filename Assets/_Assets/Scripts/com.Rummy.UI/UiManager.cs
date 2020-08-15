@@ -35,7 +35,7 @@ namespace com.Rummy.Ui
 
         internal void EnableLoadingUi()
         {
-            if(Screen.orientation == ScreenOrientation.Portrait)
+            if (Screen.orientation == ScreenOrientation.Portrait)
             {
                 enabledLoadingUi = loadingUiController[0];
                 enabledLoadingUi.Enable(true);
@@ -174,10 +174,41 @@ namespace com.Rummy.Ui
 
         internal void LeaveSocketRoom()
         {
-
+            PlayerLeftRequest playerLeftRequest = new PlayerLeftRequest
+            {
+                room_id = 25,// GamePlayManager.GetInstance.roomId,
+                user_id = int.Parse(GameVariables.userId),
+            };
+            SocketConnectionManager.GetInstance.SendSocketRequest(GameVariables.SocketRequestType.playerLeft, playerLeftRequest);
         }
 
         #endregion
- 
+        #region GameplayUI
+        internal void SetRoomJoinDetails(List<Player> players)
+        {
+            gameplayController.SetScreenData(players);
+        }
+
+        internal void OnPlayerJoinRoom(Player player)
+        {
+            gameplayController.OnPlayerJoin(player);
+        }
+
+        internal void EnableGameplayScreen()
+        {
+            gameplayController.Activate();
+        }
+        private void OnApplicationQuit()
+        {
+            LeaveSocketRoom();
+        }
+        private void OnApplicationFocus(bool focus)
+        {
+            if(!focus)
+            {
+                LeaveSocketRoom();
+            }
+        }
+        #endregion
     }
 }

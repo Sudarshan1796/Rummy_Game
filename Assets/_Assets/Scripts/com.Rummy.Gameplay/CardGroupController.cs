@@ -1,5 +1,10 @@
 ﻿using com.Rummy.GameVariable;
+using com.Rummy.Network;
+using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
+using System.Linq;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -13,6 +18,7 @@ namespace com.Rummy.Gameplay
         [SerializeField] private Button createGroupBtn, sortCardBtn;
         [SerializeField] private GameObject createGroupPanel;
         [SerializeField] private RectTransform[] parentReactTans;
+        [SerializeField] private TMP_Text[] groupSetText;
 
         private List<GameObject> cardGameobject;
         private List<Card> cards;
@@ -37,9 +43,10 @@ namespace com.Rummy.Gameplay
         {
             instance = this;
             selectedObject = new Dictionary<Card, GameObject>();
-
-            //Below code is simply generate 13 cards
-            //Todo add server init here
+            cards = new List<Card>();
+            cardGameobject = new List<GameObject>();
+            childParentObject = new Dictionary<GameObject, GameObject>();
+            inActiveGroups = new List<GameObject>();
         }
 
         private void OnEnable()
@@ -56,11 +63,6 @@ namespace com.Rummy.Gameplay
 
         public void InitilizeGroup(List<GameObject> _cardObject,List<Card> _cards)
         {
-            cards = new List<Card>();
-            cardGameobject = new List<GameObject>();
-            childParentObject = new Dictionary<GameObject, GameObject>();
-            inActiveGroups = new List<GameObject>();
-
             this.cards.Clear();
             this.cardGameobject.Clear();
             this.cards = _cards;
@@ -82,6 +84,7 @@ namespace com.Rummy.Gameplay
         {
             createGroupPanel.SetActive(CanCreateGroup());
             cardGameObject.transform.SetParent(tempParemtObject.transform, false);
+            DeactivateGroupText();
         }
 
         /// <summary>
@@ -91,7 +94,6 @@ namespace com.Rummy.Gameplay
         /// <param name="_cardGameObject"></param>
         internal void OnCardDragEnd(Card _card, GameObject _cardGameObject)
         {
-
             if (IsAboveNewGroupPanel(_card, _cardGameObject))
             {
                 CreateNewGroup(_card, _cardGameObject);
@@ -108,6 +110,24 @@ namespace com.Rummy.Gameplay
             createGroupPanel.SetActive(false);
             RemoveAllSelectedCard();
             CheckForInActivaGroup();
+            setGroupText();
+        }
+
+        private void setGroupText()
+        {
+            List<Card> groupCards = new List<Card>();
+            for (int i = 0; i < cardGroupGameobject.Count; i++)
+            {
+                foreach (var item in childParentObject)
+                {
+                    if (item.Value == cardGroupGameobject[i])
+                    {
+                        var card = selectedObject.FirstOrDefault(x => x.Value == item.Key).Key;
+                        groupCards.Add(card);
+                    }
+                }
+                SetGroupInfo(groupCards, cardGroupGameobject[i], groupSetText[i]);
+            }
         }
 
         private Vector3 tempVector;
@@ -230,6 +250,7 @@ namespace com.Rummy.Gameplay
             }
             RemoveAllSelectedCard();
             CheckForInActivaGroup();
+            setGroupText();
         }
 
         private bool CanCreateGroup()
@@ -366,6 +387,7 @@ namespace com.Rummy.Gameplay
             CreateSortedDeck(_diamondDeck);
 
             sortCardBtn.gameObject.SetActive(false);
+            setGroupText();
         }
 
         /// <summary>
@@ -410,6 +432,176 @@ namespace com.Rummy.Gameplay
             if (cards[i].suitType == GameVariables.SuitType.Diamonds)
             {
                 _diamondDeck.Add(cardGameobject[i]);
+            }
+        }
+
+        private void SetGroupInfo(List<Card> cards, GameObject parentObject, TMP_Text text)
+        {
+            float _position = parentObject.transform.localPosition.x;
+            _position += (parentObject.GetComponent<RectTransform>().rect.width / 2);
+            text.transform.localPosition = new Vector3(_position, text.transform.localPosition.y, text.transform.localPosition.z);
+            text.text = CheckForValidCardGroup(cards).ToString();
+            text.gameObject.SetActive(true);
+        }
+
+        private GameVariables.SetType CheckForValidCardGroup(List<Card> cards)
+        {
+            if (CheckSet(cards))
+            {
+                return GameVariables.SetType.Set;
+            }
+            if (CheckPureSequence(cards))
+            {
+                return GameVariables.SetType.pureSequence;
+            }
+            if (CheckForStraightImpureSequence(cards))
+            {
+                return GameVariables.SetType.ImpureSequence;
+            }
+            return GameVariables.SetType.Invalid;
+        }
+
+        /// <summary>
+        /// checks for the pure sequence in the group
+        /// </summary>
+        /// <returns></returns>
+        private bool CheckPureSequence(List<Card> cards)
+        {
+            if (!IsSameSuitType(cards))
+            {
+                return false;
+            }
+            var orderCards = cards.OrderBy(x => (int)x.cardValue).ToList();
+            if (orderCards[0].cardValue == GameVariables.CardType.Ace)
+            {
+                if (CheckForStraightSequence(orderCards))
+                {
+                    return true;
+                }
+                else
+                {
+                    return CheckForInbetweenSequence(orderCards);
+                }
+            }
+            else
+            {
+                return CheckForStraightSequence(orderCards);
+            }
+        }
+
+        private bool CheckForInbetweenSequence(List<Card> orderCards)
+        {
+            int _indexCount = 0;
+            for (int i = 0; i < orderCards.Count; i++)
+            {
+                if (((int)orderCards[i].cardValue + 1) != (int)(orderCards[i + 1].cardValue))
+                {
+                    _indexCount++;
+                    if (_indexCount >= 2)
+                    {
+                        return false;
+                    }
+                }
+            }
+            return true;
+        }
+
+        /// <summary>
+        /// this check for 
+        /// </summary>
+        /// <param name="cards"></param>
+        /// <returns></returns>
+        private bool IsSameSuitType(List<Card> cards)
+        {
+            for (int i = 0; i < cards.Count; i++)
+            {
+                if (cards[i].suitType != cards[i].suitType)
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        /// <summary>
+        /// this return false if it not sequence
+        /// </summary>
+        /// <param name="orderCards"></param>
+        /// <returns></returns>
+        private bool CheckForStraightSequence(List<Card> orderCards)
+        {
+            for (int i = 0; i < orderCards.Count - 1; i++)
+            {
+                if (((int)orderCards[i].cardValue + 1) != (int)(orderCards[i + 1].cardValue))
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
+        
+        /// <summary>
+        /// Checks for the Impure sequence in the current group
+        /// </summary>
+        private bool CheckImpureSequence(List<Card> cards)
+        {
+            //chec for direct sequence
+            var orderCards = cards.OrderBy(x => (int)x.cardValue).ToList();
+
+            return true;
+        }
+
+        private bool CheckForStraightImpureSequence(List<Card> orderCards)
+        {
+            int _impureCount = 0;
+            for (int i = 0; i < orderCards.Count - 1; i++)
+            {
+                if (orderCards[i].cardValue == GameVariables.CardType.Joker)
+                {
+                    _impureCount++;
+                    if (_impureCount > 2)
+                        return false;
+                    continue;
+                }
+                else if (orderCards[i + 1].cardValue == GameVariables.CardType.Joker)
+                {
+                    _impureCount++;
+                    if (_impureCount > 2)
+                        return false;
+                    continue;
+                }
+                if (((int)orderCards[i].cardValue + 1) != (int)(orderCards[i + 1].cardValue))
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        /// <summary>
+        /// Checkd for Set in the list of groups
+        /// </summary>
+        /// <param name="cards"></param>
+        /// <returns></returns>
+        private bool CheckSet(List<Card> cards)
+        {
+            var initialCardValue = cards[0].cardValue;
+            foreach (var item in cards)
+            {
+                if (item.cardValue != initialCardValue)
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        internal void DeactivateGroupText()
+        {
+            for(int i=0;i<groupSetText.Length;i++)
+            {
+                groupSetText[i].gameObject.SetActive(false);
+
             }
         }
     }

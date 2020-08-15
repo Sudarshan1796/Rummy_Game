@@ -11,18 +11,28 @@ namespace com.Rummy.UI
 {
     public class GameplayController : MonoBehaviour
     {
+        [SerializeField] private GameObject gameplayObject;
         [SerializeField] private GameObject[] cardPosition;
         [SerializeField] private GameObject cardInitPosition;
-        [SerializeField] private List<Text> userNames;
-        [SerializeField] private List<Image> userProfileImages;
         [SerializeField] private Button btnDrop, btnExit;
+        //this is for the first person this will be our player
+        [SerializeField] private PlayerUIController playerController;
+        //this contains all other players
+        [SerializeField] private List<PlayerUIController> gamePlayers;
+        [SerializeField] private GameObject closedCard;
+        [SerializeField] private GameObject discardPile;
+
+        //List of all players
+        private Dictionary<int, PlayerUIController> activePlayers;
         private List<Gameplay.Card> cards;
         private List<GameObject> cardgameObject;
 
+        internal bool isPlayerTurn;
         private void Awake()
         {
             cards = new List<Gameplay.Card>();
             cardgameObject = new List<GameObject>();
+            activePlayers = new Dictionary<int, PlayerUIController>();
         }
 
         private void AddListners()
@@ -36,6 +46,22 @@ namespace com.Rummy.UI
             GamePlayManager.GetInstance.OnGameStart -= createCard;
             btnDrop.onClick.RemoveListener(OnDropClick);
             btnExit.onClick.RemoveListener(OnRoomExit);
+        }
+
+        /// <summary>
+        /// Activate Gameplay screen
+        /// </summary>
+        internal void Activate()
+        {
+            gameplayObject.SetActive(true);
+        }
+
+        /// <summary>
+        /// Deactivate Gameplay Screen
+        /// </summary>
+        internal void Deactivate()
+        {
+            gameplayObject.SetActive(false);
         }
 
         /// <summary>
@@ -79,13 +105,54 @@ namespace com.Rummy.UI
         /// Set Gameplay related  Data
         /// </summary>
         /// <param name="players"></param>
-        private void SetScreenData(List<Player> players)
+        internal void SetScreenData(List<Player> players)
         {
+            SetPlayerDetail(players);
+        }
+
+        private void SetPlayerDetail(List<Player> players)
+        {
+            int _opponentPlayerCount = 0;
+            activePlayers.Clear();
             for (int i = 0; i < players.Count; i++)
             {
-                userNames[i].text = players[i].userName;
+                if (players[i].userId == int.Parse(GameVariables.userId))
+                {
+                    AddPlayer(players[i], playerController);
+                }
+                else
+                {
+                    AddPlayer(players[i], gamePlayers[_opponentPlayerCount]);
+                    _opponentPlayerCount++;
+                }
             }
+
+            void AddPlayer(Player player, PlayerUIController playerUiController)
+            {
+                playerUiController.SetDetails(player);
+                if (!activePlayers.ContainsKey(player.userId))
+                {
+                    activePlayers.Add(player.userId, playerController);
+                }
+            }
+
         }
+
+        /// <summary>
+        ///  On individual player joins
+        /// </summary>
+        /// <param name="player"></param>
+        internal void OnPlayerJoin(Player player)
+        {
+            var index = activePlayers.Count;
+            if(index>0)
+            {
+                index = index - 1;
+            }
+            gamePlayers[index].SetDetails(player);
+        }
+
+
 
         private void OnDropClick()
         {
@@ -100,6 +167,26 @@ namespace com.Rummy.UI
         private void OnCardDraw()
         {
 
+        }
+
+        /// <summary>
+        /// this Functione is added to the discard pile panel 
+        /// </summary>
+        public void OnPlayerCardSelect()
+        {
+            if (isPlayerTurn)
+            {
+
+            }
+        }
+        internal void PlayerDrawCard(Player player)
+        {
+
+        }
+
+        private void MoveCard(GameObject card, Vector3 destinationPosition)
+        {
+            var leanTweenObject = LeanTween.move(gameObject, destinationPosition, 1.0f).setEase(LeanTweenType.linear);
         }
     }
 }
