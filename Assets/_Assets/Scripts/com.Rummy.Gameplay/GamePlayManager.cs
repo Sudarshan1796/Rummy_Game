@@ -38,6 +38,21 @@ namespace com.Rummy.Gameplay
             }
         }
 
+        internal void SocketRoomJoin(int roomId)
+        {
+            
+            SocketConnectionManager.GetInstance.ConnectToSocket(()=>
+            {
+                RoomJoinRequest socketRequest = new RoomJoinRequest
+                {
+                    room_id = roomId,
+                    user_id = int.Parse(GameVariables.userId),
+                    access_token = GameVariables.AccessToken
+                };
+                SocketConnectionManager.GetInstance.SendSocketRequest(GameVariables.SocketRequestType.roomJoin, socketRequest);
+            });
+        }
+
         /// <summary>
         /// OnSocket response received 
         /// </summary>
