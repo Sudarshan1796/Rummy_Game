@@ -127,7 +127,7 @@ namespace com.Rummy.Ui
         private void OnSuccessRoomCreate(RoomCreateResponse roomCreateResponse)
         {
             GameVariables.roomId = roomCreateResponse.room_id;
-            roomJoinUiController.EnableRoomJoinWaitingScreen(roomCreateResponse.time_remaining);
+            roomJoinUiController.EnableRoomJoinWaitingScreen(true);
             GamePlayManager.GetInstance.SocketRoomJoin(roomCreateResponse.room_id);
             DisableLoadingUi();
         }
@@ -146,7 +146,7 @@ namespace com.Rummy.Ui
 
         private void OnSuccessRoomJoin(RoomJoinResponse roomJoinResponse)
         {
-            roomJoinUiController.EnableRoomJoinWaitingScreen(roomJoinResponse.time_remaining);
+            roomJoinUiController.EnableRoomJoinWaitingScreen(false);
             GamePlayManager.GetInstance.SocketRoomJoin(roomJoinResponse.room_id);
             DisableLoadingUi();
         }
@@ -178,12 +178,6 @@ namespace com.Rummy.Ui
         }
 
         #endregion
-        #region GameplayUI
-        internal void EnableGameplayScreen(List<Player> players)
-        {
-            gameplayController.Activate();
-            gameplayController.SetScreenData(players);
-        }
-        #endregion
+ 
     }
 }

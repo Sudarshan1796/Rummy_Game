@@ -3,6 +3,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using static com.Rummy.GameVariable.GameVariables;
+using com.Rummy.GameVariable;
 
 namespace com.Rummy.Ui
 {
@@ -109,13 +110,19 @@ namespace com.Rummy.Ui
             roomTypeSelectionScreen.SetActive(false);
         }
 
-        internal void EnableRoomJoinWaitingScreen(int timeRemainingToJoinRoom)
+        internal void EnableRoomJoinWaitingScreen(bool isHost)
         {
-            roomSizeSelectionScreen.SetActive(false);
+            if(isHost)
+            {
+                roomIdText.text = $"Room ID : {GameVariables.roomId} \n Waiting for other players to join...";
+            }
+            else
+            {
+                roomIdText.text = "Waiting for other players to join...";
+            }
             ResetDynamicText();
-            //roomJoinWaitingScreenCloseButton.interactable = false;
             roomJoinWaitingScreen.SetActive(true);
-            //StartCoroutine(StartRoomJoinRemainingTimer(timeRemainingToJoinRoom));
+            roomSizeSelectionScreen.SetActive(false);
         }
 
         internal void DisableRoomJoinWaitScreen()
