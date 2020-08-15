@@ -3220,7 +3220,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Material: {fileID: 2100000, guid: 602126807f9c840eb85e91b5b436e503, type: 2}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_RaycastTarget: 0
+  m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
@@ -3860,6 +3860,7 @@ GameObject:
   - component: {fileID: 4732458870730346403}
   - component: {fileID: 8260278802306748045}
   - component: {fileID: 7257773305355631421}
+  - component: {fileID: 267988830}
   m_Layer: 5
   m_Name: Canvas-LoadingScreen
   m_TagString: Untagged
@@ -3923,6 +3924,23 @@ MonoBehaviour:
   shouldRotate: 1
   rotateTransform: {fileID: 7628525787398139721}
   rotationAngle: 2.5
+--- !u!114 &267988830
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7326496211518819331}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dc42784cf147c0c48a680349fa168899, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_IgnoreReversedGraphics: 1
+  m_BlockingObjects: 0
+  m_BlockingMask:
+    serializedVersion: 2
+    m_Bits: 4294967295
 --- !u!1 &8570359975518500645
 GameObject:
   m_ObjectHideFlags: 0
@@ -4288,7 +4306,7 @@ Canvas:
   m_OverrideSorting: 0
   m_OverridePixelPerfect: 0
   m_SortingBucketNormalizedSize: 0
-  m_AdditionalShaderChannelsFlag: 25
+  m_AdditionalShaderChannelsFlag: 1
   m_SortingLayerID: 0
   m_SortingOrder: 0
   m_TargetDisplay: 0

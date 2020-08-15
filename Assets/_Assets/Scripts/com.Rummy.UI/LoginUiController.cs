@@ -36,7 +36,7 @@ namespace com.Rummy.Ui
 
         private void OnClickMobNumberSubmitButton()
         {
-            if (mobNumberText.text.Length == 10)
+            if (!string.IsNullOrWhiteSpace(mobNumberText.text) && mobNumberText.text.Length == 10)
             {
                 ShowErrorMessageInNumberInputPanel("");
                 UiManager.GetInstance.OnSubmitMobNumber(mobNumberText.text);

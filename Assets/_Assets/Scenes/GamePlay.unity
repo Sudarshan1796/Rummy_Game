@@ -839,9 +839,5 @@ PrefabInstance:
       propertyPath: m_Name
       value: Canvas-GameUI-Potrait
       objectReference: {fileID: 0}
-    - target: {fileID: 9147124994084282111, guid: bc8cacaa1145b6b42a952d81eb4b8e53, type: 3}
-      propertyPath: m_AdditionalShaderChannelsFlag
-      value: 1
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: bc8cacaa1145b6b42a952d81eb4b8e53, type: 3}
