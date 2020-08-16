@@ -1,5 +1,6 @@
 ﻿using com.Rummy.GameVariable;
 using com.Rummy.Network;
+using com.Rummy.Ui;
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
@@ -12,13 +13,28 @@ namespace com.Rummy.Gameplay
 {
     public class CardGroupController : MonoBehaviour
     {
+        public delegate void OnCardselect(PlayerCard card);
+        public static event OnCardselect onCardSelect;
+
+        public delegate void OnCardDeselect(Card card);
+        public static event OnCardDeselect onCardDiscard;
+
         [SerializeField] private GameObject tempParemtObject;
         [SerializeField] private List<GameObject> cardGroupGameobject;
         [SerializeField] private List<CardGroup> cardGroups;
-        [SerializeField] private Button createGroupBtn, sortCardBtn;
+        [SerializeField] private Button createGroupBtn, sortCardBtn,discardBtn;
         [SerializeField] private GameObject createGroupPanel;
         [SerializeField] private RectTransform[] parentReactTans;
         [SerializeField] private TMP_Text[] groupSetText;
+        [SerializeField] private GameObject declarePanel;
+        [SerializeField] private Transform openDeckTransform;
+        [SerializeField] private Transform closedDeckTransform;
+        [SerializeField] private GameObject playerCardSelectTransform;
+        [SerializeField] private GameObject movingCard;
+        [SerializeField] private Card movingCardController;
+        [SerializeField]private Transform prifileDestination;
+        [SerializeField] private Card backCardController;
+        [SerializeField] private Card OpenTileCard;
 
         private List<GameObject> cardGameobject;
         private List<Card> cards;
@@ -27,6 +43,7 @@ namespace com.Rummy.Gameplay
         private Dictionary<GameObject, GameObject> childParentObject;
         private static CardGroupController instance;
 
+        private GamePlayManager gameplayManager;
         public static CardGroupController GetInstance
         {
             get
@@ -47,37 +64,68 @@ namespace com.Rummy.Gameplay
             cardGameobject = new List<GameObject>();
             childParentObject = new Dictionary<GameObject, GameObject>();
             inActiveGroups = new List<GameObject>();
+            gameplayManager = GamePlayManager.GetInstance;
         }
 
         private void OnEnable()
         {
             createGroupBtn.onClick.AddListener(CheckCanCreateGroup);
             sortCardBtn.onClick.AddListener(SortCards);
+            discardBtn.onClick.AddListener(OnCardDiscard);
         }
 
         private void OnDisable()
         {
             createGroupBtn.onClick.RemoveListener(CheckCanCreateGroup);
             sortCardBtn.onClick.RemoveListener(SortCards);
+            discardBtn.onClick.RemoveListener(OnCardDiscard);
         }
 
-        public void InitilizeGroup(List<GameObject> _cardObject,List<Card> _cards)
+        public void InitilizeGroup(List<GameObject> _cardObject, List<Card> _cards)
         {
-            this.cards.Clear();
-            this.cardGameobject.Clear();
+            //this.cards.Clear();
+            //this.cardGameobject.Clear();
+            //selectedObject.Clear();
+            RemoveAllSelectedCard();
+            childParentObject.Clear();
+            inActiveGroups.Clear();
+
             this.cards = _cards;
             this.cardGameobject = _cardObject;
+            cardGroupGameobject[0].SetActive(true);
             for (int i = 0; i < _cardObject.Count; i++)
             {
                 childParentObject.Add(_cardObject[i], cardGroupGameobject[0]);
                 _cardObject[i].transform.SetParent(cardGroupGameobject[0].transform, false);
             }
-            inActiveGroups.Clear();
             for (int i = 1; i < cardGroupGameobject.Count; i++)
             {
+                cardGroupGameobject[i].SetActive(false);
                 cardGroupGameobject[i].transform.SetSiblingIndex(i);
                 inActiveGroups.Add(cardGroupGameobject[i]);
             }
+        }
+
+        public void AddCardToGroup(GameObject cardGameObj, Card cardController)
+        {
+            int index = -1;
+            GameObject parentObject = null;
+
+            for (int i = 0; i < cardGroupGameobject.Count; i++)
+            {
+                if (cardGroupGameobject[i].activeSelf)
+                {
+                    if (cardGroupGameobject[i].transform.GetSiblingIndex() > index)
+                    {
+                        index = cardGroupGameobject[i].transform.GetSiblingIndex();
+                        parentObject = cardGroupGameobject[i];
+                    }
+                }
+            }
+            childParentObject.Add(cardGameObj, parentObject);
+            cardGameObj.transform.SetParent(parentObject.transform, false);
+            cards.Add(cardController);
+            cardGameobject.Add(cardGameObj);
         }
 
         internal void OnDragBegin(Card card, GameObject cardGameObject)
@@ -94,6 +142,11 @@ namespace com.Rummy.Gameplay
         /// <param name="_cardGameObject"></param>
         internal void OnCardDragEnd(Card _card, GameObject _cardGameObject)
         {
+            //if(isPlayerDeclare(_cardGameObject,ref declarePanel))
+            //{
+            //    UiManager.GetInstance.ConfirmationPoup("Alert", "Are you sure you want to Declare", Declare, null);
+            //}
+            //else 
             if (IsAboveNewGroupPanel(_card, _cardGameObject))
             {
                 CreateNewGroup(_card, _cardGameObject);
@@ -115,18 +168,22 @@ namespace com.Rummy.Gameplay
 
         private void setGroupText()
         {
+            return;
             List<Card> groupCards = new List<Card>();
             for (int i = 0; i < cardGroupGameobject.Count; i++)
             {
-                foreach (var item in childParentObject)
+                if (cardGroupGameobject[i].activeSelf)
                 {
-                    if (item.Value == cardGroupGameobject[i])
+                    foreach (var item in childParentObject)
                     {
-                        var card = selectedObject.FirstOrDefault(x => x.Value == item.Key).Key;
-                        groupCards.Add(card);
+                        if (item.Value == cardGroupGameobject[i])
+                        {
+                            var card = item.Key.GetComponent<Card>();
+                            groupCards.Add(card);
+                        }
                     }
+                    SetGroupInfo(groupCards, cardGroupGameobject[i], groupSetText[i]);
                 }
-                SetGroupInfo(groupCards, cardGroupGameobject[i], groupSetText[i]);
             }
         }
 
@@ -177,7 +234,7 @@ namespace com.Rummy.Gameplay
         /// <param name="_card"></param>
         /// <param name="_cardObject"></param>
         /// <returns></returns>
-        private bool IsAboveNewGroupPanel(Card _card,GameObject _cardObject)
+        private bool IsAboveNewGroupPanel(Card _card, GameObject _cardObject)
         {
             if (!createGroupPanel.activeSelf)
                 return false;
@@ -210,9 +267,11 @@ namespace com.Rummy.Gameplay
                     selectedObject.Remove(card);
                 }
             }
-            if(CanCreateGroup())
+
+            discardBtn.gameObject.SetActive(selectedObject.Count == 1 && gameplayManager.playerTurn == int.Parse(GameVariables.userId) && gameplayManager.isCardDrawn);
+            if (CanCreateGroup())
             {
-                createGroupBtn.gameObject.SetActive(selectedObject.Count > 0);
+                createGroupBtn.gameObject.SetActive(selectedObject.Count > 1);
             }
             else
             {
@@ -277,7 +336,7 @@ namespace com.Rummy.Gameplay
         {
             for (int i = 0; i < cardGroupGameobject.Count; i++)
             {
-                if(cardGroupGameobject[i].activeSelf)
+                if (cardGroupGameobject[i].activeSelf)
                 {
                     if (cardGroupGameobject[i].transform.childCount <= 0)
                     {
@@ -316,7 +375,7 @@ namespace com.Rummy.Gameplay
         /// <returns></returns>
         private bool CheckForMergeGroup()
         {
-            if (selectedObject.Count <= 0)
+            if (selectedObject.Count <= 1)
             {
                 return false;
             }
@@ -360,7 +419,7 @@ namespace com.Rummy.Gameplay
                     _parentObject = item.Key;
                 }
             }
-            if(_parentObject!=null)
+            if (_parentObject != null)
             {
                 foreach (var item in selectedObject)
                 {
@@ -377,8 +436,10 @@ namespace com.Rummy.Gameplay
             var _clubDeck = new List<GameObject>();
             var _diamondDeck = new List<GameObject>();
             ReleaseAllGroup();
+            Debug.Log("COunt"+cards.Count);
             for (int i = 0; i < cards.Count; i++)
             {
+                Debug.Log(cards[i]);
                 SortDeck(_spadeDeck, _heartDeck, _clubDeck, _diamondDeck, i);
             }
             CreateSortedDeck(_spadeDeck);
@@ -429,7 +490,7 @@ namespace com.Rummy.Gameplay
             {
                 _clubDeck.Add(cardGameobject[i]);
             }
-            if (cards[i].suitType == GameVariables.SuitType.Diamonds)
+            if (cards[i].suitType == GameVariables.SuitType.Diamonds || cards[i].suitType == GameVariables.SuitType.Joker)
             {
                 _diamondDeck.Add(cardGameobject[i]);
             }
@@ -437,8 +498,8 @@ namespace com.Rummy.Gameplay
 
         private void SetGroupInfo(List<Card> cards, GameObject parentObject, TMP_Text text)
         {
-            float _position = parentObject.transform.localPosition.x;
-            _position += (parentObject.GetComponent<RectTransform>().rect.width / 2);
+            float _position = parentObject.transform.localPosition.x + 10;
+            //_position += (parentObject.GetComponent<RectTransform>().rect.width);
             text.transform.localPosition = new Vector3(_position, text.transform.localPosition.y, text.transform.localPosition.z);
             text.text = CheckForValidCardGroup(cards).ToString();
             text.gameObject.SetActive(true);
@@ -446,6 +507,10 @@ namespace com.Rummy.Gameplay
 
         private GameVariables.SetType CheckForValidCardGroup(List<Card> cards)
         {
+            if (cards.Count < 3)
+            {
+                return GameVariables.SetType.Invalid;
+            }
             if (CheckSet(cards))
             {
                 return GameVariables.SetType.Set;
@@ -539,7 +604,7 @@ namespace com.Rummy.Gameplay
             }
             return true;
         }
-        
+
         /// <summary>
         /// Checks for the Impure sequence in the current group
         /// </summary>
@@ -585,6 +650,7 @@ namespace com.Rummy.Gameplay
         /// <returns></returns>
         private bool CheckSet(List<Card> cards)
         {
+            Debug.Log("cards" + cards.Count + ":" + cards[0].cardValue);
             var initialCardValue = cards[0].cardValue;
             foreach (var item in cards)
             {
@@ -598,11 +664,127 @@ namespace com.Rummy.Gameplay
 
         internal void DeactivateGroupText()
         {
-            for(int i=0;i<groupSetText.Length;i++)
+            for (int i = 0; i < groupSetText.Length; i++)
             {
                 groupSetText[i].gameObject.SetActive(false);
-
             }
+        }
+
+        private bool isPlayerDeclare(GameObject cardObject, ref GameObject dropPanel)
+        {
+
+            var _distance = Vector3.Distance(cardObject.transform.localPosition, dropPanel.transform.localPosition);
+            if (_distance < 10.0f)
+            {
+                return true;
+            }
+            return false;
+        }
+
+        private void CheckForDropPanel(GameObject cardObject, ref GameObject dropPanel)
+        {
+            var _distance = Vector3.Distance(cardObject.transform.localPosition, dropPanel.transform.localPosition);
+            if (_distance > 10.0f)
+            {
+            }
+
+        }
+        private void Declare()
+        {
+
+        }
+
+        public void OnCloseDeckClick()
+        {
+            if (gameplayManager.playerTurn == int.Parse(GameVariables.userId))
+            {
+                if (gameplayManager.isCardDrawn)
+                    return;
+                movingCardController.gameObject.transform.localPosition = closedDeckTransform.localPosition;
+                movingCardController.Init(gameplayManager.closedCard.cardValue, gameplayManager.closedCard.suitValue);
+                movingCardController.Activate();
+                movingCardController.Move(playerCardSelectTransform.transform.position, OnCloseddeckMoveComplete);
+                gameplayManager.DrawCard(false);
+            }
+        }
+        void OnCloseddeckMoveComplete()
+        {
+            movingCardController.Deactivate();
+            PlayerCard _playerCard = new PlayerCard
+            {
+                suitValue = gameplayManager.closedCard.suitValue,
+                cardValue = gameplayManager.closedCard.cardValue
+            };
+            onCardSelect?.Invoke(_playerCard);
+        }
+
+        public void OnOpenDeckClick()
+        {
+            if (gameplayManager.playerTurn == int.Parse(GameVariables.userId))
+            {
+                if (gameplayManager.isCardDrawn)
+                    return;
+                movingCardController.gameObject.transform.localPosition = openDeckTransform.localPosition;
+                movingCardController.Init(gameplayManager.discardedCard.cardValue, gameplayManager.discardedCard.suitValue);
+                movingCardController.Move(playerCardSelectTransform.transform.localPosition, OnOpendeckMoveComplete);
+                gameplayManager.DrawCard(true);
+            }
+        }
+
+        void OnOpendeckMoveComplete()
+        {
+            movingCardController.Deactivate();
+            PlayerCard _playerCard = new PlayerCard
+            {
+                suitValue = gameplayManager.discardedCard.suitValue,
+                cardValue = gameplayManager.discardedCard.cardValue
+            };
+            onCardSelect?.Invoke(_playerCard);
+        }
+
+        public void MoveDrawCard()
+        {
+            backCardController.gameObject.SetActive(true);
+            backCardController.gameObject.transform.localPosition = closedDeckTransform.localPosition;
+            backCardController.Move(prifileDestination.transform.position, OnDrawMoveComplete);
+        }
+        void OnDrawMoveComplete()
+        {
+            backCardController.gameObject.SetActive(false);
+        }
+
+        private void OnCardDiscard()
+        {
+            PlayerCard _playerCard = new PlayerCard
+            {
+                cardValue = selectedObject.Keys.First().cardValue,
+                suitValue = selectedObject.Keys.First().suitType,
+            };
+            onCardDiscard?.Invoke(selectedObject.Keys.First());
+            MoveCardToOpenPile(_playerCard);
+            RemoveAllSelectedCard();
+            discardBtn.gameObject.SetActive(false);
+        }
+
+        PlayerCard discardeCard;
+        private void MoveCardToOpenPile(PlayerCard player)
+        {
+            movingCardController.gameObject.transform.localPosition = playerCardSelectTransform.transform.localPosition;
+            movingCardController.Init(player.cardValue, player.suitValue);
+            discardeCard = player;
+            movingCardController.Move(openDeckTransform.transform.position, OnDicardMoveComplete);
+            Network.Card card = new Network.Card
+            {
+                suitValue = player.suitValue,
+                cardValue = player.cardValue,
+            };
+            gameplayManager.DiscardCard(card);
+        }
+        private void OnDicardMoveComplete()
+        {
+            movingCardController.Deactivate();
+            OpenTileCard.gameObject.SetActive(true);
+            OpenTileCard.Init(discardeCard.cardValue, discardeCard.suitValue);
         }
     }
 }

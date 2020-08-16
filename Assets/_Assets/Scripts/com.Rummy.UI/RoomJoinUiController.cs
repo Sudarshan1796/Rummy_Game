@@ -74,7 +74,7 @@ namespace com.Rummy.Ui
 
         private void OnClickCustomRoomJoinButton()
         {
-            if(string.IsNullOrEmpty(roomIdInput.text) || string.IsNullOrWhiteSpace(roomIdInput.text))
+            if (string.IsNullOrEmpty(roomIdInput.text) || string.IsNullOrWhiteSpace(roomIdInput.text))
             {
                 PrintRoomJoinErrorMessage("Please enter a room id");
             }

@@ -35,7 +35,8 @@ namespace com.Rummy.Network
         public int roomId;
         public int playerTurn;
         public List<PlayerCard> playerCards;
-        public DiscardPile discardPile;
+        public Card discardPile;
+        public Card closedDeck;
         public int eventTime;
         public int remainingTime;
     }
@@ -72,7 +73,8 @@ namespace com.Rummy.Network
         public int playerTurn;
         public int eventTime;
         public int remainingTime;
-        public DiscardPile discardPile;
+        public Card discardPile;
+        public Card closedDeck;
     }
 
     public class PlayerLeftResResponse: SocketResponse

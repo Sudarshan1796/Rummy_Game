@@ -13,6 +13,7 @@ namespace com.Rummy.GameVariable
                 case RESTApiType.getProfile: return GetBaseUrl() + "/user/getProfile";
                 case RESTApiType.updateProfile: return GetBaseUrl() + "/user/updateProfile";
                 case RESTApiType.join: return GetBaseUrl() + "/room/join";
+                case RESTApiType.create:return GetBaseUrl() + "/room/create";
                 case RESTApiType.verify: return GetBaseUrl() + "/user/verify";
                 default: return null;
             };
@@ -30,7 +31,7 @@ namespace com.Rummy.GameVariable
 
         public static string userId;
         public static string AccessToken;
-        public static int roomId;
+        public static string roomId;
         public static UserGetProfile UserProfile;
         public static GameMode userSelectedGameMode;
         public static RoomType userSelectedRoomType;
@@ -64,6 +65,7 @@ namespace com.Rummy.GameVariable
             updateProfile,
             join,
             verify,
+            create,
         }
 
         public enum SuitType: short

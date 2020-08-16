@@ -20,12 +20,16 @@ namespace com.Rummy.Gameplay
         // This List hold the List of player in the current room
         internal List<Player> roomPlayers;
         internal List<PlayerCard> playerCards;
-        internal DiscardPile discardedPile;
+
+        internal Network.Card closedCard;
+        internal Network.Card discardedCard;
 
         internal int playerTurn;
         internal int roomId;
         internal int remainingTime;
         internal int eventTime;
+
+        internal bool isCardDrawn = false;
 
         public static GamePlayManager GetInstance
         {
@@ -41,6 +45,8 @@ namespace com.Rummy.Gameplay
         private void Awake()
         {
             roomPlayers = new List<Player>();
+            playerCards = new List<PlayerCard>();
+            //discardedPile = new DiscardPile();
         }
 
         private void OnEnable()
@@ -90,6 +96,7 @@ namespace com.Rummy.Gameplay
             roomId = response.roomId;
             Debug.Log(roomId + ":" + response.roomId);
             UiManager.GetInstance.SetRoomJoinDetails(response.players);
+            UiManager.GetInstance.PrintRoomJoinedPlayersCount(response.players.Count);
         }
 
         /// <summary>
@@ -105,32 +112,57 @@ namespace com.Rummy.Gameplay
             };
             roomPlayers.Add(_player);
             UiManager.GetInstance.OnPlayerJoinRoom(_player);
+            UiManager.GetInstance.PrintRoomJoinedPlayersCount(roomPlayers.Count);
+            UiManager.GetInstance.PrintRoomJoinedPlayerRoom(response.userName);
         }
 
         private void GameStart(GameStartResponse response)
         {
             playerCards.Clear();
             playerCards = response.playerCards;
-            discardedPile = response.discardPile;
             playerTurn = response.playerTurn;
             remainingTime = response.remainingTime;
             eventTime = response.eventTime;
+            UiManager.GetInstance.EnableGameplayScreen();
             OnGameStart?.Invoke(playerCards);
+            discardedCard = response.discardPile;
+            closedCard = response.closedDeck;
+            UiManager.GetInstance.StartTimer(playerTurn,remainingTime,OnTimerComplete);
+            isCardDrawn = false;
+            UiManager.GetInstance.DisableRoomJoinWaitScreen();
+        }
+        
+        private void OnTimerComplete()
+        {
+
         }
 
         private void OncardDraw(CardDrawRes response)
         {
-
+            //Move card to player position
+            if (response.userId != int.Parse(GameVariables.userId))
+            {
+                UiManager.GetInstance.OtherplayerDrawCard();
+            }
         }
 
         private void OnCardDiscard(CardDiscardResResponse response)
         {
-
+            playerTurn = response.playerTurn;
+            discardedCard = response.discardPile;
+            closedCard = response.closedDeck;
+            remainingTime = response.remainingTime;
+            UiManager.GetInstance.StartTimer(playerTurn, remainingTime, OnTimerComplete);
+            isCardDrawn = false;
+            UiManager.GetInstance.StartTimer(playerTurn, remainingTime, OnTimerComplete);
         }
 
         private void OnPlayerLeft(PlayerLeftResResponse response)
         {
-
+            // this is the temp code
+            UiManager.GetInstance.EnableMainMenuUi();
+            UiManager.GetInstance.DisableGamplayScreen();
+            UiManager.GetInstance.LeaveSocketRoom();
         }
 
         private void OnRoundComplete(RoundCompleteResponse response)
@@ -157,6 +189,7 @@ namespace com.Rummy.Gameplay
 
         internal void DrawCard(bool isFromDiscardFile)
         {
+            isCardDrawn = true;
             CardDrawRequest request = new CardDrawRequest
             {
                 user_id = int.Parse(GameVariables.userId),

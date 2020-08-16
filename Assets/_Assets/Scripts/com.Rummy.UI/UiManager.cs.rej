@@ -1,0 +1,15 @@
+diff a/Assets/_Assets/Scripts/com.Rummy.UI/UiManager.cs b/Assets/_Assets/Scripts/com.Rummy.UI/UiManager.cs	(rejected hunks)
+@@ -178,12 +178,6 @@
+         }
+ 
+         #endregion
+-        #region GameplayUI
+-        internal void EnableGameplayScreen(List<Player> players)
+-        {
+-            gameplayController.Activate();
+-            gameplayController.SetScreenData(players);
+-        }
+-        #endregion
++ 
+     }
+ }

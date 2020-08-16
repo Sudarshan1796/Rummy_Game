@@ -1,4 +1,5 @@
 ﻿using com.Rummy.GameVariable;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -13,10 +14,11 @@ namespace com.Rummy.Gameplay
 
         private bool isSelected;
         private CardGroupController cardGroupController;
-        private readonly Vector3 activePosition = new Vector3(0, 25, 0);
-        private readonly Vector3 inactivePosition = new Vector3(0, 0, 0);
+        private readonly Vector3 activePosition = new Vector3(0, 15, 0);
+        private readonly Vector3 inactivePosition = new Vector3(0, -15, 0);
         private LTDescr leanTweenObject;
         private float speed = 0.50f;
+        private Action moveCompleteAction;
 
         internal Network.Card card;
         internal GameVariables.SuitType suitType;
@@ -34,9 +36,14 @@ namespace com.Rummy.Gameplay
             throw new System.NotImplementedException();
         }
 
-        public void Move(Vector3 _destinationPoint)
+        public void Move(Vector3 _destinationPoint,Action onComplete=null)
         {
-            leanTweenObject = LeanTween.move(gameObject, _destinationPoint, speed * 0.5f).setEase(LeanTweenType.linear);
+            moveCompleteAction = onComplete;
+            leanTweenObject = LeanTween.move(gameObject, _destinationPoint, speed * 0.5f).setEase(LeanTweenType.linear).setOnComplete(onMoveComplete);
+        }
+        void onMoveComplete()
+        {
+            moveCompleteAction?.Invoke();
         }
         
 
@@ -68,11 +75,10 @@ namespace com.Rummy.Gameplay
             cardGroupController.OnCardDragEnd(this, gameObject);
         }
 
-        internal void Init(int index, GameVariables.CardType cardValue, GameVariables.SuitType suitType)
+        internal void Init( GameVariables.CardType cardValue, GameVariables.SuitType suitType)
         {
             this.cardValue = cardValue;
             this.suitType = suitType;
-            cardIndexInParent = index;
             cardImage.sprite = CardController.GetInstance.GetSprite(cardValue, suitType);
         }
         /// <summary>
@@ -109,6 +115,14 @@ namespace com.Rummy.Gameplay
             isSelected = false;
             cardImage.color = Color.white;
             cardImage.gameObject.transform.localPosition = inactivePosition;
+        }
+        public void Deactivate()
+        {
+            gameObject.SetActive(false);
+        }
+        public void Activate()
+        {
+            gameObject.SetActive(true);
         }
     }
 }

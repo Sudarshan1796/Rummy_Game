@@ -77,7 +77,7 @@ namespace com.Rummy.Network
             payloadKeyValuePairs.Add(GameConstants.IS_PRACTICE, isPractice?"1":"0");
             payloadKeyValuePairs.Add(GameConstants.GAME_MODE, gameMode);
             payloadKeyValuePairs.Add(GameConstants.MAX_PLAYERS, maxPlayers);
-            _ = StartCoroutine(RESTApiService.UnityWebRequestInPostMethod(GameVariables.GetRestApiUrl(GameVariables.RESTApiType.join),
+            _ = StartCoroutine(RESTApiService.UnityWebRequestInPostMethod(GameVariables.GetRestApiUrl(GameVariables.RESTApiType.create),
                                                                           payloadKeyValuePairs, successResponse, errorResponse));
         }
 

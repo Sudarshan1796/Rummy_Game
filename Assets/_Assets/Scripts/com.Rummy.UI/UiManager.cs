@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using com.Rummy.UI;
 using com.Rummy.GameVariable;
 using com.Rummy.Gameplay;
+using System;
 
 namespace com.Rummy.Ui
 {
@@ -28,7 +29,7 @@ namespace com.Rummy.Ui
         [SerializeField] private MainMenuUiController mainMenuUiController;
         [SerializeField] private RoomJoinUiController roomJoinUiController;
         [SerializeField] private GameplayController gameplayController;
-
+        [SerializeField] private ConfirmationPopup confirmationPopup;
         private UiRotator enabledLoadingUi;
 
         #region LoadingUi
@@ -126,7 +127,7 @@ namespace com.Rummy.Ui
 
         private void OnSuccessRoomCreate(RoomCreateResponse roomCreateResponse)
         {
-            GameVariables.roomId = roomCreateResponse.room_id;
+            GameVariables.roomId = roomCreateResponse.room_code;
             roomJoinUiController.EnableRoomJoinWaitingScreen(true);
             GamePlayManager.GetInstance.SocketRoomJoin(roomCreateResponse.room_id);
             DisableLoadingUi();
@@ -146,6 +147,7 @@ namespace com.Rummy.Ui
 
         private void OnSuccessRoomJoin(RoomJoinResponse roomJoinResponse)
         {
+            Debug.Log(roomJoinResponse.room_id+":"+roomJoinResponse.time_remaining);
             roomJoinUiController.EnableRoomJoinWaitingScreen(false);
             GamePlayManager.GetInstance.SocketRoomJoin(roomJoinResponse.room_id);
             DisableLoadingUi();
@@ -176,7 +178,7 @@ namespace com.Rummy.Ui
         {
             PlayerLeftRequest playerLeftRequest = new PlayerLeftRequest
             {
-                room_id = 25,// GamePlayManager.GetInstance.roomId,
+                room_id = GamePlayManager.GetInstance.roomId,
                 user_id = int.Parse(GameVariables.userId),
             };
             SocketConnectionManager.GetInstance.SendSocketRequest(GameVariables.SocketRequestType.playerLeft, playerLeftRequest);
@@ -198,6 +200,11 @@ namespace com.Rummy.Ui
         {
             gameplayController.Activate();
         }
+
+        internal void DisableGamplayScreen()
+        {
+            gameplayController.Deactivate();
+        }
         private void OnApplicationQuit()
         {
             LeaveSocketRoom();
@@ -206,8 +213,25 @@ namespace com.Rummy.Ui
         {
             if(!focus)
             {
-                LeaveSocketRoom();
+                //LeaveSocketRoom();
             }
+        }
+
+        internal void StartTimer(int userId,float timer,Action OnComplete)
+        {
+            gameplayController.StartPlayerTimer(userId, timer, OnComplete);
+        }
+
+        internal void OtherplayerDrawCard()
+        {
+            gameplayController.OnCardDraw();
+        }
+        #endregion
+
+        #region ConfirmationPoup
+        internal void ConfirmationPoup(string message, string headingText, Action successAction = null, Action failureAction = null)
+        {
+            confirmationPopup.ShowPopup(message, headingText, successAction, failureAction);
         }
         #endregion
     }

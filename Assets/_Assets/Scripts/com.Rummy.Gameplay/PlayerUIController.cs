@@ -1,4 +1,5 @@
 ﻿using com.Rummy.Network;
+using System;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -21,9 +22,18 @@ namespace com.Rummy.Gameplay
             position = player.position;
         }
 
-        internal void SetTimer()
+        internal void SetTimer(int userId,float Timer,Action onComplete)
         {
-
+            if (userId == this.userId)
+            {
+                timerController.Activate(Timer, onComplete);
+                ////gameObject.SetActive(true);
+            }
+            else
+            {
+                timerController.Deactiivate();
+                //gameObject.SetActive(false);
+            }
         }
     }
 }

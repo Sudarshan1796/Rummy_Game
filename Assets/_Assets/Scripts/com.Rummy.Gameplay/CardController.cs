@@ -26,6 +26,10 @@ public class CardController : MonoBehaviour
 
     public Sprite GetSprite(GameVariables.CardType cardValue, GameVariables.SuitType suitType)
     {
+        if (suitType == GameVariables.SuitType.Joker||cardValue==GameVariables.CardType.Joker)
+        {
+            return cardSprites[52];
+        }
         int _index = ((int)suitType - 1) * SUIT_LENGTH + (int)cardValue - 1;
         return cardSprites[_index];
     }

@@ -5,6 +5,7 @@ namespace com.Rummy.Misc
 {
 	public class GUIController : MonoBehaviour
 	{
+#if UNITY_EDITOR
 		[MenuItem("GUI/Anchors to Corners %[")]
 		static void AnchorsToCorners()
 		{
@@ -25,5 +26,6 @@ namespace com.Rummy.Misc
 				t.offsetMin = t.offsetMax = new Vector2(0, 0);
 			}
 		}
+#endif
 	}
 }

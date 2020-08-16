@@ -1,6 +1,7 @@
 ﻿using com.Rummy.Gameplay;
 using com.Rummy.GameVariable;
 using com.Rummy.Network;
+using com.Rummy.Ui;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -21,6 +22,9 @@ namespace com.Rummy.UI
         [SerializeField] private List<PlayerUIController> gamePlayers;
         [SerializeField] private GameObject closedCard;
         [SerializeField] private GameObject discardPile;
+        [SerializeField] private CardGroupController cardGroupController;
+        //Dummy Movable card
+        [SerializeField] private Gameplay.Card movableCard;
 
         //List of all players
         private Dictionary<int, PlayerUIController> activePlayers;
@@ -34,18 +38,31 @@ namespace com.Rummy.UI
             cardgameObject = new List<GameObject>();
             activePlayers = new Dictionary<int, PlayerUIController>();
         }
+        private void OnEnable()
+        {
+            AddListners();
+        }
+        
+        private void OnDisable()
+        {
+            RemoveListeners();
+        }
 
         private void AddListners()
         {
             GamePlayManager.GetInstance.OnGameStart += createCard;
+            CardGroupController.onCardSelect += CreateCard;
             btnDrop.onClick.AddListener(OnDropClick);
             btnExit.onClick.AddListener(OnRoomExit);
+            CardGroupController.onCardDiscard += RemoveCard;
         }
-        private void removeListeners()
+        private void RemoveListeners()
         {
             GamePlayManager.GetInstance.OnGameStart -= createCard;
+            CardGroupController.onCardSelect -= CreateCard;
             btnDrop.onClick.RemoveListener(OnDropClick);
             btnExit.onClick.RemoveListener(OnRoomExit);
+            CardGroupController.onCardDiscard -= RemoveCard;
         }
 
         /// <summary>
@@ -69,11 +86,14 @@ namespace com.Rummy.UI
         /// </summary>
         private void createCard(List<PlayerCard> playerCards)
         {
-            for (int i = 0; i < 13; i++)
+            Debug.Log(playerCards.Count);
+            DestroyAllCards();
+            for (int i = 0; i < playerCards.Count; i++)
             {
+                Debug.Log("player cards are" + playerCards[i].suitValue + "-" + playerCards[i].cardValue);
                 var _gameObject = CardController.GetInstance.GetObject(cardInitPosition.transform);
                 var _card = _gameObject.GetComponent<Gameplay.Card>();
-                _card.Init(i, playerCards[i].cardValue, playerCards[i].suitValue);
+                _card.Init( playerCards[i].cardValue, playerCards[i].suitValue);
                 cards.Add(_card);
                 cardgameObject.Add(_gameObject);
             }
@@ -83,6 +103,38 @@ namespace com.Rummy.UI
             }));
         }
 
+        private void DestroyAllCards()
+        {
+            for(int i=0;i<cardgameObject.Count;i++)
+            {
+                Destroy(cardgameObject[i]);
+            }
+            cards.Clear();
+            cardgameObject.Clear();
+        }
+
+        private void CreateCard(PlayerCard playerCard)
+        {
+            Debug.Log("player cards are" + playerCard.suitValue + "-" + playerCard.cardValue);
+            var _gameObject = CardController.GetInstance.GetObject(cardInitPosition.transform);
+            var _card = _gameObject.GetComponent<Gameplay.Card>();
+            _card.Init(playerCard.cardValue, playerCard.suitValue);
+            //cards.Add(_card);
+            //cardgameObject.Add(_gameObject);
+            CardGroupController.GetInstance.AddCardToGroup(_gameObject, _card);
+        }
+
+
+        private void RemoveCard(Gameplay.Card card)
+        {
+            if (cards.Contains(card))
+            {
+                var cardGameobject = cardgameObject[cards.IndexOf(card)];
+                cardgameObject.RemoveAt(cards.IndexOf(card));
+                cards.RemoveAt(cards.IndexOf(card));
+                Destroy(cardGameobject);
+            }
+        }
         /// <summary>
         /// This is the Starting Card draw animation
         /// </summary>
@@ -97,7 +149,7 @@ namespace com.Rummy.UI
                 i++;
                 yield return new WaitForSeconds(0.10f);
             }
-            yield return new WaitForSeconds(0.50f);
+            yield return new WaitForSeconds(1.0f);
             isDone.Invoke();
         }
 
@@ -161,12 +213,14 @@ namespace com.Rummy.UI
 
         private void OnRoomExit()
         {
-
+            UiManager.GetInstance.EnableMainMenuUi();
+            UiManager.GetInstance.DisableGamplayScreen();
+            UiManager.GetInstance.LeaveSocketRoom();
         }
 
-        private void OnCardDraw()
+        public void OnCardDraw()
         {
-
+            cardGroupController.MoveDrawCard();
         }
 
         /// <summary>
@@ -187,6 +241,13 @@ namespace com.Rummy.UI
         private void MoveCard(GameObject card, Vector3 destinationPosition)
         {
             var leanTweenObject = LeanTween.move(gameObject, destinationPosition, 1.0f).setEase(LeanTweenType.linear);
+        }
+
+        internal void StartPlayerTimer(int id,float timer,Action onComplete)
+        {
+            playerController.SetTimer(id, timer, onComplete);
+            gamePlayers[0].SetTimer(id, timer, onComplete);
+         
         }
     }
 }
