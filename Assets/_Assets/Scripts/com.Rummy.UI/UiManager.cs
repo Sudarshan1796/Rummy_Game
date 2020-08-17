@@ -124,6 +124,11 @@ namespace com.Rummy.Ui
             mainMenuUiController.EnableMainMenuPanel();
         }
 
+        internal void DisableMainMenu()
+        {
+            mainMenuUiController.DisableMainMenuPanel();
+        }
+
         internal void ShowMainMenuUserName()
         {
             mainMenuUiController.ShowUserName();
@@ -181,6 +186,7 @@ namespace com.Rummy.Ui
         internal void DisableRoomJoinWaitScreen()
         {
             roomJoinUiController.DisableRoomJoinWaitScreen();
+            DisableMainMenu();
         }
 
         internal void PrintRoomJoinedPlayersCount(int count)

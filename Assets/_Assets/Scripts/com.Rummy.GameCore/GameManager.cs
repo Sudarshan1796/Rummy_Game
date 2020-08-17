@@ -25,7 +25,6 @@ namespace com.Rummy.GameCore
         private void Start()
         {
             Application.targetFrameRate = 60;
-
             if (PlayerPrefs.GetInt("isLoggedIn", 0) == 0)
             {
                 SetScreenOrientation(ScreenOrientation.Portrait);
