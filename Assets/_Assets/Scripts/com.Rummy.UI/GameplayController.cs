@@ -244,11 +244,15 @@ namespace com.Rummy.UI
             var leanTweenObject = LeanTween.move(gameObject, destinationPosition, 1.0f).setEase(LeanTweenType.linear);
         }
 
-        internal void StartPlayerTimer(int id,float timer,Action onComplete)
+        internal void StartPlayerTimer(int id, float timer, Action onComplete)
         {
             playerController.SetTimer(id, timer, onComplete);
             gamePlayers[0].SetTimer(id, timer, onComplete);
-         
+        }
+
+        internal void MoveDiscardedCard(PlayerCard playerCard)
+        {
+            cardGroupController.MoveDiscardedCard(playerCard);
         }
     }
 }

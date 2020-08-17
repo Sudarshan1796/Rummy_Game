@@ -155,9 +155,18 @@ namespace com.Rummy.Gameplay
             discardedCard = response.discardPile;
             closedCard = response.closedDeck;
             remainingTime = response.remainingTime;
+            PlayerCard _playerCard = new PlayerCard
+            {
+                cardValue = discardedCard.cardValue,
+                suitValue = discardedCard.suitValue
+            };
+            if (response.userId != int.Parse(GameVariables.userId))
+            {
+                UiManager.GetInstance.MoveDiscardedCard(_playerCard);
+            }
             UiManager.GetInstance.StartTimer(playerTurn, remainingTime, OnTimerComplete);
             isCardDrawn = false;
-            UiManager.GetInstance.StartTimer(playerTurn, remainingTime, OnTimerComplete);
+            //UiManager.GetInstance.StartTimer(playerTurn, remainingTime, OnTimerComplete);
         }
 
         private void OnPlayerLeft(PlayerLeftResResponse response)

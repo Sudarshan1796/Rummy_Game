@@ -36,11 +36,13 @@ namespace com.Rummy.Gameplay
             throw new System.NotImplementedException();
         }
 
-        public void Move(Vector3 _destinationPoint,Action onComplete=null)
+        public void Move(Vector3 _destinationPoint, Action onComplete = null, float moveSpeed = 0.5f)
         {
+            speed = moveSpeed;
             moveCompleteAction = onComplete;
             leanTweenObject = LeanTween.move(gameObject, _destinationPoint, speed * 0.5f).setEase(LeanTweenType.linear).setOnComplete(onMoveComplete);
         }
+
         void onMoveComplete()
         {
             moveCompleteAction?.Invoke();

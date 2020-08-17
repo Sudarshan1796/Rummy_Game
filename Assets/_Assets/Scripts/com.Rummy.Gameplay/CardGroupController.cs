@@ -88,6 +88,7 @@ namespace com.Rummy.Gameplay
             //selectedObject.Clear();
             RemoveAllSelectedCard();
             childParentObject.Clear();
+            OpenTileCard.gameObject.SetActive(false);
             inActiveGroups.Clear();
 
             this.cards = _cards;
@@ -746,8 +747,18 @@ namespace com.Rummy.Gameplay
         {
             backCardController.gameObject.SetActive(true);
             backCardController.gameObject.transform.localPosition = closedDeckTransform.localPosition;
-            backCardController.Move(prifileDestination.transform.position, OnDrawMoveComplete);
+            backCardController.Move(prifileDestination.transform.position, OnDrawMoveComplete, 0.70f);
         }
+
+        public void MoveDiscardedCard(PlayerCard playerCard)
+        {
+            discardeCard = playerCard;
+            movingCardController.gameObject.transform.localPosition = prifileDestination.transform.localPosition;
+            movingCardController.Init(playerCard.cardValue, playerCard.suitValue);
+            movingCardController.Activate();
+            movingCardController.Move(openDeckTransform.transform.position, OnDicardMoveComplete, 0.70f);
+        }
+
         void OnDrawMoveComplete()
         {
             backCardController.gameObject.SetActive(false);
@@ -772,6 +783,7 @@ namespace com.Rummy.Gameplay
             movingCardController.gameObject.transform.localPosition = playerCardSelectTransform.transform.localPosition;
             movingCardController.Init(player.cardValue, player.suitValue);
             discardeCard = player;
+            movingCardController.Activate();
             movingCardController.Move(openDeckTransform.transform.position, OnDicardMoveComplete);
             Network.Card card = new Network.Card
             {
@@ -783,8 +795,8 @@ namespace com.Rummy.Gameplay
         private void OnDicardMoveComplete()
         {
             movingCardController.Deactivate();
-            OpenTileCard.gameObject.SetActive(true);
             OpenTileCard.Init(discardeCard.cardValue, discardeCard.suitValue);
+            OpenTileCard.gameObject.SetActive(true);
         }
     }
 }
