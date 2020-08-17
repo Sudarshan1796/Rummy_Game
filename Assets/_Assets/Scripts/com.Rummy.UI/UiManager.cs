@@ -89,7 +89,22 @@ namespace com.Rummy.Ui
 
         private void OnUserVerifySuccess(UserVerifyResponse userVerifyResponse)
         {
-            GameManager.GetInstance.StoreLoginCredentials(userVerifyResponse.user_id.ToString(), userVerifyResponse.access_token);
+            if(userVerifyResponse.code == GameVariables.CodeType.None)
+            {
+                GameManager.GetInstance.StoreLoginCredentials(userVerifyResponse.user_id.ToString(), userVerifyResponse.access_token);
+            }
+            else
+            {
+                switch (userVerifyResponse.code)
+                {
+                    case GameVariables.CodeType.InvalidOtp : loginUiController.ShowErrorMessageInOtpInputPanel("Please enter valid OTP");
+                        break;
+                    case GameVariables.CodeType.RoomIsActive : loginUiController.ShowErrorMessageInOtpInputPanel("Cannot join this room! \n room is active.");
+                        break;
+                    default : loginUiController.ShowErrorMessageInOtpInputPanel("Error Occured! \n Plese Resend OTP.");
+                        break;
+                }
+            }
         }
 
         private void OnUserVerifyFail(string url, string errorMessage)
@@ -127,8 +142,7 @@ namespace com.Rummy.Ui
 
         private void OnSuccessRoomCreate(RoomCreateResponse roomCreateResponse)
         {
-            GameVariables.roomId = roomCreateResponse.room_code;
-            roomJoinUiController.EnableRoomJoinWaitingScreen(true);
+            roomJoinUiController.EnableRoomJoinWaitingScreen(true, roomCreateResponse.room_code);
             GamePlayManager.GetInstance.SocketRoomJoin(roomCreateResponse.room_id);
             DisableLoadingUi();
         }
@@ -176,15 +190,20 @@ namespace com.Rummy.Ui
 
         internal void LeaveSocketRoom()
         {
-            PlayerLeftRequest playerLeftRequest = new PlayerLeftRequest
+            if (GamePlayManager.GetInstance.isJoinedRoom)
             {
-                room_id = GamePlayManager.GetInstance.roomId,
-                user_id = int.Parse(GameVariables.userId),
-            };
-            SocketConnectionManager.GetInstance.SendSocketRequest(GameVariables.SocketRequestType.playerLeft, playerLeftRequest);
+                PlayerLeftRequest playerLeftRequest = new PlayerLeftRequest
+                {
+                    room_id = GamePlayManager.GetInstance.roomId,
+                    user_id = int.Parse(GameVariables.userId),
+                };
+                SocketConnectionManager.GetInstance.SendSocketRequest(GameVariables.SocketRequestType.playerLeft, playerLeftRequest);
+                GamePlayManager.GetInstance.isJoinedRoom = false;
+            }
         }
 
         #endregion
+
         #region GameplayUI
         internal void SetRoomJoinDetails(List<Player> players)
         {
@@ -205,10 +224,12 @@ namespace com.Rummy.Ui
         {
             gameplayController.Deactivate();
         }
+
         private void OnApplicationQuit()
         {
             LeaveSocketRoom();
         }
+
         private void OnApplicationFocus(bool focus)
         {
             if(!focus)

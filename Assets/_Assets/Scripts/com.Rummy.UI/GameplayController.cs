@@ -58,6 +58,7 @@ namespace com.Rummy.UI
         }
         private void RemoveListeners()
         {
+            if (GamePlayManager.GetInstance)
             GamePlayManager.GetInstance.OnGameStart -= createCard;
             CardGroupController.onCardSelect -= CreateCard;
             btnDrop.onClick.RemoveListener(OnDropClick);

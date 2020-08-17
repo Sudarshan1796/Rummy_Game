@@ -1,11 +1,12 @@
 ﻿using System;
+using static com.Rummy.GameVariable.GameVariables;
 
 namespace com.Rummy.Network
 {
     [Serializable]
     public class ResponseData
     {
-		
+        public CodeType code;
     }
 
     [Serializable]

@@ -62,13 +62,13 @@ namespace com.Rummy.Ui
 
         private void OnClickRoomSize2Button()
         {
-            userSelectedRoomSize = RoomSize.players2;
+            userSelectedRoomSize = RoomSize.Players2;
             UiManager.GetInstance.CreateRoom();
         }
 
         private void OnClickRoomSize6Button()
         {
-            userSelectedRoomSize = RoomSize.players6;
+            userSelectedRoomSize = RoomSize.Players6;
             UiManager.GetInstance.CreateRoom();
         }
 
@@ -110,11 +110,11 @@ namespace com.Rummy.Ui
             roomTypeSelectionScreen.SetActive(false);
         }
 
-        internal void EnableRoomJoinWaitingScreen(bool isHost)
+        internal void EnableRoomJoinWaitingScreen(bool isHost, string roomCode = null)
         {
             if(isHost)
             {
-                roomIdText.text = $"Room ID : {GameVariables.roomId} \n Waiting for other players to join...";
+                roomIdText.text = $"Room ID : {roomCode} \n Waiting for other players to join...";
             }
             else
             {
@@ -128,6 +128,7 @@ namespace com.Rummy.Ui
         internal void DisableRoomJoinWaitScreen()
         {
             roomJoinWaitingScreen.SetActive(false);
+            gameObject.SetActive(false);
         }
 
         internal void PrintRoomJoinErrorMessage(string message)

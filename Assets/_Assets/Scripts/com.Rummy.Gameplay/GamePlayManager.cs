@@ -28,6 +28,7 @@ namespace com.Rummy.Gameplay
         internal int roomId;
         internal int remainingTime;
         internal int eventTime;
+        internal bool isJoinedRoom;
 
         internal bool isCardDrawn = false;
 
@@ -56,6 +57,7 @@ namespace com.Rummy.Gameplay
 
         private void OnDisable()
         {
+            if(SocketConnectionManager.GetInstance)
             SocketConnectionManager.GetInstance.SocketResponse -= OnSocketResponseReceived;
         }
 
@@ -91,6 +93,7 @@ namespace com.Rummy.Gameplay
         /// </summary>
         private void OnRoomJoin(OnRoomJoinResponse response)
         {
+            isJoinedRoom = true;
             roomPlayers.Clear();
             roomPlayers = response.players;
             roomId = response.roomId;

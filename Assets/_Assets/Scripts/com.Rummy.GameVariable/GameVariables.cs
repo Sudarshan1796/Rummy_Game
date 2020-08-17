@@ -31,7 +31,6 @@ namespace com.Rummy.GameVariable
 
         public static string userId;
         public static string AccessToken;
-        public static string roomId;
         public static UserGetProfile UserProfile;
         public static GameMode userSelectedGameMode;
         public static RoomType userSelectedRoomType;
@@ -111,15 +110,25 @@ namespace com.Rummy.GameVariable
 
         public enum RoomSize : short
         {
-            players2 = 2,
-            players6 = 6
+            Players2 = 2,
+            Players6 = 6
         }
+
         public enum SetType : short
         {
             pureSequence=1,
             ImpureSequence,
             Set,
             Invalid,
+        }
+
+        public enum CodeType : short
+        {
+            None = 0,
+            InvalidEmail = 205,
+            InvalidOtp = 206,
+            RoomIsActive = 216,
+            InvalidRoomId = 219,
         }
     }
 }
