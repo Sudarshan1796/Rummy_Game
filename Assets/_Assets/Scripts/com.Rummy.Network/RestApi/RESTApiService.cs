@@ -61,7 +61,7 @@ namespace com.Rummy.Network
                 {
                     if (errorResponse != null)
                     {
-                        errorResponse.Invoke($"<Color=red>Url : {url}</Color>", $"<Color=red>Response: Error Occurred! \n ResponseCode: {responseData.responseCode} \n ResponseMessage : {responseData.responseMessage}</Color>");
+                        errorResponse.Invoke(url, $"Response: Error Occurred! \n ResponseCode: {responseData.responseCode} \n ResponseMessage : {responseData.responseMessage}");
                     }
                     else
                     {

@@ -24,6 +24,8 @@ namespace com.Rummy.GameCore
 
         private void Start()
         {
+            Application.targetFrameRate = 60;
+
             if (PlayerPrefs.GetInt("isLoggedIn", 0) == 0)
             {
                 SetScreenOrientation(ScreenOrientation.Portrait);
@@ -31,7 +33,7 @@ namespace com.Rummy.GameCore
             }
             else
             {
-                SetScreenOrientation(ScreenOrientation.LandscapeRight);
+                SetScreenOrientation(ScreenOrientation.LandscapeLeft);
                 GameVariables.userId = PlayerPrefs.GetString("userId");
                 GameVariables.AccessToken = PlayerPrefs.GetString("accessToken");
                 Debug.Log($"<color=blue>User Id : {GameVariables.userId} || Access Token : { GameVariables.AccessToken}</color>");
@@ -70,15 +72,20 @@ namespace com.Rummy.GameCore
         {
             Debug.Log("<color=green>User Profile Loaded</color>");
             GameVariables.UserProfile = userGetProfileResponse;
-            UiManager.GetInstance.DisableLoadingUi();
-            SetScreenOrientation(ScreenOrientation.LandscapeRight);
+            SetScreenOrientation(ScreenOrientation.LandscapeLeft);
             UiManager.GetInstance.EnableMainMenuUi();
             UiManager.GetInstance.ShowMainMenuUserName();
+            Invoke(nameof(BufferTimeToRotateScreen), 1);
+        }
+
+        private void BufferTimeToRotateScreen()
+        {
+            UiManager.GetInstance.DisableLoadingUi();
         }
 
         private void OnGetUserProfileFail(string url, string errorMessage)
         {
-            Debug.Log(url + "\n" + errorMessage);
+            Debug.Log(url  + "\n" + errorMessage);
         }
     }
 }

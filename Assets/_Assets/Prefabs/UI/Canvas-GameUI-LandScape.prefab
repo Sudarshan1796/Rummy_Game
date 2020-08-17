@@ -1457,7 +1457,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   shouldRotate: 1
   rotateTransform: {fileID: 7527855725862003095}
-  rotationAngle: 2.5
+  rotationAngle: 5
 --- !u!114 &1147115445472884280
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -14320,7 +14320,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   shouldRotate: 1
   rotateTransform: {fileID: 7270272969547497364}
-  rotationAngle: 2.5
+  rotationAngle: 5
 --- !u!1 &5473877222849525972
 GameObject:
   m_ObjectHideFlags: 0

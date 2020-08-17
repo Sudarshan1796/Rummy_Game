@@ -3923,7 +3923,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   shouldRotate: 1
   rotateTransform: {fileID: 7628525787398139721}
-  rotationAngle: 2.5
+  rotationAngle: 5
 --- !u!114 &267988830
 MonoBehaviour:
   m_ObjectHideFlags: 0
