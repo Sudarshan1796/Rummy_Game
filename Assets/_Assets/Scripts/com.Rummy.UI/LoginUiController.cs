@@ -87,6 +87,7 @@ namespace com.Rummy.Ui
         internal void DisableOtpInputPanel()
         {
             otpInputPanel.SetActive(false);
+            if(otpInputPanelTimer != null)
             StopCoroutine(otpInputPanelTimer);
         }
 

@@ -28,8 +28,12 @@ namespace com.Rummy.Ui
 
         internal void EnableMainMenuPanel()
         {
-            phoneNumberText.text = GameVariables.UserProfile.mob_no.ToString();
             mainMenuPanel.SetActive(true);
+        }
+
+        internal void ShowUserName()
+        {
+            phoneNumberText.text = GameVariables.UserProfile.mob_no.ToString();
         }
     }
 }

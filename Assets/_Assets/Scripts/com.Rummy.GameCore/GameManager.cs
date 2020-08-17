@@ -73,6 +73,7 @@ namespace com.Rummy.GameCore
             UiManager.GetInstance.DisableLoadingUi();
             SetScreenOrientation(ScreenOrientation.LandscapeRight);
             UiManager.GetInstance.EnableMainMenuUi();
+            UiManager.GetInstance.ShowMainMenuUserName();
         }
 
         private void OnGetUserProfileFail(string url, string errorMessage)

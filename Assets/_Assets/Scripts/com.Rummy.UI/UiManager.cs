@@ -124,6 +124,11 @@ namespace com.Rummy.Ui
             mainMenuUiController.EnableMainMenuPanel();
         }
 
+        internal void ShowMainMenuUserName()
+        {
+            mainMenuUiController.ShowUserName();
+        }
+
         #endregion
 
         #region RoomJoinUi
