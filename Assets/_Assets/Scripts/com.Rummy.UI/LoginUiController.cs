@@ -32,6 +32,27 @@ namespace com.Rummy.Ui
             otpSubmitButton.onClick.AddListener(OnClickOtpSubmitButton);
             otpResendButton.onClick.AddListener(OnClickOtpResendButton);
             backButtonButton.onClick.AddListener(OnClickOtpPanelBackButton);
+            TMP_InputField.OnValidateInput inputValidator = ValidateUserInputTrigger;
+            foreach (var text in otpText)
+            {
+                text.onValidateInput += inputValidator;
+            }
+        }
+
+        private char ValidateUserInputTrigger(string text, int charIndex, char addedChar)
+        {
+            if(char.IsDigit(addedChar))
+            {
+                foreach (var otpDigit in otpText)
+                {
+                    if (otpDigit.text.Length == 0)
+                    {
+                        otpDigit.text = addedChar.ToString();
+                        break;
+                    }
+                }
+            }
+            return '\0';
         }
 
         private void OnClickMobNumberSubmitButton()

@@ -52,20 +52,20 @@ namespace com.Rummy.Network
                     Debug.Log($"<Color=blue>Url : {url} \n Response : {unityWebRequest.downloadHandler.text}</Color>");
                 }
 
-                RESTApiResponse<T> responseData = JsonUtility.FromJson<RESTApiResponse<T>>(unityWebRequest.downloadHandler.text);
-                if (responseData.responseCode == 200)
+                RESTApiResponse<T> response = JsonUtility.FromJson<RESTApiResponse<T>>(unityWebRequest.downloadHandler.text);
+                if (response.responseCode == 200)
                 {
-                    successResponse?.Invoke(responseData.responseData);
+                    successResponse?.Invoke(response.responseData);
                 }
                 else
                 {
                     if (errorResponse != null)
                     {
-                        errorResponse.Invoke(url, $"Response: Error Occurred! \n ResponseCode: {responseData.responseCode} \n ResponseMessage : {responseData.responseMessage}");
+                        errorResponse.Invoke(url, $"Response: Error Occurred! \n ResponseCode: {response.responseCode} \n ResponseMessage : {response.responseMessage}");
                     }
                     else
                     {
-                        Debug.Log($"<Color=red>Url : {url} \n Response : Error Occurred! \n ResponseCode : {responseData.responseCode} \n ResponseMessage : {responseData.responseMessage}</Color>");
+                        Debug.Log($"<Color=red>Url : {url} \n Response : Error Occurred! \n ResponseCode : {response.responseCode} \n ResponseMessage : {response.responseMessage}</Color>");
                     }
                 }
             }
@@ -98,20 +98,20 @@ namespace com.Rummy.Network
                     Debug.Log($"<Color=blue>Base Url : {baseUrl} \n Response : {unityWebRequest.downloadHandler.text}</Color>");
                 }
 
-                RESTApiResponse<T> responseData = JsonUtility.FromJson<RESTApiResponse<T>>(unityWebRequest.downloadHandler.text);
-                if (responseData.responseCode == 200)
+                RESTApiResponse<T> response = JsonUtility.FromJson<RESTApiResponse<T>>(unityWebRequest.downloadHandler.text);
+                if (response.responseCode == 200)
                 {
-                    successResponse?.Invoke(responseData.responseData);
+                    successResponse?.Invoke(response.responseData);
                 }
                 else
                 {
                     if (errorResponse != null)
                     {
-                        errorResponse.Invoke($"<Color=red>Url : {baseUrl}</Color>", $"<Color=red>Response: Error Occurred! \n ResponseCode: {responseData.responseCode} \n ResponseMessage : {responseData.responseMessage}</Color>");
+                        errorResponse.Invoke($"<Color=red>Url : {baseUrl}</Color>", $"<Color=red>Response: Error Occurred! \n ResponseCode: {response.responseCode} \n ResponseMessage : {response.responseMessage}</Color>");
                     }
                     else
                     {
-                        Debug.Log($"<Color=red>Url : {baseUrl} \n Response : Error Occurred! \n ResponseCode : {responseData.responseCode} \n ResponseMessage : {responseData.responseMessage}</Color>");
+                        Debug.Log($"<Color=red>Url : {baseUrl} \n Response : Error Occurred! \n ResponseCode : {response.responseCode} \n ResponseMessage : {response.responseMessage}</Color>");
                     }
                 }
             }
