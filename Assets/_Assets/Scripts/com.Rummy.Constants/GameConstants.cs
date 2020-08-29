@@ -5,7 +5,7 @@
         #region SocketConstants
         internal const string SOCKET_URL_PREFIX    = "http://";
         internal const string SOCKET_HOST_ADDRESS  = "54.90.44.5";
-        internal const string SOCKET_PORT_NUMBER   = "3000";
+        internal const string SOCKET_PORT_NUMBER   = "3001";
         internal const string SOCKET_URL_SUFFIX    = "/socket.io/";
         internal const string SOCKET_URL_SEPARATOR = ":";
         #endregion
