@@ -308,8 +308,8 @@ namespace com.Rummy.Gameplay
             {
                 CreateMergeGroup();
             }
-            RemoveAllSelectedCard();
             CheckForInActivaGroup();
+            RemoveAllSelectedCard();
             setGroupText();
         }
 
@@ -344,6 +344,14 @@ namespace com.Rummy.Gameplay
                         ReleaseGroup(cardGroupGameobject[i]);
                     }
                 }
+            }
+            if (inActiveGroups.Count >= 5)
+            {
+                sortCardBtn.gameObject.SetActive(true);
+            }
+            else
+            {
+                sortCardBtn.gameObject.SetActive(false);
             }
         }
 
