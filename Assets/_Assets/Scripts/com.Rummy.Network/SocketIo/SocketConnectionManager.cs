@@ -104,6 +104,7 @@ namespace com.Rummy.Network
         {
             Debug.Log("<color=green>Socket Connected Successfully!</color>");
             onSocketConnect?.Invoke();
+            onSocketConnect = null;
         }
 
         private void OndisConnect(Socket socket, Packet packet, params object[] args)
