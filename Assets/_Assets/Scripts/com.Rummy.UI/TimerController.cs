@@ -73,7 +73,7 @@ public class TimerController : MonoBehaviour
 
     private void SetImageFillAmount()
     {
-        insideImage.fillAmount = remainingTime / totalTime;
+        //insideImage.fillAmount = remainingTime / totalTime;
         borderImage.fillAmount = remainingTime / totalTime;
     }
 
@@ -104,7 +104,7 @@ public class TimerController : MonoBehaviour
 
     private void SetColor( ref Color color,  ref Color fadeColor, ref bool issetColor)
     {
-        insideImage.color = fadeColor;
+        //insideImage.color = fadeColor;
         borderImage.color = color;
         TimerPanel.color = color;
         issetColor = true;

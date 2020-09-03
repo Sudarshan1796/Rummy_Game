@@ -105,6 +105,7 @@ namespace com.Rummy.Gameplay
                 cardGroupGameobject[i].transform.SetSiblingIndex(i);
                 inActiveGroups.Add(cardGroupGameobject[i]);
             }
+            sortCardBtn.gameObject.SetActive(true);
         }
 
         public void AddCardToGroup(GameObject cardGameObj, Card cardController)
