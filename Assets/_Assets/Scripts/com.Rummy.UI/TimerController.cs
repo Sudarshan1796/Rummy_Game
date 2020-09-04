@@ -106,7 +106,7 @@ public class TimerController : MonoBehaviour
     {
         //insideImage.color = fadeColor;
         borderImage.color = color;
-        TimerPanel.color = color;
+        //TimerPanel.color = color;
         issetColor = true;
     }
 }
