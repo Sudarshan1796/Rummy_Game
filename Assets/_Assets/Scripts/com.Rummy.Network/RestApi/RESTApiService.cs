@@ -43,7 +43,14 @@ namespace com.Rummy.Network
 
             if (unityWebRequest.isNetworkError)
             {
-                errorResponse.Invoke(url, unityWebRequest.error);
+                if (errorResponse != null)
+                {
+                    errorResponse.Invoke(url, unityWebRequest.error);
+                }
+                else
+                {
+                    Debug.Log($"<Color=blue>Url : {url} \n Error : {unityWebRequest.error}</Color>");
+                }
             }
             else
             {
@@ -89,7 +96,14 @@ namespace com.Rummy.Network
 
             if (unityWebRequest.isNetworkError)
             {
-                errorResponse?.Invoke(baseUrl, unityWebRequest.error);
+                if (errorResponse != null)
+                {
+                    errorResponse.Invoke(baseUrl, unityWebRequest.error);
+                }
+                else
+                {
+                    Debug.Log($"<Color=blue>Url : {url} \n Error : {unityWebRequest.error}</Color>");
+                }
             }
             else
             {
