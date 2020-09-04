@@ -713,7 +713,7 @@ namespace com.Rummy.Gameplay
                 movingCardController.gameObject.transform.localPosition = closedDeckTransform.localPosition;
                 movingCardController.Init(gameplayManager.closedCard.cardValue, gameplayManager.closedCard.suitValue);
                 movingCardController.Activate();
-                movingCardController.Move(playerCardSelectTransform.transform.position, OnCloseddeckMoveComplete);
+                movingCardController.Move(playerCardSelectTransform.transform.position, OnCloseddeckMoveComplete, 0.80f);
                 gameplayManager.DrawCard(false);
             }
         }
@@ -736,7 +736,7 @@ namespace com.Rummy.Gameplay
                     return;
                 movingCardController.gameObject.transform.localPosition = openDeckTransform.localPosition;
                 movingCardController.Init(gameplayManager.discardedCard.cardValue, gameplayManager.discardedCard.suitValue);
-                movingCardController.Move(playerCardSelectTransform.transform.localPosition, OnOpendeckMoveComplete);
+                movingCardController.Move(playerCardSelectTransform.transform.localPosition, OnOpendeckMoveComplete, 0.75f);
                 gameplayManager.DrawCard(true);
             }
         }
