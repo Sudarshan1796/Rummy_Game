@@ -35,7 +35,7 @@ namespace com.Rummy.Gameplay
         [SerializeField]private Transform prifileDestination;
         [SerializeField] private Card backCardController;
         [SerializeField] private Card OpenTileCard;
-
+        [SerializeField] private float cardLenght;
         private List<GameObject> cardGameobject;
         private List<Card> cards;
         private List<GameObject> inActiveGroups;
@@ -780,20 +780,25 @@ namespace com.Rummy.Gameplay
                 cardValue = selectedObject.Keys.First().cardValue,
                 suitValue = selectedObject.Keys.First().suitType,
             };
+            var positionCard = childParentObject[selectedObject.Keys.First().gameObject];
+            int _index = selectedObject.Keys.First().gameObject.transform.GetSiblingIndex();
+            var _cardPosition = positionCard.transform.localPosition;
+            _cardPosition.x += _index * cardLenght + cardLenght;
+            _cardPosition.y = _cardPosition.y - (2 * cardLenght);
             onCardDiscard?.Invoke(selectedObject.Keys.First());
-            MoveCardToOpenPile(_playerCard);
+            MoveCardToOpenPile(_playerCard, _cardPosition);
             RemoveAllSelectedCard();
             discardBtn.gameObject.SetActive(false);
         }
 
         PlayerCard discardeCard;
-        private void MoveCardToOpenPile(PlayerCard player)
+        private void MoveCardToOpenPile(PlayerCard player,Vector3 positionCard)
         {
-            movingCardController.gameObject.transform.localPosition = playerCardSelectTransform.transform.localPosition;
+            movingCardController.gameObject.transform.localPosition = positionCard;
             movingCardController.Init(player.cardValue, player.suitValue);
             discardeCard = player;
             movingCardController.Activate();
-            movingCardController.Move(openDeckTransform.transform.position, OnDicardMoveComplete);
+            movingCardController.Move(openDeckTransform.transform.position, OnDicardMoveComplete, 0.80f);
             Network.Card card = new Network.Card
             {
                 suitValue = player.suitValue,
