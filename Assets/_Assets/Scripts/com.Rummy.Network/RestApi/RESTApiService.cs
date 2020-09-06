@@ -40,41 +40,47 @@ namespace com.Rummy.Network
             unityWebRequest.SetRequestHeader("Content-Type", "application/json");
 
             yield return unityWebRequest.SendWebRequest();
-
-            if (unityWebRequest.isNetworkError)
+            try
             {
-                if (errorResponse != null)
-                {
-                    errorResponse.Invoke(url, unityWebRequest.error);
-                }
-                else
-                {
-                    Debug.Log($"<Color=blue>Url : {url} \n Error : {unityWebRequest.error}</Color>");
-                }
-            }
-            else
-            {
-                if(shouldPrintResponseString)
-                {
-                    Debug.Log($"<Color=blue>Url : {url} \n Response : {unityWebRequest.downloadHandler.text}</Color>");
-                }
-
-                RESTApiResponse<T> response = JsonUtility.FromJson<RESTApiResponse<T>>(unityWebRequest.downloadHandler.text);
-                if (response.responseCode == 200)
-                {
-                    successResponse?.Invoke(response.responseData);
-                }
-                else
+                if (unityWebRequest.isNetworkError)
                 {
                     if (errorResponse != null)
                     {
-                        errorResponse.Invoke(url, $"Response: Error Occurred! \n ResponseCode: {response.responseCode} \n ResponseMessage : {response.responseMessage}");
+                        errorResponse.Invoke(url, unityWebRequest.error);
                     }
                     else
                     {
-                        Debug.Log($"<Color=red>Url : {url} \n Response : Error Occurred! \n ResponseCode : {response.responseCode} \n ResponseMessage : {response.responseMessage}</Color>");
+                        Debug.Log($"<Color=blue>Url : {url} \n Error : {unityWebRequest.error}</Color>");
                     }
                 }
+                else
+                {
+                    if (shouldPrintResponseString)
+                    {
+                        Debug.Log($"<Color=blue>Url : {url} \n Response : {unityWebRequest.downloadHandler.text}</Color>");
+                    }
+
+                    RESTApiResponse<T> response = JsonUtility.FromJson<RESTApiResponse<T>>(unityWebRequest.downloadHandler.text);
+                    if (response.responseCode == 200)
+                    {
+                        successResponse?.Invoke(response.responseData);
+                    }
+                    else
+                    {
+                        if (errorResponse != null)
+                        {
+                            errorResponse.Invoke(url, $"Response: Error Occurred! \n ResponseCode: {response.responseCode} \n ResponseMessage : {response.responseMessage}");
+                        }
+                        else
+                        {
+                            Debug.Log($"<Color=red>Url : {url} \n Response : Error Occurred! \n ResponseCode : {response.responseCode} \n ResponseMessage : {response.responseMessage}</Color>");
+                        }
+                    }
+                }
+            }
+            catch(Exception e)
+            {
+                Debug.LogError(e.Message + "\n" + e.StackTrace);
             }
         }
 
@@ -93,41 +99,47 @@ namespace com.Rummy.Network
             UnityWebRequest unityWebRequest = UnityWebRequest.Get(url.ToString());
 
             yield return unityWebRequest.SendWebRequest();
-
-            if (unityWebRequest.isNetworkError)
+            try
             {
-                if (errorResponse != null)
-                {
-                    errorResponse.Invoke(baseUrl, unityWebRequest.error);
-                }
-                else
-                {
-                    Debug.Log($"<Color=blue>Url : {url} \n Error : {unityWebRequest.error}</Color>");
-                }
-            }
-            else
-            {
-                if (shouldPrintResponseString)
-                {
-                    Debug.Log($"<Color=blue>Base Url : {baseUrl} \n Response : {unityWebRequest.downloadHandler.text}</Color>");
-                }
-
-                RESTApiResponse<T> response = JsonUtility.FromJson<RESTApiResponse<T>>(unityWebRequest.downloadHandler.text);
-                if (response.responseCode == 200)
-                {
-                    successResponse?.Invoke(response.responseData);
-                }
-                else
+                if (unityWebRequest.isNetworkError)
                 {
                     if (errorResponse != null)
                     {
-                        errorResponse.Invoke($"<Color=red>Url : {baseUrl}</Color>", $"<Color=red>Response: Error Occurred! \n ResponseCode: {response.responseCode} \n ResponseMessage : {response.responseMessage}</Color>");
+                        errorResponse.Invoke(baseUrl, unityWebRequest.error);
                     }
                     else
                     {
-                        Debug.Log($"<Color=red>Url : {baseUrl} \n Response : Error Occurred! \n ResponseCode : {response.responseCode} \n ResponseMessage : {response.responseMessage}</Color>");
+                        Debug.Log($"<Color=blue>Url : {url} \n Error : {unityWebRequest.error}</Color>");
                     }
                 }
+                else
+                {
+                    if (shouldPrintResponseString)
+                    {
+                        Debug.Log($"<Color=blue>Base Url : {baseUrl} \n Response : {unityWebRequest.downloadHandler.text}</Color>");
+                    }
+
+                    RESTApiResponse<T> response = JsonUtility.FromJson<RESTApiResponse<T>>(unityWebRequest.downloadHandler.text);
+                    if (response.responseCode == 200)
+                    {
+                        successResponse?.Invoke(response.responseData);
+                    }
+                    else
+                    {
+                        if (errorResponse != null)
+                        {
+                            errorResponse.Invoke($"<Color=red>Url : {baseUrl}</Color>", $"<Color=red>Response: Error Occurred! \n ResponseCode: {response.responseCode} \n ResponseMessage : {response.responseMessage}</Color>");
+                        }
+                        else
+                        {
+                            Debug.Log($"<Color=red>Url : {baseUrl} \n Response : Error Occurred! \n ResponseCode : {response.responseCode} \n ResponseMessage : {response.responseMessage}</Color>");
+                        }
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                Debug.LogError(e.Message + "\n" + e.StackTrace);
             }
         }
     }
