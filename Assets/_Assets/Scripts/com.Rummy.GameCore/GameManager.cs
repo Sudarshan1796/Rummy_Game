@@ -59,6 +59,17 @@ namespace com.Rummy.GameCore
             {
                 return;
             }
+
+            if(orientationType == ScreenOrientation.LandscapeLeft)
+            {
+                Screen.autorotateToPortrait = false;
+                Screen.autorotateToLandscapeLeft = true;
+            }
+            else if(orientationType == ScreenOrientation.Portrait)
+            {
+                Screen.autorotateToLandscapeLeft = false;
+                Screen.autorotateToPortrait = true;
+            }
             Screen.orientation = orientationType;
         }
 
