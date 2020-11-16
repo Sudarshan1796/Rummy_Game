@@ -775,20 +775,25 @@ namespace com.Rummy.Gameplay
 
         private void OnCardDiscard()
         {
-            PlayerCard _playerCard = new PlayerCard
+            Network.Card card = new Network.Card
             {
-                cardValue = selectedObject.Keys.First().cardValue,
                 suitValue = selectedObject.Keys.First().suitType,
+                cardValue = selectedObject.Keys.First().cardValue,
             };
+            gameplayManager.DiscardCard(card);
+            discardBtn.gameObject.SetActive(false);
+        }
+
+        public void MoveUserCard(PlayerCard playerCard)
+        {
             var positionCard = childParentObject[selectedObject.Keys.First().gameObject];
             int _index = selectedObject.Keys.First().gameObject.transform.GetSiblingIndex();
             var _cardPosition = positionCard.transform.localPosition;
             _cardPosition.x += _index * cardLenght + cardLenght;
             _cardPosition.y = _cardPosition.y - (2 * cardLenght);
             onCardDiscard?.Invoke(selectedObject.Keys.First());
-            MoveCardToOpenPile(_playerCard, _cardPosition);
+            MoveCardToOpenPile(playerCard, _cardPosition);
             RemoveAllSelectedCard();
-            discardBtn.gameObject.SetActive(false);
         }
 
         PlayerCard discardeCard;
@@ -799,12 +804,7 @@ namespace com.Rummy.Gameplay
             discardeCard = player;
             movingCardController.Activate();
             movingCardController.Move(openDeckTransform.transform.position, OnDicardMoveComplete, 0.80f);
-            Network.Card card = new Network.Card
-            {
-                suitValue = player.suitValue,
-                cardValue = player.cardValue,
-            };
-            gameplayManager.DiscardCard(card);
+
         }
         private void OnDicardMoveComplete()
         {

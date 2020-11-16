@@ -160,10 +160,7 @@ namespace com.Rummy.Gameplay
                 cardValue = discardedCard.cardValue,
                 suitValue = discardedCard.suitValue
             };
-            if (response.userId != int.Parse(GameVariables.userId))
-            {
-                UiManager.GetInstance.MoveDiscardedCard(_playerCard);
-            }
+            UiManager.GetInstance.MoveDiscardedCard(_playerCard, response.userId);
             UiManager.GetInstance.StartTimer(playerTurn, remainingTime, OnTimerComplete);
             isCardDrawn = false;
             //UiManager.GetInstance.StartTimer(playerTurn, remainingTime, OnTimerComplete);

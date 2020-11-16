@@ -231,9 +231,9 @@ namespace com.Rummy.Ui
             gameplayController.Activate();
         }
 
-        internal void MoveDiscardedCard(PlayerCard playerCard)
+        internal void MoveDiscardedCard(PlayerCard playerCard,int userId)
         {
-            gameplayController.MoveDiscardedCard(playerCard);
+            gameplayController.MoveDiscardedCard(playerCard, userId);
         }
 
         internal void DisableGamplayScreen()

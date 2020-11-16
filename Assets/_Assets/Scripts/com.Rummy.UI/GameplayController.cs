@@ -250,9 +250,16 @@ namespace com.Rummy.UI
             gamePlayers[0].SetTimer(id, timer, onComplete);
         }
 
-        internal void MoveDiscardedCard(PlayerCard playerCard)
+        internal void MoveDiscardedCard(PlayerCard playerCard, int userId)
         {
-            cardGroupController.MoveDiscardedCard(playerCard);
+            if (userId != int.Parse(GameVariables.userId))
+            {
+                cardGroupController.MoveDiscardedCard(playerCard);
+            }
+            else
+            {
+                cardGroupController.MoveUserCard(playerCard);
+            }
         }
     }
 }
