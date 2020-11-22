@@ -29,7 +29,7 @@ namespace com.Rummy.Ui
         [SerializeField] private MainMenuUiController mainMenuUiController;
         [SerializeField] private RoomJoinUiController roomJoinUiController;
         [SerializeField] private GameplayController gameplayController;
-        [SerializeField] private ConfirmationPopup confirmationPopup;
+        [SerializeField] private CommonPopUpUiController commonPopUpUiController;
         private UiRotator enabledLoadingUi;
 
         #region LoadingUi
@@ -268,7 +268,7 @@ namespace com.Rummy.Ui
         #region ConfirmationPoup
         internal void ConfirmationPoup(string message, string headingText, Action successAction = null, Action failureAction = null)
         {
-            confirmationPopup.ShowPopup(message, headingText, successAction, failureAction);
+            commonPopUpUiController.ShowPopUp(headingText, message, true, true, successAction, failureAction);
         }
         #endregion
     }
