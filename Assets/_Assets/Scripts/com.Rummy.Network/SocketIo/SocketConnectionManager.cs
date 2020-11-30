@@ -3,6 +3,7 @@ using System;
 using BestHTTP.SocketIO;
 using com.Rummy.GameVariable;
 using System.Collections.Generic;
+using com.Rummy.Constants;
 
 namespace com.Rummy.Network
 {
@@ -68,8 +69,13 @@ namespace com.Rummy.Network
         {
             SocketOptions options = new SocketOptions
             {
-                AutoConnect = false
+                AutoConnect = false,
             };
+
+            options.AdditionalQueryParams = new PlatformSupport.Collections.ObjectModel.ObservableDictionary<string, string>();
+            options.AdditionalQueryParams.Add(GameConstants.USER_ID, GameVariables.userId);
+            options.AdditionalQueryParams.Add(GameConstants.ACCESS_TOKEN, GameVariables.AccessToken);
+
             onSocketConnect = onConnect;
             socketManager = new SocketManager(new Uri(GameVariables.GetSocketUrl()), options);
             socketManager.Socket.On(SocketIOEventTypes.Connect, OnConnect);

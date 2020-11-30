@@ -84,7 +84,7 @@ namespace com.Rummy.Network
         public int position;
     }
 
-    public class DeclareResponse: SocketResponse
+   /* public class DeclareResponse: SocketResponse
     {
         public int roomId;
         public int userId;
@@ -92,7 +92,7 @@ namespace com.Rummy.Network
         public string userName;
         public List<Card> cardSet;
         public int points;
-    }
+    }*/
 
     public class RoundCompleteResponse: SocketResponse
     {
@@ -100,13 +100,63 @@ namespace com.Rummy.Network
         public List<Result> result;
     }
 
+    public class CardGroup
+    {
+        public int group_id;
+        public List<Card> card_set;
+    }
+
     [Serializable]
+    public class Declare
+    {
+        public int user_id;
+        public int room_id;
+        public List<CardGroup> card_group;
+    }
+
+    public class DeclarResponse : SocketResponse
+    {
+        public int roomId;
+        public int userId;
+        public int position;
+        public string userName;
+        public int playerTurn;
+        public int eventTime;
+        public int remainingTime;
+        public List<CardGroup> cardGroup;
+        public int points;
+    }
+
     public class Result
     {
         public int userId;
         public int position;
         public string userName;
-        public List<Card> cardSet;
+        public List<CardGroup> cardGroup;
         public int points;
+        public bool isDropped;
+    }
+
+    public class RoundResultResponse : SocketResponse
+    {
+        public int roomId;
+        public List<Result> result;
+    }
+
+    [Serializable]
+    public class Drop
+    {
+        public int user_id;
+        public int room_id;
+    }
+
+    public class DropResponse : SocketResponse
+    {
+        public int userId;
+        public int position;
+        public int roomId;
+        public int playerTurn;
+        public int eventTime;
+        public int remainingTime;
     }
 }
