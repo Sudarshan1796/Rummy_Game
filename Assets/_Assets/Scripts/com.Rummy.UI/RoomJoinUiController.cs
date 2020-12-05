@@ -4,6 +4,7 @@ using UnityEngine.UI;
 using TMPro;
 using static com.Rummy.GameVariable.GameVariables;
 using com.Rummy.GameVariable;
+using System.Collections.Generic;
 
 namespace com.Rummy.Ui
 {
@@ -14,14 +15,26 @@ namespace com.Rummy.Ui
         [SerializeField] private Button randomRoomButton;
         [SerializeField] private Button customRoomButton;
         [SerializeField] private Button roomTypeSelectionScreenCloseButton;
-        [Header("Room Size Selection Screen")]
-        [SerializeField] private GameObject roomSizeSelectionScreen;
+        [Header("Custom Room Size Selection Screen")]
+        [SerializeField] private GameObject customRoomSizeSelectionScreen;
         [SerializeField] private Button roomSize2Button;
         [SerializeField] private Button roomSize6Button;
         [SerializeField] private Button joinButton;
         [SerializeField] private TMP_InputField roomIdInput;
         [SerializeField] private TextMeshProUGUI roomIdInputErrorText;
-        [SerializeField] private Button roomSizeSelectionScreenCloseButton;
+        [SerializeField] private Button customRoomSizeSelectionScreenCloseButton;
+        [Header("Random Room Table Selection Screen")]
+        public GameObject randomRoomTableSelectionScreen;
+        public GameObject openTablePrefab;
+        public Transform twoPlayersScrollRectContent;
+        public Transform sixPlayersScrollRectContent;
+
+        [SerializeField] private TextMeshProUGUI gameTypeText;
+        [SerializeField] private Toggle twoPlayersToggle;
+        [SerializeField] private Toggle sixPlayerToggle;
+        [SerializeField] private ScrollRect twoPlayersScrollRect;
+        [SerializeField] private ScrollRect sixPlayersScrollRect;
+        [SerializeField] private Button randomRoomTableSelectionScreenCloseButton;
         [Header("Room Join Waiting Screen")]
         [SerializeField] private GameObject roomJoinWaitingScreen;
         [SerializeField] private TextMeshProUGUI roomIdText;
@@ -29,6 +42,9 @@ namespace com.Rummy.Ui
         [SerializeField] private TextMeshProUGUI playersRoomJoinedCountText;
         [SerializeField] private TextMeshProUGUI playersRoomJoinedText;
         [SerializeField] private Button roomJoinWaitingScreenCloseButton;
+
+        internal List<Table> twoPlayersOpenTable = new List<Table>();
+        internal List<Table> sixPlayersOpenTable = new List<Table>();
 
         private void Start()
         {
@@ -38,20 +54,23 @@ namespace com.Rummy.Ui
             roomSize6Button.onClick.AddListener(OnClickRoomSize6Button);
             joinButton.onClick.AddListener(OnClickCustomRoomJoinButton);
             roomTypeSelectionScreenCloseButton.onClick.AddListener(OnClickRoomTypeSelectionScreenCloseButton);
-            roomSizeSelectionScreenCloseButton.onClick.AddListener(OnClickRoomSizeSelectionScreenCloseButton);
+            customRoomSizeSelectionScreenCloseButton.onClick.AddListener(OnClickCustomRoomSizeSelectionScreenCloseButton);
+            randomRoomTableSelectionScreenCloseButton.onClick.AddListener(OnClickRandomRoomTableSelectionScreenCloseButton);
             roomJoinWaitingScreenCloseButton.onClick.AddListener(OnClickRoomJoinWaitingScreenCloseButton);
+            twoPlayersToggle.onValueChanged.AddListener(OnClickTwoPlayersToggle);
+            sixPlayerToggle.onValueChanged.AddListener(OnClickSixPlayersToggle);
         }
 
         private void OnClickRandomRoomButton()
         {
             userSelectedRoomType = RoomType.RandomRoom;
-            EnableRoomSizeSelectionScreen();
+            EnableRandomRoomTableSelectionScreen();
         }
 
         private void OnClickCustomRoomButton()
         {
             userSelectedRoomType = RoomType.CustomRoom;
-            EnableRoomSizeSelectionScreen();
+            EnableCustomRoomSizeSelectionScreen();
         }
 
         private void OnClickRoomTypeSelectionScreenCloseButton()
@@ -82,20 +101,62 @@ namespace com.Rummy.Ui
             {
                 PrintRoomJoinErrorMessage("");
             }
-            UiManager.GetInstance.JoinRoom(roomIdInput.text);
+            UiManager.GetInstance.JoinRoom(roomIdInput.text, null, ((short)userSelectedRoomSize).ToString());
         }
 
-        private void OnClickRoomSizeSelectionScreenCloseButton()
+        private void OnClickCustomRoomSizeSelectionScreenCloseButton()
         {
             roomTypeSelectionScreen.SetActive(true);
-            roomSizeSelectionScreen.SetActive(false);
+            customRoomSizeSelectionScreen.SetActive(false);
+        }
+
+        private void OnClickRandomRoomTableSelectionScreenCloseButton()
+        {
+            UiManager.GetInstance.StopUpdatingRandomRoomOpenTableData();
+            roomTypeSelectionScreen.SetActive(true);
+            randomRoomTableSelectionScreen.SetActive(false);
+            foreach(var table in twoPlayersOpenTable)
+            {
+                table.onClickPlayNowButton -= OnClickOpenTablePlayNowButton;
+                table.playNowButton.onClick.AddListener(null);
+                DestroyImmediate(table.gameObject, true);
+            }
+            foreach (var table in sixPlayersOpenTable)
+            {
+                table.onClickPlayNowButton -= OnClickOpenTablePlayNowButton;
+                table.playNowButton.onClick.AddListener(null);
+                DestroyImmediate(table.gameObject, true);
+            }
+            twoPlayersOpenTable.Clear();
+            sixPlayersOpenTable.Clear();
         }
 
         private void OnClickRoomJoinWaitingScreenCloseButton()
         {
             UiManager.GetInstance.LeaveSocketRoom();
-            roomSizeSelectionScreen.SetActive(true);
+            customRoomSizeSelectionScreen.SetActive(true);
             roomJoinWaitingScreen.SetActive(false);
+        }
+
+        private void OnClickTwoPlayersToggle(bool status)
+        {
+            if(status)
+                userSelectedRoomSize = RoomSize.Players2;
+            twoPlayersScrollRect.gameObject.SetActive(status);
+            sixPlayersScrollRect.gameObject.SetActive(!status);
+        }
+
+        private void OnClickSixPlayersToggle(bool status)
+        {
+            if(status)
+                userSelectedRoomSize = RoomSize.Players6;
+            sixPlayersScrollRect.gameObject.SetActive(status);
+            twoPlayersScrollRect.gameObject.SetActive(!status);
+        }
+
+        internal void OnClickOpenTablePlayNowButton(string entryFee, string maxPlayers)
+        {
+            UiManager.GetInstance.JoinRoom(null, entryFee, maxPlayers);
         }
 
         internal void EnableRoomTypeSelectionPanel()
@@ -104,9 +165,31 @@ namespace com.Rummy.Ui
             roomTypeSelectionScreen.SetActive(true);
         }
 
-        internal void EnableRoomSizeSelectionScreen()
+        internal void EnableCustomRoomSizeSelectionScreen()
         {
-            roomSizeSelectionScreen.SetActive(true);
+            customRoomSizeSelectionScreen.SetActive(true);
+            roomTypeSelectionScreen.SetActive(false);
+        }
+
+        internal void EnableRandomRoomTableSelectionScreen()
+        {
+            UiManager.GetInstance.StartUpdatingRandomRoomOpenTableDataInIntervals();
+            switch(userSelectedGameMode)
+            {
+                case GameMode.Points:
+                    gameTypeText.text = "Points";
+                    break;
+                case GameMode.Pool101:
+                    gameTypeText.text = "101 Pool";
+                    break;
+                case GameMode.Deals:
+                    gameTypeText.text = "Deals";
+                    break;
+                case GameMode.Pool201:
+                    gameTypeText.text = "201 Pool";
+                    break;
+            }
+            randomRoomTableSelectionScreen.SetActive(true);
             roomTypeSelectionScreen.SetActive(false);
         }
 
@@ -122,7 +205,7 @@ namespace com.Rummy.Ui
             }
             ResetDynamicText();
             roomJoinWaitingScreen.SetActive(true);
-            roomSizeSelectionScreen.SetActive(false);
+            customRoomSizeSelectionScreen.SetActive(false);
         }
 
         internal void DisableRoomJoinWaitScreen()

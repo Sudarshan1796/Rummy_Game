@@ -12,9 +12,11 @@ namespace com.Rummy.GameVariable
                 case RESTApiType.login: return GetBaseUrl() + "/user/login";
                 case RESTApiType.getProfile: return GetBaseUrl() + "/user/getProfile";
                 case RESTApiType.updateProfile: return GetBaseUrl() + "/user/updateProfile";
-                case RESTApiType.join: return GetBaseUrl() + "/room/join";
-                case RESTApiType.create:return GetBaseUrl() + "/room/create";
-                case RESTApiType.verify: return GetBaseUrl() + "/user/verify";
+                case RESTApiType.userVerify: return GetBaseUrl() + "/user/verify";
+                case RESTApiType.resendOtp: return GetBaseUrl() + "/user/resendOtp";
+                case RESTApiType.roomJoin: return GetBaseUrl() + "/room/join";
+                case RESTApiType.roomCreate: return GetBaseUrl() + "/room/create";
+                case RESTApiType.roomList: return GetBaseUrl() + "/room/list";
                 default: return null;
             };
 
@@ -31,7 +33,7 @@ namespace com.Rummy.GameVariable
 
         public static string userId;
         public static string AccessToken;
-        public static UserGetProfile UserProfile;
+        public static UserGetProfileResponse UserProfile;
         public static GameMode userSelectedGameMode;
         public static RoomType userSelectedRoomType;
         public static RoomSize userSelectedRoomSize;
@@ -66,9 +68,11 @@ namespace com.Rummy.GameVariable
             login,
             getProfile,
             updateProfile,
-            join,
-            verify,
-            create,
+            roomJoin,
+            userVerify,
+            roomCreate,
+            resendOtp,
+            roomList
         }
 
         public enum SuitType: short
@@ -101,9 +105,9 @@ namespace com.Rummy.GameVariable
         public enum GameMode: short
         {
             Points = 1,
-            Pool101,
-            Deals,
-            Pool201
+            Pool101 = 2,
+            Deals = 3,
+            Pool201 = 4
         }
 
         public enum RoomType : short

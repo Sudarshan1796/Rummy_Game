@@ -6,6 +6,7 @@ using com.Rummy.UI;
 using com.Rummy.GameVariable;
 using com.Rummy.Gameplay;
 using System;
+using System.Collections;
 
 namespace com.Rummy.Ui
 {
@@ -31,6 +32,9 @@ namespace com.Rummy.Ui
         [SerializeField] private GameplayController gameplayController;
         [SerializeField] private CommonPopUpUiController commonPopUpUiController;
         private UiRotator enabledLoadingUi;
+        private Coroutine randomRoomOpenTableDataUpdatingCoroutine;
+        private readonly WaitForSecondsRealtime waitForSecondsRealtime = new WaitForSecondsRealtime(0.5f);
+        private bool isOpenTablesInstantiated = false;
 
         #region LoadingUi
 
@@ -143,6 +147,99 @@ namespace com.Rummy.Ui
             roomJoinUiController.EnableRoomTypeSelectionPanel();
         }
 
+        internal void StartUpdatingRandomRoomOpenTableDataInIntervals()
+        {
+            if (randomRoomOpenTableDataUpdatingCoroutine != null)
+            {
+                StopCoroutine(randomRoomOpenTableDataUpdatingCoroutine);
+            }
+            isOpenTablesInstantiated = false;
+            randomRoomOpenTableDataUpdatingCoroutine = StartCoroutine(GetRandomRoomTableDataInInterval());
+        }
+
+        internal void StopUpdatingRandomRoomOpenTableData()
+        {
+            StopCoroutine(randomRoomOpenTableDataUpdatingCoroutine);
+            randomRoomOpenTableDataUpdatingCoroutine = null;
+        }
+
+        private IEnumerator GetRandomRoomTableDataInInterval()
+        {
+            while (true)
+            {
+                if (!isOpenTablesInstantiated)
+                {
+                    EnableLoadingUi();
+                }
+                RESTApiConnectionManager.GetInstance.RoomList<RoomListResponse>(OnSuccessRoomList);
+                yield return waitForSecondsRealtime;
+            }
+        }
+
+        private void OnSuccessRoomList(RoomListResponse roomListResponse)
+        {
+            if (roomListResponse != null)
+            {
+                if (roomListResponse.cashGameInfo != null)
+                {
+                    if(roomJoinUiController.randomRoomTableSelectionScreen.activeSelf)
+                    {
+                        foreach (var gameinfo in roomListResponse.cashGameInfo)
+                        {
+                            if (GameVariables.userSelectedGameMode == gameinfo.gameMode)
+                            {
+                                if (isOpenTablesInstantiated)
+                                {
+                                    GameObject table;
+                                    for (int i = 0; i < gameinfo.roomData.Count; i++)
+                                    {
+                                        if (gameinfo.roomData[i].maxPlayers == 2)
+                                        {
+                                            table = Instantiate(roomJoinUiController.openTablePrefab, roomJoinUiController.twoPlayersScrollRectContent);
+                                            roomJoinUiController.twoPlayersOpenTable.Add(table.GetComponent<Table>());
+                                        }
+                                        else
+                                        {
+                                            table = Instantiate(roomJoinUiController.openTablePrefab, roomJoinUiController.sixPlayersScrollRectContent);
+                                            roomJoinUiController.sixPlayersOpenTable.Add(table.GetComponent<Table>());
+                                        }
+                                    }
+                                    isOpenTablesInstantiated = true;
+                                    DisableLoadingUi();
+                                }
+
+                                int twoPlayersOpenTableCount = 0;
+                                int sixPlayersOpenTableCount = 0;
+                                for (int j = 0; j < gameinfo.roomData.Count; j++)
+                                {
+                                    if (gameinfo.roomData[j].maxPlayers == 2)
+                                    {
+                                        roomJoinUiController.twoPlayersOpenTable[twoPlayersOpenTableCount].UpdateData(gameinfo.roomData[j].entryFee.ToString(), gameinfo.roomData[j].usersInTable, 2, gameinfo.roomData[j].activePlayers.ToString());
+                                        roomJoinUiController.twoPlayersOpenTable[twoPlayersOpenTableCount].onClickPlayNowButton += roomJoinUiController.OnClickOpenTablePlayNowButton;
+                                        twoPlayersOpenTableCount++;
+                                    }
+                                    else
+                                    {
+                                        roomJoinUiController.sixPlayersOpenTable[sixPlayersOpenTableCount].UpdateData(gameinfo.roomData[j].entryFee.ToString(), gameinfo.roomData[j].usersInTable, 6, gameinfo.roomData[j].activePlayers.ToString());
+                                        roomJoinUiController.sixPlayersOpenTable[sixPlayersOpenTableCount].onClickPlayNowButton += roomJoinUiController.OnClickOpenTablePlayNowButton;
+                                        sixPlayersOpenTableCount++;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                else
+                {
+                    Debug.LogError("roomListResponse.cashGameInfo is empty!");
+                }
+            }
+            else
+            {
+                Debug.LogError("RoomListResponse is empty!");
+            }
+        }
+
         internal void CreateRoom()
         {
             EnableLoadingUi();
@@ -163,10 +260,10 @@ namespace com.Rummy.Ui
             DisableLoadingUi();
         }
 
-        internal void JoinRoom(string roomId)
+        internal void JoinRoom(string roomId, string entryFee, string maxPlayers)
         {
             EnableLoadingUi();
-            RESTApiConnectionManager.GetInstance.RoomJoin<RoomJoinResponse>(roomId, OnSuccessRoomJoin, OnFailRoomJoin);
+            RESTApiConnectionManager.GetInstance.RoomJoin<RoomJoinResponse>(false, ((short)GameVariables.userSelectedGameMode).ToString(), maxPlayers, roomId, entryFee, OnSuccessRoomJoin, OnFailRoomJoin);
         }
 
         private void OnSuccessRoomJoin(RoomJoinResponse roomJoinResponse)

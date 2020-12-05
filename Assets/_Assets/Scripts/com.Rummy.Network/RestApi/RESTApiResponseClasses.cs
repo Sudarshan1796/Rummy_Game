@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using com.Rummy.GameVariable;
 
 namespace com.Rummy.Network
 {
@@ -32,7 +33,7 @@ namespace com.Rummy.Network
     }
 
     [Serializable]
-    public class UserUpdateProfile : ResponseData
+    public class UserUpdateProfileResponse : ResponseData
     {
         public int user_id;
         public int mob_no;
@@ -47,7 +48,7 @@ namespace com.Rummy.Network
     }
 
     [Serializable]
-    public class UserGetProfile : ResponseData
+    public class UserGetProfileResponse : ResponseData
     {
         public long user_id;
         public long mob_no;
@@ -107,5 +108,39 @@ namespace com.Rummy.Network
     {
         public int deposit;
         public int withdrawable;
+    }
+
+    [Serializable]
+    public class RoomListResponse : ResponseData
+    {
+        public List<CashGameInfo> cashGameInfo;
+        public List<PracticeGameInfo> practiceGameInfo;
+    }
+
+    [Serializable]
+    public class PracticeGameInfo
+    {
+        public GameVariables.GameMode gameMode;
+        public int minFee;
+        public int maxFee;
+        public List<RoomData> roomData;
+    }
+
+    [Serializable]
+    public class CashGameInfo
+    {
+        public GameVariables.GameMode gameMode;
+        public int minFee;
+        public int maxFee;
+        public List<RoomData> roomData;
+    }
+
+    [Serializable]
+    public class RoomData
+    {
+        public int maxPlayers;
+        public int entryFee;
+        public int activePlayers;
+        public int usersInTable;
     }
 }

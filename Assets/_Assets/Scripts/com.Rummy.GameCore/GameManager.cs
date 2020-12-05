@@ -76,10 +76,10 @@ namespace com.Rummy.GameCore
         private void UserGetProfile()
         {
             UiManager.GetInstance.EnableLoadingUi();
-            RESTApiConnectionManager.GetInstance.UserGetProfile<UserGetProfile>(OnGetUserProfileSuccess, OnGetUserProfileFail);
+            RESTApiConnectionManager.GetInstance.UserGetProfile<UserGetProfileResponse>(OnGetUserProfileSuccess, OnGetUserProfileFail);
         }
 
-        private void OnGetUserProfileSuccess(UserGetProfile userGetProfileResponse)
+        private void OnGetUserProfileSuccess(UserGetProfileResponse userGetProfileResponse)
         {
             Debug.Log("<color=green>User Profile Loaded</color>");
             GameVariables.UserProfile = userGetProfileResponse;
