@@ -37,13 +37,6 @@ namespace com.Rummy.Network
         public Card card;
     }
 
-    public class ShowCardRequest: SocketRequest
-    {
-        public int user_id;
-        public int room_id;
-        public List<Card> card_set;
-    }
-
     public class PlayerLeftRequest: SocketRequest
     {
         public int room_id;
@@ -53,5 +46,13 @@ namespace com.Rummy.Network
     public class DropRequest:SocketRequest
     {
         public int user_id;
+        public int room_id;
+    }
+
+    public class ShowCardRequest : SocketRequest
+    {
+        public int user_id;
+        public int room_id;
+        public List<CardGroup> card_group;
     }
 }

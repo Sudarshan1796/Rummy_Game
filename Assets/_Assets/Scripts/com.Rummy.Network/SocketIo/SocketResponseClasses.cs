@@ -106,14 +106,6 @@ namespace com.Rummy.Network
         public List<Card> card_set;
     }
 
-    [Serializable]
-    public class Declare
-    {
-        public int user_id;
-        public int room_id;
-        public List<CardGroup> card_group;
-    }
-
     public class DeclarResponse : SocketResponse
     {
         public int roomId;
@@ -135,19 +127,6 @@ namespace com.Rummy.Network
         public List<CardGroup> cardGroup;
         public int points;
         public bool isDropped;
-    }
-
-    public class RoundResultResponse : SocketResponse
-    {
-        public int roomId;
-        public List<Result> result;
-    }
-
-    [Serializable]
-    public class Drop
-    {
-        public int user_id;
-        public int room_id;
     }
 
     public class DropResponse : SocketResponse

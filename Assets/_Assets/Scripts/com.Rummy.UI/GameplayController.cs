@@ -20,11 +20,11 @@ namespace com.Rummy.UI
         [SerializeField] private PlayerUIController playerController;
         //this contains all other players
         [SerializeField] private List<PlayerUIController> gamePlayers;
-        [SerializeField] private GameObject closedCard;
-        [SerializeField] private GameObject discardPile;
+       // [SerializeField] private GameObject closedCard;
+       // [SerializeField] private GameObject discardPile;
         [SerializeField] private CardGroupController cardGroupController;
         //Dummy Movable card
-        [SerializeField] private Gameplay.Card movableCard;
+       // [SerializeField] private Gameplay.Card movableCard;
 
         //List of all players
         private Dictionary<int, PlayerUIController> activePlayers;

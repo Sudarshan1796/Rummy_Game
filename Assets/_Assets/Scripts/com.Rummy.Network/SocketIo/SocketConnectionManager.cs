@@ -102,7 +102,21 @@ namespace com.Rummy.Network
             
             socketManager.Socket.On(GameVariables.SocketResponseType.roundComplete.ToString(), (Socket socket, Packet packet, object[] args) => 
             { QueueResponse(Deserialize<RoundCompleteResponse>(GameVariables.SocketResponseType.roundComplete, args[0] as string)); });
-            
+
+            //added events
+            socketManager.Socket.On(GameVariables.SocketResponseType.declareRes.ToString(), (Socket socket, Packet packet, object[] args) =>
+            { QueueResponse(Deserialize<DeclarResponse>(GameVariables.SocketResponseType.declareRes, args[0] as string)); });
+
+            socketManager.Socket.On(GameVariables.SocketResponseType.dropRes.ToString(), (Socket socket, Packet packet, object[] args) =>
+            { QueueResponse(Deserialize<DropResponse>(GameVariables.SocketResponseType.dropRes, args[0] as string)); });
+           
+           //Listen when its Done
+           // socketManager.Socket.On(GameVariables.SocketResponseType.roomStateRes.ToString(), (Socket socket, Packet packet, object[] args) =>
+           // { QueueResponse(Deserialize<RoundCompleteResponse>(GameVariables.SocketResponseType.roomStateRes, args[0] as string)); });
+
+           // socketManager.Socket.On(GameVariables.SocketResponseType.roomClose.ToString(), (Socket socket, Packet packet, object[] args) =>
+           // { QueueResponse(Deserialize<RoundCompleteResponse>(GameVariables.SocketResponseType.roomClose, args[0] as string)); });
+
             socketManager.Open();
         }
 

@@ -25,6 +25,18 @@ namespace com.Rummy.Gameplay
         internal GameVariables.CardType cardValue;
         internal int cardIndexInParent;
 
+        public Network.Card GetCard
+        {
+            get
+            {
+                return new Network.Card()
+                {
+                    suitValue = this.suitType,
+                    cardValue = this.cardValue,
+                };
+            }
+        }
+
         private void Start()
         {
             cardGroupController = CardGroupController.GetInstance;

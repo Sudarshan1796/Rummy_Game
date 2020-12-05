@@ -22,7 +22,7 @@ namespace com.Rummy.Gameplay
         [SerializeField] private GameObject tempParemtObject;
         [SerializeField] private List<GameObject> cardGroupGameobject;
         [SerializeField] private List<CardGroup> cardGroups;
-        [SerializeField] private Button createGroupBtn, sortCardBtn,discardBtn;
+        [SerializeField] private Button createGroupBtn, sortCardBtn, discardBtn, dropBtn, DeclareBtn;
         [SerializeField] private GameObject createGroupPanel;
         [SerializeField] private RectTransform[] parentReactTans;
         [SerializeField] private TMP_Text[] groupSetText;
@@ -72,6 +72,9 @@ namespace com.Rummy.Gameplay
             createGroupBtn.onClick.AddListener(CheckCanCreateGroup);
             sortCardBtn.onClick.AddListener(SortCards);
             discardBtn.onClick.AddListener(OnCardDiscard);
+            dropBtn.onClick.AddListener(OnDropBtnClick);
+            DeclareBtn.onClick.AddListener(OnDeclareBtnClick);
+
         }
 
         private void OnDisable()
@@ -79,6 +82,8 @@ namespace com.Rummy.Gameplay
             createGroupBtn.onClick.RemoveListener(CheckCanCreateGroup);
             sortCardBtn.onClick.RemoveListener(SortCards);
             discardBtn.onClick.RemoveListener(OnCardDiscard);
+            dropBtn.onClick.RemoveListener(OnDropBtnClick);
+            DeclareBtn.onClick.RemoveListener(OnDeclareBtnClick);
         }
 
         public void InitilizeGroup(List<GameObject> _cardObject, List<Card> _cards)
@@ -248,6 +253,23 @@ namespace com.Rummy.Gameplay
         }
 
         /// <summary>
+        /// This is when player drops the card to the top of the drop panel
+        /// </summary>
+        /// <param name="_card"></param>
+        /// <param name="_cardObject"></param>
+        /// <returns></returns>
+        private bool IsAboveDropPanel(Card _card, GameObject _cardObject)
+        {
+            if (!declarePanel.activeSelf)
+                return false;
+            if (Vector3.Distance(_cardObject.transform.localPosition, declarePanel.transform.localPosition) <= 200.0f)
+            {
+                return true;
+            }
+            return false;
+        }
+
+        /// <summary>
         /// on each card selected add it to the new List to keep track of all selected item
         /// </summary>
         /// <param name="card"></param>
@@ -269,8 +291,9 @@ namespace com.Rummy.Gameplay
                     selectedObject.Remove(card);
                 }
             }
-
+            dropBtn.gameObject.SetActive(selectedObject.Count == 0 && gameplayManager.playerTurn == int.Parse(GameVariables.userId) && !gameplayManager.isCardDrawn);
             discardBtn.gameObject.SetActive(selectedObject.Count == 1 && gameplayManager.playerTurn == int.Parse(GameVariables.userId) && gameplayManager.isCardDrawn);
+            DeclareBtn.gameObject.SetActive(selectedObject.Count == 1 && gameplayManager.playerTurn == int.Parse(GameVariables.userId) && gameplayManager.isCardDrawn);
             if (CanCreateGroup())
             {
                 createGroupBtn.gameObject.SetActive(selectedObject.Count > 1);
@@ -699,10 +722,6 @@ namespace com.Rummy.Gameplay
             }
 
         }
-        private void Declare()
-        {
-
-        }
 
         public void OnCloseDeckClick()
         {
@@ -782,6 +801,8 @@ namespace com.Rummy.Gameplay
             };
             gameplayManager.DiscardCard(card);
             discardBtn.gameObject.SetActive(false);
+            DeclareBtn.gameObject.SetActive(false);
+
         }
 
         public void MoveUserCard(PlayerCard playerCard)
@@ -812,5 +833,57 @@ namespace com.Rummy.Gameplay
             OpenTileCard.Init(discardeCard.cardValue, discardeCard.suitValue);
             OpenTileCard.gameObject.SetActive(true);
         }
+
+        #region Drop
+        private void OnDropBtnClick()
+        {
+            //Show Confirmation Popup
+            //if yes then Drop
+            UiManager.GetInstance.ConfirmationPoup("Are you sure you want to Drop?", "Drop", DropCard);
+        }
+
+        private void DropCard()
+        {
+            gameplayManager.PlayerDrop();
+        }
+
+        internal void EnableDropButton()
+        {
+            dropBtn.gameObject.SetActive(selectedObject.Count == 0 && gameplayManager.playerTurn == int.Parse(GameVariables.userId) && !gameplayManager.isCardDrawn);
+        }
+        #endregion
+
+        #region Declare
+        private void OnDeclareBtnClick()
+        {
+            UiManager.GetInstance.ConfirmationPoup("Are you sure you want to Declare?", "Declare", Declare);
+        }
+
+        private void Declare()
+        {
+            discardBtn.gameObject.SetActive(false);
+            DeclareBtn.gameObject.SetActive(false);
+            List<Network.CardGroup> groupList = new List<Network.CardGroup>();
+            foreach (var group in cardGroupGameobject)
+            {
+                if (!group.activeSelf)
+                {
+                    continue;
+                }
+                Network.CardGroup cardGroup = new Network.CardGroup()
+                {
+                    group_id = group.transform.GetSiblingIndex() + 1,
+                    card_set = new List<Network.Card>(),
+                };
+                for (int i = 0; i < group.transform.childCount; i++)
+                {
+                    var card = group.transform.GetChild(i).GetComponent<Card>().GetCard;
+                    cardGroup.card_set.Add(card);
+                }
+                groupList.Add(cardGroup);
+            }
+            gameplayManager.PlayerDeclare(groupList);
+        }
+        #endregion
     }
 }

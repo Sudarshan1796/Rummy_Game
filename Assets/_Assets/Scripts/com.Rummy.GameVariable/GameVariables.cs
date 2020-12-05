@@ -41,7 +41,7 @@ namespace com.Rummy.GameVariable
             roomJoin,
             cardDraw,
             cardDiscard,
-            show,
+            declare,
             playerLeft,
             drop
         }
@@ -54,7 +54,11 @@ namespace com.Rummy.GameVariable
             cardDrawRes,
             cardDiscardRes,
             playerLeftRes,
-            roundComplete
+            roundComplete,
+            declareRes,
+            dropRes,
+            roomStateRes,
+            roomClose
         }
 
         public enum RESTApiType : short

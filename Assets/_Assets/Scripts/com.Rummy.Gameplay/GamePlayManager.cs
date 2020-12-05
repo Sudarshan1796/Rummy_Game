@@ -29,7 +29,7 @@ namespace com.Rummy.Gameplay
         internal int remainingTime;
         internal int eventTime;
         internal bool isJoinedRoom;
-
+        internal bool isPlayerDropped;
         internal bool isCardDrawn = false;
 
         public static GamePlayManager GetInstance
@@ -163,6 +163,7 @@ namespace com.Rummy.Gameplay
             UiManager.GetInstance.MoveDiscardedCard(_playerCard, response.userId);
             UiManager.GetInstance.StartTimer(playerTurn, remainingTime, OnTimerComplete);
             isCardDrawn = false;
+            CardGroupController.GetInstance.EnableDropButton();
             //UiManager.GetInstance.StartTimer(playerTurn, remainingTime, OnTimerComplete);
         }
 
@@ -174,13 +175,21 @@ namespace com.Rummy.Gameplay
             UiManager.GetInstance.LeaveSocketRoom();
         }
 
+        private void OnPlayerDrop(DropResponse response)
+        {
+            playerTurn      = response.playerTurn;
+            remainingTime   = response.remainingTime;
+            isPlayerDropped = (response.userId == int.Parse(GameVariables.userId));
+            //Todo: Make the Player just Spectacle
+        }
+
         private void OnRoundComplete(RoundCompleteResponse response)
         {
             //Show Results
         }
         #endregion
 
-        #region SOCKET SEND
+        #region Client Event
 
         internal void SocketRoomJoin(int roomId)
         {
@@ -219,15 +228,15 @@ namespace com.Rummy.Gameplay
             SocketConnectionManager.GetInstance.SendSocketRequest(GameVariables.SocketRequestType.cardDiscard, request);
         }
 
-        internal void CardShow(List<Network.Card> cards)
+        internal void PlayerDeclare(List<Network.CardGroup> groupset)
         {
             ShowCardRequest request = new ShowCardRequest
             {
-                user_id = int.Parse(GameVariables.userId),
-                room_id = roomId,
-                card_set = cards
+                user_id     = int.Parse(GameVariables.userId),
+                room_id     = roomId,
+                card_group  = groupset,
             };
-            SocketConnectionManager.GetInstance.SendSocketRequest(GameVariables.SocketRequestType.show, request);
+            SocketConnectionManager.GetInstance.SendSocketRequest(GameVariables.SocketRequestType.declare, request);
         }
 
         internal void PlayerDrop()
@@ -235,6 +244,7 @@ namespace com.Rummy.Gameplay
             DropRequest request = new DropRequest
             {
                 user_id = int.Parse(GameVariables.userId),
+                room_id = roomId,
             };
             SocketConnectionManager.GetInstance.SendSocketRequest(GameVariables.SocketRequestType.drop, request);
         }
@@ -246,7 +256,7 @@ namespace com.Rummy.Gameplay
                 room_id = roomId,
                 user_id = int.Parse(GameVariables.userId),
             };
-            SocketConnectionManager.GetInstance.SendSocketRequest(GameVariables.SocketRequestType.show, request);
+            SocketConnectionManager.GetInstance.SendSocketRequest(GameVariables.SocketRequestType.declare, request);
         }
         #endregion
         #endregion
