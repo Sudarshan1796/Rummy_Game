@@ -28,6 +28,8 @@ namespace com.Rummy.Gameplay
         public Network.Card GetCard
         {
             get
+
+
             {
                 return new Network.Card()
                 {

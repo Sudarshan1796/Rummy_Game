@@ -231,6 +231,15 @@ namespace com.Rummy.Ui
             gameplayController.Activate();
         }
 
+        internal void EnableResultScreen()
+        {
+            gameplayController.EnableResultScreen();
+        }
+        internal void SetResultScreeenData(RoundCompleteResponse response)
+        {
+            gameplayController.SetRoundCompleteData(response);
+        }
+
         internal void MoveDiscardedCard(PlayerCard playerCard,int userId)
         {
             gameplayController.MoveDiscardedCard(playerCard, userId);

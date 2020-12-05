@@ -93,13 +93,13 @@ namespace com.Rummy.Network
         public List<Card> cardSet;
         public int points;
     }*/
-
+   [Serializable]
     public class RoundCompleteResponse: SocketResponse
     {
         public int roomId;
         public List<Result> result;
     }
-
+    [Serializable]
     public class CardGroup
     {
         public int group_id;
@@ -119,6 +119,7 @@ namespace com.Rummy.Network
         public int points;
     }
 
+    [Serializable]
     public class Result
     {
         public int userId;

@@ -1,6 +1,7 @@
 ﻿using com.Rummy.GameVariable;
 using com.Rummy.Network;
 using com.Rummy.Ui;
+using com.Rummy.UI;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -186,6 +187,8 @@ namespace com.Rummy.Gameplay
         private void OnRoundComplete(RoundCompleteResponse response)
         {
             //Show Results
+            UiManager.GetInstance.EnableResultScreen();
+            UiManager.GetInstance.SetResultScreeenData(response);
         }
         #endregion
 

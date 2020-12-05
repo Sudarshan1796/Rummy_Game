@@ -23,6 +23,8 @@ namespace com.Rummy.UI
        // [SerializeField] private GameObject closedCard;
        // [SerializeField] private GameObject discardPile;
         [SerializeField] private CardGroupController cardGroupController;
+        //Result screen
+        [SerializeField] private ResultScreen resultScreen;
         //Dummy Movable card
        // [SerializeField] private Gameplay.Card movableCard;
 
@@ -260,6 +262,15 @@ namespace com.Rummy.UI
             {
                 cardGroupController.MoveUserCard(playerCard);
             }
+        }
+
+        internal void EnableResultScreen()
+        {
+            resultScreen.UpdateState(true);
+        }
+        internal void SetRoundCompleteData(RoundCompleteResponse response)
+        {
+            resultScreen.OnRoundComplete(response);
         }
     }
 }
