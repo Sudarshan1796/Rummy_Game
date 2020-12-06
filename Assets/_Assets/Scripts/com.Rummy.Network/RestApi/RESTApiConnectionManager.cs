@@ -90,6 +90,9 @@ namespace com.Rummy.Network
             payloadKeyValuePairs.Clear();
             payloadKeyValuePairs.Add(GameConstants.USER_ID, GameVariables.userId);
             payloadKeyValuePairs.Add(GameConstants.ACCESS_TOKEN, GameVariables.AccessToken);
+            payloadKeyValuePairs.Add(GameConstants.IS_PRACTICE, isPractice?"1":"0");
+            payloadKeyValuePairs.Add(GameConstants.GAME_MODE, gameMode);
+            payloadKeyValuePairs.Add(GameConstants.MAX_PLAYERS, maxPlayers);
             payloadKeyValuePairs.Add(GameConstants.ROOM_CODE, roomCode);
             payloadKeyValuePairs.Add(GameConstants.ENTRY_FEE, entryFee);
             _ = StartCoroutine(RESTApiService.UnityWebRequestInPostMethod(GameVariables.GetRestApiUrl(GameVariables.RESTApiType.roomJoin),
@@ -102,7 +105,7 @@ namespace com.Rummy.Network
             payloadKeyValuePairs.Add(GameConstants.USER_ID, GameVariables.userId);
             payloadKeyValuePairs.Add(GameConstants.ACCESS_TOKEN, GameVariables.AccessToken);
             _ = StartCoroutine(RESTApiService.UnityWebRequestInPostMethod(GameVariables.GetRestApiUrl(GameVariables.RESTApiType.roomList),
-                                                                          payloadKeyValuePairs, successResponse, errorResponse));
+                                                                          payloadKeyValuePairs, successResponse, errorResponse, false));
         }
     }
 }

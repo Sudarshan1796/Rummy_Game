@@ -115,26 +115,21 @@ namespace com.Rummy.Ui
             UiManager.GetInstance.StopUpdatingRandomRoomOpenTableData();
             roomTypeSelectionScreen.SetActive(true);
             randomRoomTableSelectionScreen.SetActive(false);
-            foreach(var table in twoPlayersOpenTable)
-            {
-                table.onClickPlayNowButton -= OnClickOpenTablePlayNowButton;
-                table.playNowButton.onClick.AddListener(null);
-                DestroyImmediate(table.gameObject, true);
-            }
-            foreach (var table in sixPlayersOpenTable)
-            {
-                table.onClickPlayNowButton -= OnClickOpenTablePlayNowButton;
-                table.playNowButton.onClick.AddListener(null);
-                DestroyImmediate(table.gameObject, true);
-            }
-            twoPlayersOpenTable.Clear();
-            sixPlayersOpenTable.Clear();
+            DestroyRandomRoomTables();
         }
 
         private void OnClickRoomJoinWaitingScreenCloseButton()
         {
             UiManager.GetInstance.LeaveSocketRoom();
-            customRoomSizeSelectionScreen.SetActive(true);
+            if (userSelectedRoomType == RoomType.CustomRoom)
+            {
+                customRoomSizeSelectionScreen.SetActive(true);
+            }
+            else
+            {
+                randomRoomTableSelectionScreen.SetActive(true);
+                UiManager.GetInstance.StartUpdatingRandomRoomOpenTableDataInIntervals();
+            }
             roomJoinWaitingScreen.SetActive(false);
         }
 
@@ -205,7 +200,16 @@ namespace com.Rummy.Ui
             }
             ResetDynamicText();
             roomJoinWaitingScreen.SetActive(true);
-            customRoomSizeSelectionScreen.SetActive(false);
+            if (userSelectedRoomType == RoomType.CustomRoom)
+            {
+                customRoomSizeSelectionScreen.SetActive(false);
+            }
+            else
+            {
+                UiManager.GetInstance.StopUpdatingRandomRoomOpenTableData();
+                randomRoomTableSelectionScreen.SetActive(false);
+                DestroyRandomRoomTables();
+            }
         }
 
         internal void DisableRoomJoinWaitScreen()
@@ -240,6 +244,24 @@ namespace com.Rummy.Ui
         {
             playersRoomJoinedText.text = "";
             playersRoomJoinedCountText.text = "";
+        }
+
+        private void DestroyRandomRoomTables()
+        {
+            foreach (var table in twoPlayersOpenTable)
+            {
+                table.onClickPlayNowButton -= OnClickOpenTablePlayNowButton;
+                table.playNowButton.onClick.AddListener(null);
+                DestroyImmediate(table.gameObject, true);
+            }
+            foreach (var table in sixPlayersOpenTable)
+            {
+                table.onClickPlayNowButton -= OnClickOpenTablePlayNowButton;
+                table.playNowButton.onClick.AddListener(null);
+                DestroyImmediate(table.gameObject, true);
+            }
+            twoPlayersOpenTable.Clear();
+            sixPlayersOpenTable.Clear();
         }
 
         private IEnumerator StartRoomJoinRemainingTimer(int remainingTime)

@@ -61,26 +61,34 @@ namespace com.Rummy.Network
                     }
 
                     RESTApiResponse<T> response = JsonUtility.FromJson<RESTApiResponse<T>>(unityWebRequest.downloadHandler.text);
-                    if (response.responseCode == 200)
+                    if (response != null)
                     {
-                        successResponse?.Invoke(response.responseData);
-                    }
-                    else
-                    {
-                        if (errorResponse != null)
+                        if (response.responseCode == 200)
                         {
-                            errorResponse.Invoke(url, $"Response: Error Occurred! \n ResponseCode: {response.responseCode} \n ResponseMessage : {response.responseMessage}");
+                            successResponse?.Invoke(response.responseData);
                         }
                         else
                         {
-                            Debug.Log($"<Color=red>Url : {url} \n Response : Error Occurred! \n ResponseCode : {response.responseCode} \n ResponseMessage : {response.responseMessage}</Color>");
+                            if (errorResponse != null)
+                            {
+                                errorResponse.Invoke(url, $"Response: Error Occurred! \n ResponseCode: {response.responseCode} \n ResponseMessage : {response.responseMessage}");
+                            }
+                            else
+                            {
+                                Debug.Log($"<Color=red>Url : {url} \n Response : Error Occurred! \n ResponseCode : {response.responseCode} \n ResponseMessage : {response.responseMessage}</Color>");
+                            }
                         }
+                    }
+                    else
+                    {
+                        Debug.LogError($"Null Response!! \n Url : {url} \n Request : {bodyJsonString} \n Response : {unityWebRequest.downloadHandler.text}");
                     }
                 }
             }
             catch(Exception e)
             {
                 Debug.LogError(e.Message + "\n" + e.StackTrace);
+                Debug.LogError($"Url : {url} \n Response : {unityWebRequest.downloadHandler.text}");
             }
         }
 
@@ -120,26 +128,34 @@ namespace com.Rummy.Network
                     }
 
                     RESTApiResponse<T> response = JsonUtility.FromJson<RESTApiResponse<T>>(unityWebRequest.downloadHandler.text);
-                    if (response.responseCode == 200)
+                    if (response != null)
                     {
-                        successResponse?.Invoke(response.responseData);
-                    }
-                    else
-                    {
-                        if (errorResponse != null)
+                        if (response.responseCode == 200)
                         {
-                            errorResponse.Invoke($"<Color=red>Url : {baseUrl}</Color>", $"<Color=red>Response: Error Occurred! \n ResponseCode: {response.responseCode} \n ResponseMessage : {response.responseMessage}</Color>");
+                            successResponse?.Invoke(response.responseData);
                         }
                         else
                         {
-                            Debug.Log($"<Color=red>Url : {baseUrl} \n Response : Error Occurred! \n ResponseCode : {response.responseCode} \n ResponseMessage : {response.responseMessage}</Color>");
+                            if (errorResponse != null)
+                            {
+                                errorResponse.Invoke($"<Color=red>Url : {baseUrl}</Color>", $"<Color=red>Response: Error Occurred! \n ResponseCode: {response.responseCode} \n ResponseMessage : {response.responseMessage}</Color>");
+                            }
+                            else
+                            {
+                                Debug.Log($"<Color=red>Url : {baseUrl} \n Response : Error Occurred! \n ResponseCode : {response.responseCode} \n ResponseMessage : {response.responseMessage}</Color>");
+                            }
                         }
+                    }
+                    else
+                    {
+                        Debug.LogError($"Null Response!! \n Url : {url} \n Request : {url} \n Response : {unityWebRequest.downloadHandler.text}");
                     }
                 }
             }
             catch (Exception e)
             {
                 Debug.LogError(e.Message + "\n" + e.StackTrace);
+                Debug.LogError($"Url : {url} \n Response : {unityWebRequest.downloadHandler.text}");
             }
         }
     }

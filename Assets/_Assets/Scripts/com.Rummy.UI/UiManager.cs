@@ -180,15 +180,15 @@ namespace com.Rummy.Ui
         {
             if (roomListResponse != null)
             {
-                if (roomListResponse.cashGameInfo != null)
+                if (roomListResponse.practiceGameInfo != null)
                 {
                     if(roomJoinUiController.randomRoomTableSelectionScreen.activeSelf)
                     {
-                        foreach (var gameinfo in roomListResponse.cashGameInfo)
+                        foreach (var gameinfo in roomListResponse.practiceGameInfo)
                         {
                             if (GameVariables.userSelectedGameMode == gameinfo.gameMode)
                             {
-                                if (isOpenTablesInstantiated)
+                                if (!isOpenTablesInstantiated)
                                 {
                                     GameObject table;
                                     for (int i = 0; i < gameinfo.roomData.Count; i++)
@@ -204,8 +204,6 @@ namespace com.Rummy.Ui
                                             roomJoinUiController.sixPlayersOpenTable.Add(table.GetComponent<Table>());
                                         }
                                     }
-                                    isOpenTablesInstantiated = true;
-                                    DisableLoadingUi();
                                 }
 
                                 int twoPlayersOpenTableCount = 0;
@@ -215,15 +213,23 @@ namespace com.Rummy.Ui
                                     if (gameinfo.roomData[j].maxPlayers == 2)
                                     {
                                         roomJoinUiController.twoPlayersOpenTable[twoPlayersOpenTableCount].UpdateData(gameinfo.roomData[j].entryFee.ToString(), gameinfo.roomData[j].usersInTable, 2, gameinfo.roomData[j].activePlayers.ToString());
-                                        roomJoinUiController.twoPlayersOpenTable[twoPlayersOpenTableCount].onClickPlayNowButton += roomJoinUiController.OnClickOpenTablePlayNowButton;
+                                        if (roomJoinUiController.twoPlayersOpenTable[twoPlayersOpenTableCount].onClickPlayNowButton == null)
+                                            roomJoinUiController.twoPlayersOpenTable[twoPlayersOpenTableCount].onClickPlayNowButton += roomJoinUiController.OnClickOpenTablePlayNowButton;
                                         twoPlayersOpenTableCount++;
                                     }
                                     else
                                     {
                                         roomJoinUiController.sixPlayersOpenTable[sixPlayersOpenTableCount].UpdateData(gameinfo.roomData[j].entryFee.ToString(), gameinfo.roomData[j].usersInTable, 6, gameinfo.roomData[j].activePlayers.ToString());
-                                        roomJoinUiController.sixPlayersOpenTable[sixPlayersOpenTableCount].onClickPlayNowButton += roomJoinUiController.OnClickOpenTablePlayNowButton;
+                                        if (roomJoinUiController.sixPlayersOpenTable[sixPlayersOpenTableCount].onClickPlayNowButton == null)
+                                            roomJoinUiController.sixPlayersOpenTable[sixPlayersOpenTableCount].onClickPlayNowButton += roomJoinUiController.OnClickOpenTablePlayNowButton;
                                         sixPlayersOpenTableCount++;
                                     }
+                                }
+
+                                if (!isOpenTablesInstantiated)
+                                {
+                                    isOpenTablesInstantiated = true;
+                                    DisableLoadingUi();
                                 }
                             }
                         }
@@ -231,7 +237,7 @@ namespace com.Rummy.Ui
                 }
                 else
                 {
-                    Debug.LogError("roomListResponse.cashGameInfo is empty!");
+                    Debug.LogError("roomListResponse.practiceGameInfo is empty!");
                 }
             }
             else
@@ -244,7 +250,7 @@ namespace com.Rummy.Ui
         {
             EnableLoadingUi();
             roomJoinUiController.PrintRoomJoinErrorMessage("");
-            RESTApiConnectionManager.GetInstance.RoomCreate<RoomCreateResponse>(false, ((short)GameVariables.userSelectedGameMode).ToString(), ((short)GameVariables.userSelectedRoomSize).ToString(), OnSuccessRoomCreate, OnFailRoomCreate);
+            RESTApiConnectionManager.GetInstance.RoomCreate<RoomCreateResponse>(true, ((short)GameVariables.userSelectedGameMode).ToString(), ((short)GameVariables.userSelectedRoomSize).ToString(), OnSuccessRoomCreate, OnFailRoomCreate);
         }
 
         private void OnSuccessRoomCreate(RoomCreateResponse roomCreateResponse)
@@ -263,7 +269,7 @@ namespace com.Rummy.Ui
         internal void JoinRoom(string roomId, string entryFee, string maxPlayers)
         {
             EnableLoadingUi();
-            RESTApiConnectionManager.GetInstance.RoomJoin<RoomJoinResponse>(false, ((short)GameVariables.userSelectedGameMode).ToString(), maxPlayers, roomId, entryFee, OnSuccessRoomJoin, OnFailRoomJoin);
+            RESTApiConnectionManager.GetInstance.RoomJoin<RoomJoinResponse>(true, ((short)GameVariables.userSelectedGameMode).ToString(), maxPlayers, roomId, entryFee, OnSuccessRoomJoin, OnFailRoomJoin);
         }
 
         private void OnSuccessRoomJoin(RoomJoinResponse roomJoinResponse)
