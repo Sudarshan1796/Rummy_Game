@@ -50,20 +50,6 @@ namespace com.Rummy.Network
                                                                           payloadKeyValuePairs, successResponse, errorResponse));
         }
 
-        internal void UserUpdateProfile<T>(string mobNumber, string email, string userName, string firstName, string lastName, Action<T> successResponse = null, Action<string, string> errorResponse = null) where T : ResponseData
-        {
-            payloadKeyValuePairs.Clear();
-            payloadKeyValuePairs.Add(GameConstants.USER_ID, GameVariables.userId);
-            payloadKeyValuePairs.Add(GameConstants.ACCESS_TOKEN, GameVariables.AccessToken);
-            payloadKeyValuePairs.Add(GameConstants.MOB_NO, mobNumber);
-            payloadKeyValuePairs.Add(GameConstants.EMAIL, email);
-            payloadKeyValuePairs.Add(GameConstants.USER_NAME, userName);
-            payloadKeyValuePairs.Add(GameConstants.FIRST_NAME, firstName);
-            payloadKeyValuePairs.Add(GameConstants.LAST_NAME, lastName);
-            _ = StartCoroutine(RESTApiService.UnityWebRequestInPostMethod(GameVariables.GetRestApiUrl(GameVariables.RESTApiType.updateProfile),
-                                                                          payloadKeyValuePairs, successResponse, errorResponse));
-        }
-
         internal void UserGetProfile<T>(Action<T> successResponse = null, Action<string, string> errorResponse = null) where T : ResponseData
         {
             payloadKeyValuePairs.Clear();
@@ -106,6 +92,19 @@ namespace com.Rummy.Network
             payloadKeyValuePairs.Add(GameConstants.ACCESS_TOKEN, GameVariables.AccessToken);
             _ = StartCoroutine(RESTApiService.UnityWebRequestInPostMethod(GameVariables.GetRestApiUrl(GameVariables.RESTApiType.roomList),
                                                                           payloadKeyValuePairs, successResponse, errorResponse, false));
+        }
+
+        internal void UserUpdateProfile<T>(string email, string userName, string firstName, string lastName, Action<T> successResponse = null, Action<string, string> errorResponse = null) where T : ResponseData
+        {
+            payloadKeyValuePairs.Clear();
+            payloadKeyValuePairs.Add(GameConstants.USER_ID, GameVariables.userId);
+            payloadKeyValuePairs.Add(GameConstants.ACCESS_TOKEN, GameVariables.AccessToken);
+            payloadKeyValuePairs.Add(GameConstants.EMAIL, email);
+            payloadKeyValuePairs.Add(GameConstants.USER_NAME, userName);
+            payloadKeyValuePairs.Add(GameConstants.FIRST_NAME, firstName);
+            payloadKeyValuePairs.Add(GameConstants.LAST_NAME, lastName);
+            _ = StartCoroutine(RESTApiService.UnityWebRequestInPostMethod(GameVariables.GetRestApiUrl(GameVariables.RESTApiType.updateProfile),
+                                                                          payloadKeyValuePairs, successResponse, errorResponse));
         }
     }
 }

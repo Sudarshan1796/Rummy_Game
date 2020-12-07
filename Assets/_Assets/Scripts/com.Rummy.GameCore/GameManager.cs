@@ -86,6 +86,7 @@ namespace com.Rummy.GameCore
             SetScreenOrientation(ScreenOrientation.LandscapeLeft);
             UiManager.GetInstance.EnableMainMenuUi();
             UiManager.GetInstance.ShowMainMenuUserName();
+            UiManager.GetInstance.UpdateUserProfileData();
             Invoke(nameof(BufferTimeToRotateScreen), 1);
         }
 
