@@ -28,6 +28,7 @@ namespace com.Rummy.Ui
         [SerializeField] private List<UiRotator> loadingUiController;
         [SerializeField] private LoginUiController loginUiController;
         [SerializeField] private MainMenuUiController mainMenuUiController;
+        [SerializeField] private ProfileScreenController profileScreenController;
         [SerializeField] private RoomJoinUiController roomJoinUiController;
         [SerializeField] private GameplayController gameplayController;
         [SerializeField] private CommonPopUpUiController commonPopUpUiController;
@@ -136,6 +137,62 @@ namespace com.Rummy.Ui
         internal void ShowMainMenuUserName()
         {
             mainMenuUiController.ShowUserName();
+        }
+
+        #endregion
+
+        #region ProfileScreenUi
+
+        internal void UpdateUserProfileData()
+        {
+           profileScreenController.UpdatePersonalDetails(string.IsNullOrEmpty(GameVariables.UserProfile.mob_no.ToString()) ? GameVariables.UserProfile.temp_mob_no.ToString() : GameVariables.UserProfile.mob_no.ToString(), !string.IsNullOrEmpty(GameVariables.UserProfile.mob_no.ToString()),
+           string.IsNullOrEmpty(GameVariables.UserProfile.email) ? GameVariables.UserProfile.temp_email : GameVariables.UserProfile.email, !string.IsNullOrEmpty(GameVariables.UserProfile.email),
+           GameVariables.UserProfile.user_name,
+           string.IsNullOrEmpty(GameVariables.UserProfile.first_name) ? "-" : GameVariables.UserProfile.first_name,
+           string.IsNullOrEmpty(GameVariables.UserProfile.last_name) ? "-" : GameVariables.UserProfile.last_name);
+        }
+
+        internal void UpdateEmail(string email)
+        {
+            EnableLoadingUi();
+            RESTApiConnectionManager.GetInstance.UserUpdateProfile<UserUpdateProfileResponse>(email, "", "", "", OnUserUpdateProfileSuccess, OnFailUserProfileUpdate);
+        }
+
+        internal void UpdateDisplayName(string displayName)
+        {
+            EnableLoadingUi();
+            RESTApiConnectionManager.GetInstance.UserUpdateProfile<UserUpdateProfileResponse>("", displayName, "", "", OnUserUpdateProfileSuccess, OnFailUserProfileUpdate);
+        }
+
+        internal void UpdateFullName(string firstName, string lastName)
+        {
+            EnableLoadingUi();
+            RESTApiConnectionManager.GetInstance.UserUpdateProfile<UserUpdateProfileResponse>("", "", firstName, lastName, OnUserUpdateProfileSuccess, OnFailUserProfileUpdate);
+        }
+
+        private void OnUserUpdateProfileSuccess(UserUpdateProfileResponse userUpdateProfileResponse)
+        {
+            GameVariables.UserProfile.email = userUpdateProfileResponse.email;
+            GameVariables.UserProfile.temp_email = userUpdateProfileResponse.temp_email;
+            GameVariables.UserProfile.user_name = userUpdateProfileResponse.user_name;
+            GameVariables.UserProfile.first_name = userUpdateProfileResponse.first_name;
+            GameVariables.UserProfile.last_name = userUpdateProfileResponse.last_name;
+            mainMenuUiController.ShowUserName();
+
+            profileScreenController.UpdatePersonalDetails(null, false,
+                string.IsNullOrEmpty(userUpdateProfileResponse.email)?userUpdateProfileResponse.temp_email:userUpdateProfileResponse.email, !string.IsNullOrEmpty(userUpdateProfileResponse.email),
+                userUpdateProfileResponse.user_name,
+                string.IsNullOrEmpty(userUpdateProfileResponse.first_name)?"-":userUpdateProfileResponse.first_name,
+                string.IsNullOrEmpty(userUpdateProfileResponse.last_name)?"-":userUpdateProfileResponse.last_name);
+
+            profileScreenController.GoToOverviewScreen();
+            DisableLoadingUi();
+        }
+
+        private void OnFailUserProfileUpdate(string url, string errorMessage)
+        {
+            profileScreenController.GoToOverviewScreen();
+            DisableLoadingUi();
         }
 
         #endregion

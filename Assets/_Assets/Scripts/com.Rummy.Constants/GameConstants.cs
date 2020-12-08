@@ -31,6 +31,7 @@
         internal const string EMAIL = "email";
         internal const string ROOM_CODE = "room_code";
         internal const string ENTRY_FEE = "entry_fee";
+        internal const string Email = "email";
 
         #endregion
     }

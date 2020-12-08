@@ -38,7 +38,7 @@ namespace com.Rummy.Ui
 
         internal void ShowUserName()
         {
-            phoneNumberText.text = GameVariables.UserProfile.mob_no.ToString();
+            phoneNumberText.text = GameVariables.UserProfile.user_name;
         }
     }
 }

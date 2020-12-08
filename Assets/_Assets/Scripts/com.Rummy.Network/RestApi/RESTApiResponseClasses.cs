@@ -36,15 +36,11 @@ namespace com.Rummy.Network
     public class UserUpdateProfileResponse : ResponseData
     {
         public int user_id;
-        public int mob_no;
         public string email;
+        public string temp_email;
         public string user_name;
         public string first_name;
         public string last_name;
-        public bool is_mob_verified;
-        public bool is_email_verified;
-        public int coins;
-        public int balance;
     }
 
     [Serializable]
@@ -54,10 +50,10 @@ namespace com.Rummy.Network
         public long mob_no;
         public string email;
         public string user_name;
+        public string temp_email;
+        public int temp_mob_no;
         public string first_name;
         public string last_name;
-        public bool is_mob_verified;
-        public bool is_email_verified;
         public int coins;
         public Balance balance;
         public List<AccountStatement> account_statement;
