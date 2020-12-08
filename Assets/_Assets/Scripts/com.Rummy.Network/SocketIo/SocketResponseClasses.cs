@@ -99,6 +99,7 @@ namespace com.Rummy.Network
         public int roomId;
         public List<Result> result;
     }
+
     [Serializable]
     public class CardGroup
     {
@@ -117,6 +118,12 @@ namespace com.Rummy.Network
         public int remainingTime;
         public List<CardGroup> cardGroup;
         public int points;
+        public int totalPoints;
+        public int nextRoundStartTime;
+        public Card showCard;
+        public bool isWinner;
+        public bool isEliminated;
+
     }
 
     [Serializable]
@@ -127,7 +134,10 @@ namespace com.Rummy.Network
         public string userName;
         public List<CardGroup> cardGroup;
         public int points;
+        public int totalPoints;
         public bool isDropped;
+        public bool isWinner;
+        public bool isEliminated;
     }
 
     public class DropResponse : SocketResponse
@@ -138,5 +148,6 @@ namespace com.Rummy.Network
         public int playerTurn;
         public int eventTime;
         public int remainingTime;
+        public int nextRoundStartTime;
     }
 }

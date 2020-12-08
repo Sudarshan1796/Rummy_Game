@@ -7,11 +7,14 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using Card = com.Rummy.Network.Card;
 
 namespace com.Rummy.UI
 {
     public class GameplayController : MonoBehaviour
     {
+        private static GameplayController instance;
+
         [SerializeField] private GameObject gameplayObject;
         [SerializeField] private GameObject[] cardPosition;
         [SerializeField] private GameObject cardInitPosition;
@@ -20,13 +23,15 @@ namespace com.Rummy.UI
         [SerializeField] private PlayerUIController playerController;
         //this contains all other players
         [SerializeField] private List<PlayerUIController> gamePlayers;
-       // [SerializeField] private GameObject closedCard;
-       // [SerializeField] private GameObject discardPile;
+        // [SerializeField] private GameObject closedCard;
+        // [SerializeField] private GameObject discardPile;
         [SerializeField] private CardGroupController cardGroupController;
         //Result screen
         [SerializeField] private ResultScreen resultScreen;
+
+        [SerializeField] private UICard showCardsCard;
         //Dummy Movable card
-       // [SerializeField] private Gameplay.Card movableCard;
+        // [SerializeField] private Gameplay.Card movableCard;
 
         //List of all players
         private Dictionary<int, PlayerUIController> activePlayers;
@@ -34,6 +39,19 @@ namespace com.Rummy.UI
         private List<GameObject> cardgameObject;
 
         internal bool isPlayerTurn;
+
+        public static GameplayController GetInstance
+        {
+            get
+            {
+                if (instance==null)
+                {
+                    instance = FindObjectOfType<GameplayController>();
+                }
+
+                return instance;
+            }
+        }
         private void Awake()
         {
             cards = new List<Gameplay.Card>();
@@ -44,7 +62,7 @@ namespace com.Rummy.UI
         {
             AddListners();
         }
-        
+
         private void OnDisable()
         {
             RemoveListeners();
@@ -61,7 +79,7 @@ namespace com.Rummy.UI
         private void RemoveListeners()
         {
             if (GamePlayManager.GetInstance)
-            GamePlayManager.GetInstance.OnGameStart -= createCard;
+                GamePlayManager.GetInstance.OnGameStart -= createCard;
             CardGroupController.onCardSelect -= CreateCard;
             btnDrop.onClick.RemoveListener(OnDropClick);
             btnExit.onClick.RemoveListener(OnRoomExit);
@@ -89,6 +107,7 @@ namespace com.Rummy.UI
         /// </summary>
         private void createCard(List<PlayerCard> playerCards)
         {
+            showCardsCard.gameObject.SetActive(false);
             Debug.Log(playerCards.Count);
             DestroyAllCards();
             for (int i = 0; i < playerCards.Count; i++)
@@ -96,11 +115,11 @@ namespace com.Rummy.UI
                 Debug.Log("player cards are" + playerCards[i].suitValue + "-" + playerCards[i].cardValue);
                 var _gameObject = CardController.GetInstance.GetObject(cardInitPosition.transform);
                 var _card = _gameObject.GetComponent<Gameplay.Card>();
-                _card.Init( playerCards[i].cardValue, playerCards[i].suitValue);
+                _card.Init(playerCards[i].cardValue, playerCards[i].suitValue);
                 cards.Add(_card);
                 cardgameObject.Add(_gameObject);
             }
-            StartCoroutine(PlayCardAnimation(()=>
+            StartCoroutine(PlayCardAnimation(() =>
             {
                 CardGroupController.GetInstance.InitilizeGroup(cardgameObject, cards);
             }));
@@ -108,7 +127,7 @@ namespace com.Rummy.UI
 
         private void DestroyAllCards()
         {
-            for(int i=0;i<cardgameObject.Count;i++)
+            for (int i = 0; i < cardgameObject.Count; i++)
             {
                 Destroy(cardgameObject[i]);
             }
@@ -200,7 +219,7 @@ namespace com.Rummy.UI
         internal void OnPlayerJoin(Player player)
         {
             var index = activePlayers.Count;
-            if(index>0)
+            if (index > 0)
             {
                 index = index - 1;
             }
@@ -268,9 +287,26 @@ namespace com.Rummy.UI
         {
             resultScreen.UpdateState(true);
         }
+
+        internal void DisableResultScreen()
+        {
+            resultScreen.UpdateState(false);
+        }
+
         internal void SetRoundCompleteData(RoundCompleteResponse response)
         {
             resultScreen.OnRoundComplete(response);
+        }
+
+        internal void SetDeclaredata(DeclarResponse result)
+        {
+            resultScreen.OnDeclareComplete(result);
+        }
+
+        internal void SetShowCard(Card card)
+        {
+            showCardsCard.gameObject.SetActive(true);
+            showCardsCard.SetDetail(card.cardValue, card.suitValue);
         }
     }
 }

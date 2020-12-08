@@ -90,7 +90,7 @@ namespace com.Rummy.Gameplay
         {
             //this.cards.Clear();
             //this.cardGameobject.Clear();
-            //selectedObject.Clear();
+            selectedObject.Clear();
             RemoveAllSelectedCard();
             childParentObject.Clear();
             OpenTileCard.gameObject.SetActive(false);
@@ -139,7 +139,7 @@ namespace com.Rummy.Gameplay
         {
             createGroupPanel.SetActive(CanCreateGroup());
             cardGameObject.transform.SetParent(tempParemtObject.transform, false);
-            DeactivateGroupText();
+            //DeactivateGroupText();
         }
 
         /// <summary>
@@ -531,7 +531,7 @@ namespace com.Rummy.Gameplay
 
         private void SetGroupInfo(List<Card> cards, GameObject parentObject, TMP_Text text)
         {
-            float _position = parentObject.transform.localPosition.x + 10;
+            float _position = parentObject.transform.localPosition.x + parentObject.GetComponent<RectTransform>().rect.width / 2;
             //_position += (parentObject.GetComponent<RectTransform>().rect.width);
             text.transform.localPosition = new Vector3(_position, text.transform.localPosition.y, text.transform.localPosition.z);
             text.text = CheckForValidCardGroup(cards).ToString();
@@ -847,9 +847,13 @@ namespace com.Rummy.Gameplay
             gameplayManager.PlayerDrop();
         }
 
-        internal void EnableDropButton()
+        internal void EnableDropButton(bool isGamestart = false)
         {
             dropBtn.gameObject.SetActive(selectedObject.Count == 0 && gameplayManager.playerTurn == int.Parse(GameVariables.userId) && !gameplayManager.isCardDrawn);
+            if(isGamestart)
+            {
+                dropBtn.gameObject.SetActive(true);
+            }
         }
         #endregion
 
@@ -859,7 +863,7 @@ namespace com.Rummy.Gameplay
             UiManager.GetInstance.ConfirmationPoup("Are you sure you want to Declare?", "Declare", Declare);
         }
 
-        private void Declare()
+        internal void Declare()
         {
             discardBtn.gameObject.SetActive(false);
             DeclareBtn.gameObject.SetActive(false);
@@ -878,11 +882,30 @@ namespace com.Rummy.Gameplay
                 for (int i = 0; i < group.transform.childCount; i++)
                 {
                     var card = group.transform.GetChild(i).GetComponent<Card>().GetCard;
+                    if (selectedObject.Count > 0 &&
+                        (selectedObject.ElementAt(0).Value == group.transform.GetChild(i).gameObject))
+                    {
+                        continue;
+                    }
+
                     cardGroup.card_set.Add(card);
                 }
                 groupList.Add(cardGroup);
             }
-            gameplayManager.PlayerDeclare(groupList);
+
+            Network.Card showCard = new Network.Card();
+            if (selectedObject.Count > 0)
+            {
+                showCard.suitValue = selectedObject.ElementAt(0).Key.suitType;
+                showCard.cardValue = selectedObject.ElementAt(0).Key.cardValue;
+            }
+            else
+            {
+                showCard = null;
+            }
+            
+            gameplayManager.PlayerDeclare(groupList, showCard);
+            gameplayManager.IsPlayerDeclare = true;
         }
         #endregion
     }
