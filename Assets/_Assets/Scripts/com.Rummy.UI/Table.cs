@@ -34,7 +34,7 @@ namespace com.Rummy.Ui
             this.maxPlayersPerTable = maxPlayersPerTable.ToString();
 
             entryFeeText.text = entryFee;
-            openTableText.text = $"Open Table: openTable: {userInTable}/{maxPlayersPerTable}";
+            openTableText.text = $"Open Table: {userInTable}/{maxPlayersPerTable}";
             onlinePlayersText.text = $"{onLinePlayers} players online";
             if(!gameObject.activeSelf)
             {
