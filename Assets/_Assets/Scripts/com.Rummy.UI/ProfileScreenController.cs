@@ -40,6 +40,16 @@ namespace com.Rummy.Ui
             fullNameSaveButton.onClick.AddListener(OnClickFullNameSaveButton);
         }
 
+        private void OnEnable()
+        {
+            UiManager.GetInstance.StopUpdatingMainMenuGameTypeDynamicDataInIntervals();
+        }
+
+        private void OnDisable()
+        {
+            UiManager.GetInstance.StartUpdatingMainMenuGameTypeDynamicDataInIntervals();
+        }
+
         private void OnClickEmailSaveButton()
         {
             if (string.IsNullOrEmpty(emailInputField.text))

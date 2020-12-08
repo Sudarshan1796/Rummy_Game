@@ -5,6 +5,7 @@ using TMPro;
 using static com.Rummy.GameVariable.GameVariables;
 using com.Rummy.GameVariable;
 using System.Collections.Generic;
+using com.Rummy.Network;
 
 namespace com.Rummy.Ui
 {
@@ -75,6 +76,7 @@ namespace com.Rummy.Ui
 
         private void OnClickRoomTypeSelectionScreenCloseButton()
         {
+            UiManager.GetInstance.StartUpdatingMainMenuGameTypeDynamicDataInIntervals();
             gameObject.SetActive(false);
             roomTypeSelectionScreen.SetActive(false);
         }
@@ -262,6 +264,69 @@ namespace com.Rummy.Ui
             }
             twoPlayersOpenTable.Clear();
             sixPlayersOpenTable.Clear();
+        }
+
+        internal void UpdateRandomRoomTablesData(RoomListResponse roomListResponse)
+        {
+            if (roomListResponse.practiceGameInfo != null)
+            {
+                if (randomRoomTableSelectionScreen.activeSelf)
+                {
+                    foreach (var gameinfo in roomListResponse.practiceGameInfo)
+                    {
+                        if (userSelectedGameMode == gameinfo.gameMode)
+                        {
+                            if (!UiManager.GetInstance.isOpenTablesInstantiated)
+                            {
+                                GameObject table;
+                                for (int i = 0; i < gameinfo.roomData.Count; i++)
+                                {
+                                    if (gameinfo.roomData[i].maxPlayers == 2)
+                                    {
+                                        table = Instantiate(openTablePrefab, twoPlayersScrollRectContent);
+                                        twoPlayersOpenTable.Add(table.GetComponent<Table>());
+                                    }
+                                    else
+                                    {
+                                        table = Instantiate(openTablePrefab, sixPlayersScrollRectContent);
+                                        sixPlayersOpenTable.Add(table.GetComponent<Table>());
+                                    }
+                                }
+                            }
+
+                            int twoPlayersOpenTableCount = 0;
+                            int sixPlayersOpenTableCount = 0;
+                            for (int j = 0; j < gameinfo.roomData.Count; j++)
+                            {
+                                if (gameinfo.roomData[j].maxPlayers == 2)
+                                {
+                                    twoPlayersOpenTable[twoPlayersOpenTableCount].UpdateData(gameinfo.roomData[j].entryFee.ToString(), gameinfo.roomData[j].usersInTable, 2, gameinfo.roomData[j].activePlayers.ToString());
+                                    if (twoPlayersOpenTable[twoPlayersOpenTableCount].onClickPlayNowButton == null)
+                                        twoPlayersOpenTable[twoPlayersOpenTableCount].onClickPlayNowButton += OnClickOpenTablePlayNowButton;
+                                    twoPlayersOpenTableCount++;
+                                }
+                                else
+                                {
+                                    sixPlayersOpenTable[sixPlayersOpenTableCount].UpdateData(gameinfo.roomData[j].entryFee.ToString(), gameinfo.roomData[j].usersInTable, 6, gameinfo.roomData[j].activePlayers.ToString());
+                                    if (sixPlayersOpenTable[sixPlayersOpenTableCount].onClickPlayNowButton == null)
+                                        sixPlayersOpenTable[sixPlayersOpenTableCount].onClickPlayNowButton += OnClickOpenTablePlayNowButton;
+                                    sixPlayersOpenTableCount++;
+                                }
+                            }
+
+                            if (!UiManager.GetInstance.isOpenTablesInstantiated)
+                            {
+                                UiManager.GetInstance.isOpenTablesInstantiated = true;
+                                UiManager.GetInstance.DisableLoadingUi();
+                            }
+                        }
+                    }
+                }
+            }
+            else
+            {
+                Debug.LogError("roomListResponse.practiceGameInfo is empty!");
+            }
         }
 
         private IEnumerator StartRoomJoinRemainingTimer(int remainingTime)

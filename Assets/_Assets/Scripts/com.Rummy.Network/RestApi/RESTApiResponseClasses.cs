@@ -119,6 +119,7 @@ namespace com.Rummy.Network
         public GameVariables.GameMode gameMode;
         public int minFee;
         public int maxFee;
+        public int activePlayers;
         public List<RoomData> roomData;
     }
 
@@ -128,6 +129,7 @@ namespace com.Rummy.Network
         public GameVariables.GameMode gameMode;
         public int minFee;
         public int maxFee;
+        public int activePlayers;
         public List<RoomData> roomData;
     }
 

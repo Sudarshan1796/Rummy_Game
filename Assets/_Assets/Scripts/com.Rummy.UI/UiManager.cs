@@ -33,9 +33,10 @@ namespace com.Rummy.Ui
         [SerializeField] private GameplayController gameplayController;
         [SerializeField] private CommonPopUpUiController commonPopUpUiController;
         private UiRotator enabledLoadingUi;
+        private Coroutine mainMenuGameTypeDataUpdatingCoroutine;
         private Coroutine randomRoomOpenTableDataUpdatingCoroutine;
-        private readonly WaitForSecondsRealtime waitForSecondsRealtime = new WaitForSecondsRealtime(0.5f);
-        private bool isOpenTablesInstantiated = false;
+        private readonly WaitForSecondsRealtime waitForSecondsRealtime = new WaitForSecondsRealtime(1);
+        internal bool isOpenTablesInstantiated = false;
 
         #region LoadingUi
 
@@ -125,7 +126,10 @@ namespace com.Rummy.Ui
 
         internal void EnableMainMenuUi()
         {
-            loginUiController.DisableOtpInputPanel();
+            if (loginUiController.gameObject.activeSelf)
+            {
+                loginUiController.DisableOtpInputPanel();
+            }
             mainMenuUiController.EnableMainMenuPanel();
         }
 
@@ -137,6 +141,42 @@ namespace com.Rummy.Ui
         internal void ShowMainMenuUserName()
         {
             mainMenuUiController.ShowUserName();
+        }
+
+        internal void StartUpdatingMainMenuGameTypeDynamicDataInIntervals()
+        {
+            if (mainMenuGameTypeDataUpdatingCoroutine != null)
+            {
+                StopCoroutine(mainMenuGameTypeDataUpdatingCoroutine);
+            }
+            mainMenuGameTypeDataUpdatingCoroutine = StartCoroutine(GetMainMenuGameTypeDataInterval());
+        }
+
+        internal void StopUpdatingMainMenuGameTypeDynamicDataInIntervals()
+        {
+            StopCoroutine(mainMenuGameTypeDataUpdatingCoroutine);
+            mainMenuGameTypeDataUpdatingCoroutine = null;
+        }
+
+        private IEnumerator GetMainMenuGameTypeDataInterval()
+        {
+            while (true)
+            {
+                RESTApiConnectionManager.GetInstance.RoomList<RoomListResponse>(OnSuccessRoomListForMainMenuUi);
+                yield return waitForSecondsRealtime;
+            }
+        }
+
+        private void OnSuccessRoomListForMainMenuUi(RoomListResponse roomListResponse)
+        {
+            if (roomListResponse != null)
+            {
+                mainMenuUiController.UpdateGameTypeDynamicData(roomListResponse);
+            }
+            else
+            {
+                Debug.LogError("RoomListResponse is empty!");
+            }
         }
 
         #endregion
@@ -228,74 +268,16 @@ namespace com.Rummy.Ui
                 {
                     EnableLoadingUi();
                 }
-                RESTApiConnectionManager.GetInstance.RoomList<RoomListResponse>(OnSuccessRoomList);
+                RESTApiConnectionManager.GetInstance.RoomList<RoomListResponse>(OnSuccessRoomListForRoomJoinUi);
                 yield return waitForSecondsRealtime;
             }
         }
 
-        private void OnSuccessRoomList(RoomListResponse roomListResponse)
+        private void OnSuccessRoomListForRoomJoinUi(RoomListResponse roomListResponse)
         {
             if (roomListResponse != null)
             {
-                if (roomListResponse.practiceGameInfo != null)
-                {
-                    if(roomJoinUiController.randomRoomTableSelectionScreen.activeSelf)
-                    {
-                        foreach (var gameinfo in roomListResponse.practiceGameInfo)
-                        {
-                            if (GameVariables.userSelectedGameMode == gameinfo.gameMode)
-                            {
-                                if (!isOpenTablesInstantiated)
-                                {
-                                    GameObject table;
-                                    for (int i = 0; i < gameinfo.roomData.Count; i++)
-                                    {
-                                        if (gameinfo.roomData[i].maxPlayers == 2)
-                                        {
-                                            table = Instantiate(roomJoinUiController.openTablePrefab, roomJoinUiController.twoPlayersScrollRectContent);
-                                            roomJoinUiController.twoPlayersOpenTable.Add(table.GetComponent<Table>());
-                                        }
-                                        else
-                                        {
-                                            table = Instantiate(roomJoinUiController.openTablePrefab, roomJoinUiController.sixPlayersScrollRectContent);
-                                            roomJoinUiController.sixPlayersOpenTable.Add(table.GetComponent<Table>());
-                                        }
-                                    }
-                                }
-
-                                int twoPlayersOpenTableCount = 0;
-                                int sixPlayersOpenTableCount = 0;
-                                for (int j = 0; j < gameinfo.roomData.Count; j++)
-                                {
-                                    if (gameinfo.roomData[j].maxPlayers == 2)
-                                    {
-                                        roomJoinUiController.twoPlayersOpenTable[twoPlayersOpenTableCount].UpdateData(gameinfo.roomData[j].entryFee.ToString(), gameinfo.roomData[j].usersInTable, 2, gameinfo.roomData[j].activePlayers.ToString());
-                                        if (roomJoinUiController.twoPlayersOpenTable[twoPlayersOpenTableCount].onClickPlayNowButton == null)
-                                            roomJoinUiController.twoPlayersOpenTable[twoPlayersOpenTableCount].onClickPlayNowButton += roomJoinUiController.OnClickOpenTablePlayNowButton;
-                                        twoPlayersOpenTableCount++;
-                                    }
-                                    else
-                                    {
-                                        roomJoinUiController.sixPlayersOpenTable[sixPlayersOpenTableCount].UpdateData(gameinfo.roomData[j].entryFee.ToString(), gameinfo.roomData[j].usersInTable, 6, gameinfo.roomData[j].activePlayers.ToString());
-                                        if (roomJoinUiController.sixPlayersOpenTable[sixPlayersOpenTableCount].onClickPlayNowButton == null)
-                                            roomJoinUiController.sixPlayersOpenTable[sixPlayersOpenTableCount].onClickPlayNowButton += roomJoinUiController.OnClickOpenTablePlayNowButton;
-                                        sixPlayersOpenTableCount++;
-                                    }
-                                }
-
-                                if (!isOpenTablesInstantiated)
-                                {
-                                    isOpenTablesInstantiated = true;
-                                    DisableLoadingUi();
-                                }
-                            }
-                        }
-                    }
-                }
-                else
-                {
-                    Debug.LogError("roomListResponse.practiceGameInfo is empty!");
-                }
+                roomJoinUiController.UpdateRandomRoomTablesData(roomListResponse);
             }
             else
             {
