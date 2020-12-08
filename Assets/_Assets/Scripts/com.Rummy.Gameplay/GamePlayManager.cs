@@ -12,6 +12,7 @@ namespace com.Rummy.Gameplay
     public class GamePlayManager : MonoBehaviour
     {
         #region Events
+
         internal event Action<List<PlayerCard>> OnGameStart;
 
         #endregion
@@ -177,7 +178,7 @@ namespace com.Rummy.Gameplay
             //Move card to player position
             if (response.userId != int.Parse(GameVariables.userId))
             {
-                UiManager.GetInstance.OtherplayerDrawCard();
+                UiManager.GetInstance.OtherplayerDrawCard(response);
             }
         }
 
@@ -212,6 +213,8 @@ namespace com.Rummy.Gameplay
             playerTurn      = response.playerTurn;
             remainingTime   = response.remainingTime;
             isPlayerDropped = (response.userId == int.Parse(GameVariables.userId));
+            ResultScreen.GetInstance.UpdateNextMatchTimer(response.nextRoundStartTime);
+
             //Todo: Make the Player just Spectacle
         }
 

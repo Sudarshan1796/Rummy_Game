@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using  UnityEngine.UI;
 
 namespace com.Rummy.UI
 {
@@ -15,6 +16,8 @@ namespace com.Rummy.UI
         [SerializeField] private GameObject dropGameobject;
         [SerializeField] private GameObject wonGameObject;
 
+        [SerializeField] private Image positionImage;
+        [SerializeField] private Sprite[] positionSprite;
         private int _userId;
         private List<GameObject> cardObects;
         internal int GetUserId
@@ -27,6 +30,7 @@ namespace com.Rummy.UI
         private void Awake()
         {
             cardObects = new List<GameObject>();
+            positionImage.gameObject.SetActive(false);
         }
 
         private void OnDisable()
@@ -61,13 +65,16 @@ namespace com.Rummy.UI
             currentScore.text = result.points.ToString();
             totalScore.text = result.totalPoints.ToString();
             wonGameObject.SetActive(result.isWinner);
+            int position = result.isWinner ? 0 : 1;
+            positionImage.sprite = positionSprite[position];
+            if (result.isDropped)
+            {
+                dropGameobject.SetActive(true);
+                return;
+            }
             for (int i = 0; i < result.cardGroup.Count; i++)
             {
-                if (result.isDropped)
-                {
-                    dropGameobject.SetActive(true);
-                    continue;
-                }
+
 
                 groupObject[i].SetActive(true);
 
@@ -93,6 +100,8 @@ namespace com.Rummy.UI
             currentScore.text = result.points.ToString();
             totalScore.text = result.totalPoints.ToString();
             wonGameObject.SetActive(result.isWinner);
+            int position = result.isWinner ? 0 : 1;
+            positionImage.sprite = positionSprite[position];
             for (int i = 0; i < result.cardGroup.Count; i++)
             {
                 //if (result.droped)

@@ -28,9 +28,14 @@ namespace com.Rummy.UI
         [SerializeField] private TMP_Text remainingTimeText;
 
         private int remaininMatchTime;
-
+        private bool isTimerStarted;
         private void Awake()
         {
+        }
+
+        private void OnDisable()
+        {
+            isTimerStarted = false;
         }
 
         /// <summary>
@@ -52,7 +57,8 @@ namespace com.Rummy.UI
                 resultPanels[i].SetDetails(response.result[i]);
                 if (response.result[i].isEliminated)
                 {
-                    CancelInvoke(nameof(UpdateNextTimer));
+                    //CancelInvoke(nameof(UpdateNextTimer));
+                    remaininMatchTime = 0;
                     remainingTimeText.text = "";
                     LeanTween.delayedCall(3.0f, () =>
                     {
@@ -77,7 +83,8 @@ namespace com.Rummy.UI
 
             if (result.isEliminated)
             {
-                CancelInvoke(nameof(UpdateNextTimer));
+                //CancelInvoke(nameof(UpdateNextTimer));
+                remaininMatchTime = 0;
                 remainingTimeText.text = "";
                 LeanTween.delayedCall(3.0f, () =>
                 {
@@ -113,9 +120,14 @@ namespace com.Rummy.UI
         public void UpdateNextMatchTimer(int timer)
         {
             remaininMatchTime = timer;
-            CancelInvoke(nameof(UpdateNextTimer));
-            UpdateNextTimer();
+            //CancelInvoke(nameof(UpdateNextTimer));
+            if (!isTimerStarted)
+            {
+                isTimerStarted = true;
+                UpdateNextTimer();
+            }
         }
+
         private void UpdateNextTimer()
         {
             remainingTimeText.text = "Next Match in " + remaininMatchTime + "...";

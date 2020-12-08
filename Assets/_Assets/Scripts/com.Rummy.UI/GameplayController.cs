@@ -240,9 +240,9 @@ namespace com.Rummy.UI
             UiManager.GetInstance.LeaveSocketRoom();
         }
 
-        public void OnCardDraw()
+        public void OnCardDraw(CardDrawRes response)
         {
-            cardGroupController.MoveDrawCard();
+            cardGroupController.MoveDrawCard(response);
         }
 
         /// <summary>

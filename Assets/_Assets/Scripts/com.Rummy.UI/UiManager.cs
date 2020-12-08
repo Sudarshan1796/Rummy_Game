@@ -439,9 +439,9 @@ namespace com.Rummy.Ui
             gameplayController.StartPlayerTimer(userId, timer, OnComplete);
         }
 
-        internal void OtherplayerDrawCard()
+        internal void OtherplayerDrawCard(CardDrawRes  response)
         {
-            gameplayController.OnCardDraw();
+            gameplayController.OnCardDraw(response);
         }
         #endregion
 

@@ -753,15 +753,23 @@ namespace com.Rummy.Gameplay
             {
                 if (gameplayManager.isCardDrawn)
                     return;
-                movingCardController.gameObject.transform.localPosition = openDeckTransform.localPosition;
-                movingCardController.Init(gameplayManager.discardedCard.cardValue, gameplayManager.discardedCard.suitValue);
-                movingCardController.Move(playerCardSelectTransform.transform.localPosition, OnOpendeckMoveComplete, 0.75f);
+                //MoveOpenCard();
                 gameplayManager.DrawCard(true);
             }
         }
 
+        private void MoveOpenCard()
+        {
+            movingCardController.gameObject.transform.localPosition = openDeckTransform.localPosition;
+            movingCardController.Init(gameplayManager.discardedCard.cardValue,
+                gameplayManager.discardedCard.suitValue);
+            movingCardController.Activate();
+            movingCardController.Move(playerCardSelectTransform.transform.position, OnOpendeckMoveComplete, 0.75f);
+        }
+
         void OnOpendeckMoveComplete()
         {
+            Debug.Log("Done Moving open card");
             movingCardController.Deactivate();
             PlayerCard _playerCard = new PlayerCard
             {
@@ -771,11 +779,29 @@ namespace com.Rummy.Gameplay
             onCardSelect?.Invoke(_playerCard);
         }
 
-        public void MoveDrawCard()
+        public void MoveDrawCard(CardDrawRes response)
         {
-            backCardController.gameObject.SetActive(true);
-            backCardController.gameObject.transform.localPosition = closedDeckTransform.localPosition;
-            backCardController.Move(prifileDestination.transform.position, OnDrawMoveComplete, 0.70f);
+            if (response.isFromDiscardPile)
+            {
+                movingCardController.gameObject.transform.localPosition = openDeckTransform.localPosition;
+                movingCardController.Init(response.card.cardValue, response.card.suitValue);
+                movingCardController.Activate();
+                movingCardController.Move(prifileDestination.transform.position, OnOpenDeckMoveComplete, 0.70f);
+                OpenTileCard.Init(response.discardPile.cardValue, response.discardPile.suitValue);
+                OpenTileCard.gameObject.SetActive(true);
+            }
+            else
+            {
+
+                backCardController.gameObject.SetActive(true);
+                backCardController.gameObject.transform.localPosition = closedDeckTransform.localPosition;
+                backCardController.Move(prifileDestination.transform.position, OnDrawMoveComplete, 0.70f);
+            }
+        }
+
+        void OnOpenDeckMoveComplete()
+        {
+            movingCardController.Deactivate();
         }
 
         public void MoveDiscardedCard(PlayerCard playerCard)
