@@ -25,8 +25,10 @@ namespace com.Rummy.Gameplay
         internal List<Player> roomPlayers;
         internal List<PlayerCard> playerCards;
 
+        internal Network.Card selectedCard;
         internal Network.Card closedCard;
         internal Network.Card discardedCard;
+        internal Network.Card wildCard;
 
         internal int playerTurn;
         internal int roomId;
@@ -156,6 +158,7 @@ namespace com.Rummy.Gameplay
             playerCards = response.playerCards;
             playerTurn = response.playerTurn;
             remainingTime = response.remainingTime;
+            wildCard = response.wildCard;
             eventTime = response.eventTime;
             UiManager.GetInstance.EnableGameplayScreen();
             OnGameStart?.Invoke(playerCards);
@@ -166,6 +169,7 @@ namespace com.Rummy.Gameplay
             UiManager.GetInstance.DisableRoomJoinWaitScreen();
             CardGroupController.GetInstance.EnableDropButton();
             UiManager.GetInstance.DisableResultScreen();
+            CardGroupController.GetInstance.EnableOpenPile();
         }
 
         private void OnTimerComplete()
@@ -176,16 +180,32 @@ namespace com.Rummy.Gameplay
         private void OncardDraw(CardDrawRes response)
         {
             //Move card to player position
-            if (response.userId != int.Parse(GameVariables.userId))
+            closedCard = response.closedDeck;
+            if (response.discardPile.suitValue == GameVariables.SuitType.Joker && response.discardPile.cardValue == GameVariables.CardType.Joker)
             {
-                UiManager.GetInstance.OtherplayerDrawCard(response);
+                discardedCard = null;
             }
+            else
+            {
+                discardedCard = response.discardPile;
+
+            }
+            selectedCard = response.card;
+            UiManager.GetInstance.OnCardDraw(response);
         }
 
         private void OnCardDiscard(CardDiscardResResponse response)
         {
+            if (response.discardPile.suitValue==GameVariables.SuitType.Joker&&response.discardPile.cardValue==GameVariables.CardType.Joker)
+            {
+                discardedCard = null;
+            }
+            else
+            {
+                discardedCard = response.discardPile;
+            }
+
             playerTurn = response.playerTurn;
-            discardedCard = response.discardPile;
             closedCard = response.closedDeck;
             remainingTime = response.remainingTime;
             PlayerCard _playerCard = new PlayerCard
@@ -214,6 +234,7 @@ namespace com.Rummy.Gameplay
             remainingTime   = response.remainingTime;
             isPlayerDropped = (response.userId == int.Parse(GameVariables.userId));
             ResultScreen.GetInstance.UpdateNextMatchTimer(response.nextRoundStartTime);
+            ResultScreen.GetInstance.UpdatePlayerPosition(response.gameResult);
 
             //Todo: Make the Player just Spectacle
         }

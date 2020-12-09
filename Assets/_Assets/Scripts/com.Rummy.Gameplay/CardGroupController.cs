@@ -93,7 +93,7 @@ namespace com.Rummy.Gameplay
             selectedObject.Clear();
             RemoveAllSelectedCard();
             childParentObject.Clear();
-            OpenTileCard.gameObject.SetActive(false);
+            //OpenTileCard.gameObject.SetActive(false);
             inActiveGroups.Clear();
 
             this.cards = _cards;
@@ -729,20 +729,19 @@ namespace com.Rummy.Gameplay
             {
                 if (gameplayManager.isCardDrawn)
                     return;
-                movingCardController.gameObject.transform.localPosition = closedDeckTransform.localPosition;
-                movingCardController.Init(gameplayManager.closedCard.cardValue, gameplayManager.closedCard.suitValue);
-                movingCardController.Activate();
-                movingCardController.Move(playerCardSelectTransform.transform.position, OnCloseddeckMoveComplete, 0.80f);
                 gameplayManager.DrawCard(false);
             }
         }
+
+
+
         void OnCloseddeckMoveComplete()
         {
             movingCardController.Deactivate();
             PlayerCard _playerCard = new PlayerCard
             {
-                suitValue = gameplayManager.closedCard.suitValue,
-                cardValue = gameplayManager.closedCard.cardValue
+                suitValue = gameplayManager.selectedCard.suitValue,
+                cardValue = gameplayManager.selectedCard.cardValue
             };
             onCardSelect?.Invoke(_playerCard);
         }
@@ -760,26 +759,41 @@ namespace com.Rummy.Gameplay
 
         private void MoveOpenCard()
         {
-            movingCardController.gameObject.transform.localPosition = openDeckTransform.localPosition;
-            movingCardController.Init(gameplayManager.discardedCard.cardValue,
-                gameplayManager.discardedCard.suitValue);
-            movingCardController.Activate();
-            movingCardController.Move(playerCardSelectTransform.transform.position, OnOpendeckMoveComplete, 0.75f);
+
         }
 
         void OnOpendeckMoveComplete()
         {
-            Debug.Log("Done Moving open card");
             movingCardController.Deactivate();
             PlayerCard _playerCard = new PlayerCard
             {
-                suitValue = gameplayManager.discardedCard.suitValue,
-                cardValue = gameplayManager.discardedCard.cardValue
+                suitValue = gameplayManager.selectedCard.suitValue,
+                cardValue = gameplayManager.selectedCard.cardValue
             };
             onCardSelect?.Invoke(_playerCard);
         }
 
-        public void MoveDrawCard(CardDrawRes response)
+        /// <summary>
+        /// On card draw
+        /// </summary>
+        /// <param name="response"></param>
+        public void MoveCardDraw(CardDrawRes response)
+        {
+            if (response.userId != int.Parse(GameVariables.userId))
+            {
+                MoveOtherPlayerSelectedCard(response);
+            }
+            else
+            {
+                MoveSelectedCard(response);
+            }
+        }
+
+        /// <summary>
+        /// For other player selected card
+        /// </summary>
+        /// <param name="response"></param>
+        public void MoveOtherPlayerSelectedCard(CardDrawRes response)
         {
             if (response.isFromDiscardPile)
             {
@@ -787,8 +801,16 @@ namespace com.Rummy.Gameplay
                 movingCardController.Init(response.card.cardValue, response.card.suitValue);
                 movingCardController.Activate();
                 movingCardController.Move(prifileDestination.transform.position, OnOpenDeckMoveComplete, 0.70f);
-                OpenTileCard.Init(response.discardPile.cardValue, response.discardPile.suitValue);
-                OpenTileCard.gameObject.SetActive(true);
+                if (gameplayManager.discardedCard==null)
+                {
+                    OpenTileCard.gameObject.SetActive(false);
+                }
+                else
+                {
+                    Debug.Log(response.discardPile.cardValue + ":" + response.discardPile.suitValue);
+                    OpenTileCard.gameObject.SetActive(true);
+                    OpenTileCard.Init(response.discardPile.cardValue, response.discardPile.suitValue);
+                }
             }
             else
             {
@@ -796,6 +818,38 @@ namespace com.Rummy.Gameplay
                 backCardController.gameObject.SetActive(true);
                 backCardController.gameObject.transform.localPosition = closedDeckTransform.localPosition;
                 backCardController.Move(prifileDestination.transform.position, OnDrawMoveComplete, 0.70f);
+            }
+        }
+        /// <summary>
+        /// For Our own selected Card
+        /// </summary>
+        /// <param name="response"></param>
+        public void MoveSelectedCard(CardDrawRes response)
+        {
+            if (!response.isFromDiscardPile)
+            {
+                movingCardController.gameObject.transform.localPosition = closedDeckTransform.localPosition;
+                movingCardController.Init(response.card.cardValue, response.card.suitValue);
+                movingCardController.Activate();
+                movingCardController.Move(playerCardSelectTransform.transform.position, OnCloseddeckMoveComplete,
+                    0.80f);
+            }
+            else
+            {
+                movingCardController.gameObject.transform.localPosition = openDeckTransform.localPosition;
+                movingCardController.Init(response.card.cardValue, response.card.suitValue);
+                movingCardController.Activate();
+                movingCardController.Move(playerCardSelectTransform.transform.position, OnOpendeckMoveComplete, 0.75f);
+                if (gameplayManager.discardedCard == null)
+                {
+                    OpenTileCard.gameObject.SetActive(false);
+                }
+                else
+                {
+                    Debug.Log(response.discardPile.cardValue + ":" + response.discardPile.suitValue);
+                    OpenTileCard.gameObject.SetActive(true);
+                    OpenTileCard.Init(response.discardPile.cardValue, response.discardPile.suitValue);
+                }
             }
         }
 
@@ -934,5 +988,19 @@ namespace com.Rummy.Gameplay
             gameplayManager.IsPlayerDeclare = true;
         }
         #endregion
+
+        internal void EnableOpenPile()
+        {
+            if (gameplayManager.discardedCard == null)
+            {
+                OpenTileCard.gameObject.SetActive(false);
+            }
+            else
+            {
+                Debug.Log(gameplayManager.discardedCard.cardValue + ":" + gameplayManager.discardedCard.suitValue);
+                OpenTileCard.gameObject.SetActive(true);
+                OpenTileCard.Init(gameplayManager.discardedCard.cardValue, gameplayManager.discardedCard.suitValue);
+            }
+        }
     }
 }

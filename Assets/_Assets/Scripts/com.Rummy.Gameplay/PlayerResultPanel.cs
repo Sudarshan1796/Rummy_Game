@@ -1,8 +1,11 @@
-﻿using com.Rummy.Network;
+﻿using System.Collections;
+using com.Rummy.Network;
 using System.Collections.Generic;
+using System.Diagnostics;
 using TMPro;
 using UnityEngine;
 using  UnityEngine.UI;
+using Debug = UnityEngine.Debug;
 
 namespace com.Rummy.UI
 {
@@ -30,7 +33,6 @@ namespace com.Rummy.UI
         private void Awake()
         {
             cardObects = new List<GameObject>();
-            positionImage.gameObject.SetActive(false);
         }
 
         private void OnDisable()
@@ -58,15 +60,12 @@ namespace com.Rummy.UI
 
         internal void SetDetails(Result result)
         {
-            Debug.Log("This round Complete is player "+result.userId);
-            Debug.Log("Player Card Count" + result.cardGroup.Count+":"+gameObject.name);
             _userId = result.userId;
             userName.text = result.userName;
             currentScore.text = result.points.ToString();
             totalScore.text = result.totalPoints.ToString();
             wonGameObject.SetActive(result.isWinner);
-            int position = result.isWinner ? 0 : 1;
-            positionImage.sprite = positionSprite[position];
+            positionImage.gameObject.SetActive(false);
             if (result.isDropped)
             {
                 dropGameobject.SetActive(true);
@@ -91,8 +90,6 @@ namespace com.Rummy.UI
 
         internal void SetDeclareDetail(DeclarResponse result)
         {
-            Debug.Log("This declare is player " + result.userId);
-            Debug.Log("Player Card Count" + result.cardGroup.Count);
             PlayerPanelReset();
             OnDisable();
             _userId = result.userId;
@@ -100,8 +97,7 @@ namespace com.Rummy.UI
             currentScore.text = result.points.ToString();
             totalScore.text = result.totalPoints.ToString();
             wonGameObject.SetActive(result.isWinner);
-            int position = result.isWinner ? 0 : 1;
-            positionImage.sprite = positionSprite[position];
+            positionImage.gameObject.SetActive(false);
             for (int i = 0; i < result.cardGroup.Count; i++)
             {
                 //if (result.droped)
@@ -120,6 +116,19 @@ namespace com.Rummy.UI
                 }
             }
 
+        }
+
+        public void UpdatePosition(int position)
+        {
+            if (positionSprite.Length>=position)
+            {
+                positionImage.sprite = positionSprite[position - 1];
+                positionImage.gameObject.SetActive(true);
+            }
+            else
+            {
+                positionImage.gameObject.SetActive(false);
+            }
         }
 
     }

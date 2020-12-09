@@ -11,6 +11,7 @@ namespace com.Rummy.Gameplay
     public class Card : MonoBehaviour, ICardManager, IBeginDragHandler, IDragHandler, IEndDragHandler
     {
         [SerializeField] private Image cardImage;
+        [SerializeField] private GameObject wildCardJ;
 
         private bool isSelected;
         private CardGroupController cardGroupController;
@@ -96,6 +97,8 @@ namespace com.Rummy.Gameplay
             this.cardValue = cardValue;
             this.suitType = suitType;
             cardImage.sprite = CardController.GetInstance.GetSprite(cardValue, suitType);
+            wildCardJ.SetActive(GamePlayManager.GetInstance.wildCard.suitValue == suitType &&
+                                           GamePlayManager.GetInstance.wildCard.cardValue == cardValue);
         }
         /// <summary>
         /// OnClick Event
@@ -131,6 +134,7 @@ namespace com.Rummy.Gameplay
             isSelected = false;
             cardImage.color = Color.white;
             cardImage.gameObject.transform.localPosition = inactivePosition;
+
         }
         public void Deactivate()
         {

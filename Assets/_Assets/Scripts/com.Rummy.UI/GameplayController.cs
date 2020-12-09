@@ -242,7 +242,7 @@ namespace com.Rummy.UI
 
         public void OnCardDraw(CardDrawRes response)
         {
-            cardGroupController.MoveDrawCard(response);
+            cardGroupController.MoveCardDraw(response);
         }
 
         /// <summary>

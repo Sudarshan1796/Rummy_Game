@@ -77,9 +77,10 @@ namespace com.Rummy.UI
                     resultPanel.UpdateState(true);
                     resultPanel.PlayerPanelReset();
                     resultPanel.SetDeclareDetail(result);
-
                 }
             }
+
+            UpdatePlayerPosition(result.gameResult);
 
             if (result.isEliminated)
             {
@@ -90,6 +91,24 @@ namespace com.Rummy.UI
                 {
                     OnHomeBtnClick();
                 });
+            }
+        }
+
+        public void UpdatePlayerPosition(List<GameResult> gameResult)
+        {
+            if (gameResult.Count > 0)
+            {
+                for (int i = 0; i < gameResult.Count; i++)
+                {
+                    foreach (var playerResult in resultPanels)
+                    {
+                        if (playerResult.GetUserId == gameResult[i].userId)
+                        {
+                            playerResult.UpdatePosition(gameResult[i].position);
+                            break;
+                        }
+                    }
+                }
             }
         }
 

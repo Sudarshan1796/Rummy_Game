@@ -39,6 +39,7 @@ namespace com.Rummy.Network
         public Card closedDeck;
         public int eventTime;
         public int remainingTime;
+        public Card wildCard;
     }
 
     [Serializable]
@@ -61,7 +62,8 @@ namespace com.Rummy.Network
         public int roomId;
         public Card card;
         public bool isFromDiscardPile;
-        public DiscardPile discardPile;
+        public Card discardPile;
+        public Card closedDeck;
     }
 
     public class CardDiscardResResponse: SocketResponse
@@ -123,6 +125,7 @@ namespace com.Rummy.Network
         public Card showCard;
         public bool isWinner;
         public bool isEliminated;
+        public List<GameResult> gameResult;
 
     }
 
@@ -149,5 +152,13 @@ namespace com.Rummy.Network
         public int eventTime;
         public int remainingTime;
         public int nextRoundStartTime;
+        public List<GameResult> gameResult;
+    }
+
+    [Serializable]
+    public class GameResult
+    {
+        public int userId;
+        public int position;
     }
 }
