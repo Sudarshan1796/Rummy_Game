@@ -370,6 +370,7 @@ namespace com.Rummy.Ui
 
         internal void EnableGameplayScreen()
         {
+            GamePlayManager.GetInstance.IPlayinGame = true;
             gameplayController.Activate();
         }
 
@@ -400,6 +401,7 @@ namespace com.Rummy.Ui
 
         internal void DisableGamplayScreen()
         {
+            GamePlayManager.GetInstance.IPlayinGame = false;
             gameplayController.Deactivate();
         }
 

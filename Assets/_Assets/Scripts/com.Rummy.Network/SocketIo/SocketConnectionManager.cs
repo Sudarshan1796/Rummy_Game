@@ -29,6 +29,19 @@ namespace com.Rummy.Network
         internal event Action<SocketResponse> SocketResponse;
 
         private Action onSocketConnect;
+
+
+        #region  Properties
+
+        public bool IsConnected
+        {
+            get
+            {
+                return socketManager.Socket.IsOpen;
+            }
+        }
+
+        #endregion
         #region UnityCallbacks
 
         void Start()
@@ -67,10 +80,7 @@ namespace com.Rummy.Network
 
         internal void ConnectToSocket(Action onConnect)
         {
-            SocketOptions options = new SocketOptions
-            {
-                AutoConnect = false,
-            };
+            SocketOptions options = new SocketOptions();
 
             options.AdditionalQueryParams = new PlatformSupport.Collections.ObjectModel.ObservableDictionary<string, string>();
             options.AdditionalQueryParams.Add(GameConstants.USER_ID, GameVariables.userId);
@@ -110,9 +120,8 @@ namespace com.Rummy.Network
             socketManager.Socket.On(GameVariables.SocketResponseType.dropRes.ToString(), (Socket socket, Packet packet, object[] args) =>
             { QueueResponse(Deserialize<DropResponse>(GameVariables.SocketResponseType.dropRes, args[0] as string)); });
            
-           //Listen when its Done
-           // socketManager.Socket.On(GameVariables.SocketResponseType.roomStateRes.ToString(), (Socket socket, Packet packet, object[] args) =>
-           // { QueueResponse(Deserialize<RoundCompleteResponse>(GameVariables.SocketResponseType.roomStateRes, args[0] as string)); });
+            socketManager.Socket.On(GameVariables.SocketResponseType.roomStateRes.ToString(), (Socket socket, Packet packet, object[] args) =>
+            { QueueResponse(Deserialize<RoomStatusResponse>(GameVariables.SocketResponseType.roomStateRes, args[0] as string)); });
 
            // socketManager.Socket.On(GameVariables.SocketResponseType.roomClose.ToString(), (Socket socket, Packet packet, object[] args) =>
            // { QueueResponse(Deserialize<RoundCompleteResponse>(GameVariables.SocketResponseType.roomClose, args[0] as string)); });

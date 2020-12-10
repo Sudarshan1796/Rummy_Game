@@ -56,4 +56,10 @@ namespace com.Rummy.Network
         public List<CardGroup> card_group;
         public Card show_card;
     }
+
+    public class RoomStatusRequest : SocketRequest
+    {
+        public int user_id;
+        public int room_id;
+    }
 }

@@ -161,4 +161,24 @@ namespace com.Rummy.Network
         public int userId;
         public int position;
     }
+
+    [Serializable]
+    public class RoomInfo
+    {
+        public int userId;
+        public int position;
+        public string userName;
+        public bool isDropped;
+        public int status;
+    }
+
+    public class RoomStatusResponse : SocketResponse
+    {
+        public int roomId;
+        public int nextEventTime;
+        public int playerTurn;
+        public int remainingTime;
+        public List<Card> cardSet;
+        public List<RoomInfo> roomInfo;
+    }
 }

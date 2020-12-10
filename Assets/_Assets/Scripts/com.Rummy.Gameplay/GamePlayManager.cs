@@ -21,6 +21,7 @@ namespace com.Rummy.Gameplay
 
         private bool _isPlayerDeclare;
 
+        private bool _isPlayingGame;
         // This List hold the List of player in the current room
         internal List<Player> roomPlayers;
         internal List<PlayerCard> playerCards;
@@ -59,6 +60,18 @@ namespace com.Rummy.Gameplay
             set
             {
                 _isPlayerDeclare = value;
+            }
+        }
+
+        public bool IPlayinGame
+        {
+            get
+            {
+               return _isPlayingGame;
+            }
+            set
+            {
+                _isPlayingGame = value;
             }
         }
         private void Awake()
@@ -113,7 +126,8 @@ namespace com.Rummy.Gameplay
                     break;
                 case GameVariables.SocketResponseType.dropRes: OnPlayerDrop((DropResponse)response);
                     break;
-
+                case GameVariables.SocketResponseType.roomStateRes: OnRoomStatusResponse((RoomStatusResponse) response);
+                    break;
             }
         }
         #region Socket 
@@ -153,6 +167,7 @@ namespace com.Rummy.Gameplay
 
         private void GameStart(GameStartResponse response)
         {
+            _isPlayingGame = true;
             _isPlayerDeclare = false;
             playerCards.Clear();
             playerCards = response.playerCards;
@@ -269,6 +284,16 @@ namespace com.Rummy.Gameplay
             UiManager.GetInstance.EnableResultScreen();
             UiManager.GetInstance.SetResultScreeenData(response);
         }
+
+        private void OnRoomStatusResponse(RoomStatusResponse response)
+        {
+            playerTurn = response.playerTurn;
+            playerTurn = response.playerTurn;
+            remainingTime = response.remainingTime;
+            UiManager.GetInstance.StartTimer(playerTurn, remainingTime, OnTimerComplete);
+            CardGroupController.GetInstance.EnableDropButton();
+        }
+
         #endregion
 
         #region Client Event
@@ -341,7 +366,37 @@ namespace com.Rummy.Gameplay
             };
             SocketConnectionManager.GetInstance.SendSocketRequest(GameVariables.SocketRequestType.declare, request);
         }
+
+        internal void RoomStatus()
+        {
+            RoomStatusRequest request = new RoomStatusRequest
+            {
+                room_id = roomId,
+                user_id = int.Parse(GameVariables.userId),
+            };
+            SocketConnectionManager.GetInstance.SendSocketRequest(GameVariables.SocketRequestType.roomState, request);
+        }
         #endregion
+        #endregion
+
+        #region  UNITY_CALLBACK
+
+        private void OnApplicationFocus(bool hasFocus)
+        {
+            if (hasFocus && _isPlayingGame && SocketConnectionManager.GetInstance.IsConnected)
+            {
+                RoomStatus();
+            }
+        }
+
+        private void OnApplicationPause(bool pauseStatus)
+        {
+            if (!pauseStatus && _isPlayingGame && SocketConnectionManager.GetInstance.IsConnected)
+            {
+                RoomStatus();
+            }
+        }
+
         #endregion
     }
 }

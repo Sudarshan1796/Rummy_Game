@@ -45,7 +45,8 @@ namespace com.Rummy.GameVariable
             cardDiscard,
             declare,
             playerLeft,
-            drop
+            drop,
+            roomState,
         }
 
         public enum SocketResponseType : short
@@ -60,7 +61,7 @@ namespace com.Rummy.GameVariable
             declareRes,
             dropRes,
             roomStateRes,
-            roomClose
+            roomClose,
         }
 
         public enum RESTApiType : short

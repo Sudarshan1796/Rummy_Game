@@ -267,7 +267,9 @@ namespace com.Rummy.UI
 
         internal void StartPlayerTimer(int id, float timer, Action onComplete)
         {
+            //this is for the first player 
             playerController.SetTimer(id, timer, onComplete);
+            //this is for the other player
             gamePlayers[0].SetTimer(id, timer, onComplete);
         }
 
