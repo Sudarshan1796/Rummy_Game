@@ -31,7 +31,7 @@ namespace com.Rummy.Network
         // Generic method to send your request to server through POST method.
         internal static IEnumerator UnityWebRequestInPostMethod<T>(string url, Dictionary<string, string> payLoadKeyValuePairs, Action<T> successResponse = null, Action<string, string> errorResponse = null,bool shouldPrintResponseString = true) where T : ResponseData
         {
-            UnityWebRequest unityWebRequest;
+            recall: UnityWebRequest unityWebRequest;
             var bodyJsonString               = JsonConvert.SerializeObject(payLoadKeyValuePairs);
             unityWebRequest                  = UnityWebRequest.Post(url, bodyJsonString);
             unityWebRequest.method           = UnityWebRequest.kHttpVerbPOST;
@@ -82,6 +82,8 @@ namespace com.Rummy.Network
                     else
                     {
                         Debug.LogError($"Null Response!! \n Url : {url} \n Request : {bodyJsonString} \n Response : {unityWebRequest.downloadHandler.text}");
+                        Debug.LogError($"Recalling {url} API again");
+                        goto recall;
                     }
                 }
             }
@@ -104,7 +106,7 @@ namespace com.Rummy.Network
             }
             url.Remove(url.Length - 1, 1);
 
-            UnityWebRequest unityWebRequest = UnityWebRequest.Get(url.ToString());
+            recall:  UnityWebRequest unityWebRequest = UnityWebRequest.Get(url.ToString());
 
             yield return unityWebRequest.SendWebRequest();
             try
@@ -149,6 +151,8 @@ namespace com.Rummy.Network
                     else
                     {
                         Debug.LogError($"Null Response!! \n Url : {url} \n Request : {url} \n Response : {unityWebRequest.downloadHandler.text}");
+                        Debug.LogError($"Recalling {url} API again");
+                        goto recall;
                     }
                 }
             }

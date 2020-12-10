@@ -35,7 +35,7 @@ namespace com.Rummy.Ui
         private UiRotator enabledLoadingUi;
         private Coroutine mainMenuGameTypeDataUpdatingCoroutine;
         private Coroutine randomRoomOpenTableDataUpdatingCoroutine;
-        private readonly WaitForSecondsRealtime waitForSecondsRealtime = new WaitForSecondsRealtime(1);
+        private readonly WaitForSeconds waitForOneSecond = new WaitForSeconds(1);
         internal bool isOpenTablesInstantiated = false;
 
         #region LoadingUi
@@ -163,7 +163,7 @@ namespace com.Rummy.Ui
             while (true)
             {
                 RESTApiConnectionManager.GetInstance.RoomList<RoomListResponse>(OnSuccessRoomListForMainMenuUi);
-                yield return waitForSecondsRealtime;
+                yield return waitForOneSecond;
             }
         }
 
@@ -269,7 +269,7 @@ namespace com.Rummy.Ui
                     EnableLoadingUi();
                 }
                 RESTApiConnectionManager.GetInstance.RoomList<RoomListResponse>(OnSuccessRoomListForRoomJoinUi);
-                yield return waitForSecondsRealtime;
+                yield return waitForOneSecond;
             }
         }
 
