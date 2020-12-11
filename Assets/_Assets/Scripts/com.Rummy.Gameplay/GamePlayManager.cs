@@ -367,12 +367,12 @@ namespace com.Rummy.Gameplay
             SocketConnectionManager.GetInstance.SendSocketRequest(GameVariables.SocketRequestType.declare, request);
         }
 
-        internal void RoomStatus()
+        public void RoomStatus()
         {
             RoomStatusRequest request = new RoomStatusRequest
             {
-                room_id = roomId,
                 user_id = int.Parse(GameVariables.userId),
+                room_id = roomId,
             };
             SocketConnectionManager.GetInstance.SendSocketRequest(GameVariables.SocketRequestType.roomState, request);
         }

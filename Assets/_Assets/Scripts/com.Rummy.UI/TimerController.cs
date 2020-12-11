@@ -37,7 +37,7 @@ public class TimerController : MonoBehaviour
     public void Activate(float _totalTime,Action _action)
     {
         remainingTime = _totalTime;
-        totalTime = remainingTime;
+        totalTime = 60;
         previosRemainingTime = remainingTime;
 
         isTimerActive = true;
@@ -88,15 +88,15 @@ public class TimerController : MonoBehaviour
 
     private void SetTimerColor()
     {
-        if (remainingTime > 15.0f && !isStartColorSet)
+        if (remainingTime > 30.0f && !isStartColorSet)
         {
             SetColor(ref startTimeColor, ref startTimeColorFade, ref isStartColorSet);
         }
-        if (remainingTime < 15.0f && remainingTime > 7.0f && !isMidColorSet)
+        if (remainingTime < 20.0f && remainingTime > 7.0f && !isMidColorSet)
         {
             SetColor(ref midTimeColor, ref midTimeColorFade, ref isMidColorSet);
         }
-        if (remainingTime < 7.0f && !isCriticalColorSet)
+        if (remainingTime < 10.0f && !isCriticalColorSet)
         {
             SetColor(ref criticalColor, ref criticalColorFade, ref isCriticalColorSet);
         }
