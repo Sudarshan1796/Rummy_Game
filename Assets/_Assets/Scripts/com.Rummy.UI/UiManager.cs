@@ -35,7 +35,7 @@ namespace com.Rummy.Ui
         private UiRotator enabledLoadingUi;
         private Coroutine mainMenuGameTypeDataUpdatingCoroutine;
         private Coroutine randomRoomOpenTableDataUpdatingCoroutine;
-        private readonly WaitForSeconds waitForOneSecond = new WaitForSeconds(1);
+        private readonly WaitForSeconds waitForOneSecond = new WaitForSeconds(3);
         internal bool isOpenTablesInstantiated = false;
 
         #region LoadingUi
