@@ -490,6 +490,7 @@ namespace com.Rummy.Gameplay
         /// <param name="deck"></param>
         private void CreateSortedDeck(List<GameObject> deck)
         {
+            deck = deck.OrderBy(o => o.GetComponent<Card>().cardValue).ToList();
             if (deck.Count > 0)
             {
                 var _gObject = CreateGroup();
