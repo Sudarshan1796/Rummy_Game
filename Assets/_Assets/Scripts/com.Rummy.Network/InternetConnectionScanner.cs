@@ -171,35 +171,25 @@ namespace com.Rummy.Network
 
         private void CheckForInternetfluctuation(InternetStatus status)
         {
-            switch(status)
+            if(status == InternetStatus.Excellent || status == InternetStatus.Good || status == InternetStatus.average)
             {
-                case InternetStatus.Excellent:
-                    CheckIfFluctuating(true);
-                    break;
-                case InternetStatus.Good:
-                    CheckIfFluctuating(true);
-                    break;
-                case InternetStatus.average:
-                    CheckIfFluctuating(true);
-                    break;
-                case InternetStatus.Bad:
-                    CheckIfFluctuating(false);
-                    break;
-                case InternetStatus.NotConnected:
-                    CheckIfFluctuating(false);
-                    break;
+                CheckIfFluctuating(true);
+            }
+            else if(status == InternetStatus.Bad || status == InternetStatus.NotConnected)
+            {
+                CheckIfFluctuating(false);
             }
 
-            void CheckIfFluctuating(bool val)
+            void CheckIfFluctuating(bool isPingTimeLooksGood)
             {
                 if (networkFluctuationSamples.Count == maxFluctuationSampleCount)
                 {
                     networkFluctuationSamples.Dequeue();
-                    networkFluctuationSamples.Enqueue(val);
+                    networkFluctuationSamples.Enqueue(isPingTimeLooksGood);
                 }
                 else
                 {
-                    networkFluctuationSamples.Enqueue(val);
+                    networkFluctuationSamples.Enqueue(isPingTimeLooksGood);
                 }
 
                 fluctuationSampleTrueCounter = fluctuationSampleFalseCounter = 0;
