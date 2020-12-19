@@ -6,27 +6,28 @@ namespace com.Rummy.Network
 {
     public enum InternetStatus : short
     {
-        None, // Internet samples are still in processing state
-        NotConnected,
         Excellent,
         Good,
         average,
-        Bad
+        Bad,
+        NotConnected,
+        None, // Internet samples are still in processing state
     }
 
     public class InternetConnectionScanner : MonoBehaviour
     {
         [SerializeField] private string ipAddress = "8.8.8.8";
-        [SerializeField] private float minPingInterval = 0.20f;
-        [SerializeField] private float pingTimeout = 1;
+        [SerializeField] private float minPingIntervalInSeconds = 0.20f;
+        [SerializeField] private float averageExpectedPingTimeInMiliSeconds = 300;
+        [SerializeField] private float pingTimeoutInSeconds = 1;
 
-        public InternetStatus internetStatus;
+        public InternetStatus internetStatus = InternetStatus.None;
         public float averagePing;
         public bool isInternetFluctuating = false;
 
         private float timer = 0;
-        private int fluctuationSampleTrueCounter;
-        private int fluctuationSampleFalseCounter;
+        private float fluctuationSampleTrueCounter;
+        private float fluctuationSampleFalseCounter;
         private readonly int maxPingSampleCount = 5;
         private readonly int maxFluctuationSampleCount = 10;
         private readonly Queue<int> pingSamples = new Queue<int>();
@@ -61,7 +62,6 @@ namespace com.Rummy.Network
             if (Application.internetReachability == NetworkReachability.NotReachable)
             {
                 internetStatus = InternetStatus.NotConnected;
-                CheckForInternetfluctuation(internetStatus);
             }
             StartCoroutine(Ping());
             StartCoroutine(PingSampleAnalyzer());
@@ -83,25 +83,50 @@ namespace com.Rummy.Network
         {
             while (true)
             {
-                Ping ping = new Ping(ipAddress);
-                timer = pingTimeout;
-                while (!ping.isDone && timer > 0)
+                if (Application.internetReachability != NetworkReachability.NotReachable)
                 {
-                    yield return null;
-                    timer -= Time.unscaledDeltaTime;
-                }
-
-                if (ping.isDone && ping.time != -1)
-                {
-                    if (pingSamples.Count == maxPingSampleCount)
+                    Ping ping = new Ping(ipAddress);
+                    timer = pingTimeoutInSeconds;
+                    while (!ping.isDone && timer > 0)
                     {
-                        pingSamples.Dequeue();
-                        pingSamples.Enqueue(ping.time);
+                        yield return null;
+                        timer -= Time.unscaledDeltaTime;
+                    }
+
+                    if (ping.isDone && ping.time != -1)
+                    {
+                        if (pingSamples.Count == maxPingSampleCount)
+                        {
+                            pingSamples.Dequeue();
+                            pingSamples.Enqueue(ping.time);
+                        }
+                        else
+                        {
+                            pingSamples.Enqueue(ping.time);
+                        }
+                        CheckForInternetfluctuation(ping.time);
                     }
                     else
                     {
-                        pingSamples.Enqueue(ping.time);
+                        if (pingSamples.Count == maxPingSampleCount)
+                        {
+                            pingSamples.Dequeue();
+                            pingSamples.Enqueue(1000);
+                        }
+                        else
+                        {
+                            pingSamples.Enqueue(1000);
+                        }
+                        CheckForInternetfluctuation(1000);
                     }
+
+                    while (timer > (pingTimeoutInSeconds - minPingIntervalInSeconds))
+                    {
+                        yield return null;
+                        timer -= Time.unscaledDeltaTime;
+                    }
+
+                    ping.DestroyPing();
                 }
                 else
                 {
@@ -114,15 +139,15 @@ namespace com.Rummy.Network
                     {
                         pingSamples.Enqueue(1000);
                     }
-                }
+                    CheckForInternetfluctuation(1000);
 
-                while (timer > (pingTimeout - minPingInterval))
-                {
-                    yield return null;
-                    timer -= Time.unscaledDeltaTime;
+                    timer = pingTimeoutInSeconds;
+                    while (timer > (pingTimeoutInSeconds - minPingIntervalInSeconds))
+                    {
+                        yield return null;
+                        timer -= Time.unscaledDeltaTime;
+                    }
                 }
-
-                ping.DestroyPing();
             }
         }
 
@@ -147,15 +172,15 @@ namespace com.Rummy.Network
                     {
                         internetStatus = InternetStatus.NotConnected;
                     }
-                    else if (averagePing <= 150)
+                    else if (averagePing <= 100)
                     {
                         internetStatus = InternetStatus.Excellent;
                     }
-                    else if (averagePing <= 300)
+                    else if (averagePing <= 200)
                     {
                         internetStatus = InternetStatus.Good;
                     }
-                    else if (averagePing <= 500)
+                    else if (averagePing <= 400)
                     {
                         internetStatus = InternetStatus.average;
                     }
@@ -164,18 +189,17 @@ namespace com.Rummy.Network
                         internetStatus = InternetStatus.Bad;
                     }
                 }
-                CheckForInternetfluctuation(internetStatus);
                 yield return waitForSecondsRealtime;
             }
         }
 
-        private void CheckForInternetfluctuation(InternetStatus status)
+        private void CheckForInternetfluctuation(int pingTime)
         {
-            if(status == InternetStatus.Excellent || status == InternetStatus.Good || status == InternetStatus.average)
+            if(pingTime <= averageExpectedPingTimeInMiliSeconds)
             {
                 CheckIfFluctuating(true);
             }
-            else if(status == InternetStatus.Bad || status == InternetStatus.NotConnected)
+            else
             {
                 CheckIfFluctuating(false);
             }
