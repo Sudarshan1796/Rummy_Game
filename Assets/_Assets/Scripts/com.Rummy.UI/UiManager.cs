@@ -448,12 +448,12 @@ namespace com.Rummy.Ui
         {
             while(true)
             {
-                if(!isInternetDisconnectedPoUpEnabled && InternetConnectionScanner.GetInstance.internetStatus == InternetStatus.NotConnected)
+                if(!isInternetDisconnectedPoUpEnabled && InternetConnectionScanner.GetInstance.internetConnectionStatus == InternetStatus.NotConnected)
                 {
                     commonPopUpUiController.ShowInternetDisconnectedPopUp();
                     isInternetDisconnectedPoUpEnabled = true;
                 }
-                else if(isInternetDisconnectedPoUpEnabled && InternetConnectionScanner.GetInstance.internetStatus != InternetStatus.NotConnected)
+                else if(isInternetDisconnectedPoUpEnabled && InternetConnectionScanner.GetInstance.internetConnectionStatus != InternetStatus.NotConnected)
                 {
                     commonPopUpUiController.CloseInternetDisconnectedPopUp();
                     isInternetDisconnectedPoUpEnabled = false;
