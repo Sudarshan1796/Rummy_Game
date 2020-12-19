@@ -21,9 +21,9 @@ namespace com.Rummy.Network
         [SerializeField] private float averageExpectedPingTimeInMiliSeconds = 300;
         [SerializeField] private float pingTimeoutInSeconds = 1;
 
-        public InternetStatus internetStatus = InternetStatus.None;
-        public float averagePing;
-        public bool isInternetFluctuating = false;
+        public InternetStatus internetConnectionStatus = InternetStatus.None;
+        public float averagePingTime;
+        public bool isInternetConnectionFluctuating = false;
 
         private float timer = 0;
         private float fluctuationSampleTrueCounter;
@@ -61,7 +61,7 @@ namespace com.Rummy.Network
         {
             if (Application.internetReachability == NetworkReachability.NotReachable)
             {
-                internetStatus = InternetStatus.NotConnected;
+                internetConnectionStatus = InternetStatus.NotConnected;
             }
             StartCoroutine(Ping());
             StartCoroutine(PingSampleAnalyzer());
@@ -158,36 +158,36 @@ namespace com.Rummy.Network
             {
                 if (Application.internetReachability == NetworkReachability.NotReachable)
                 {
-                    internetStatus = InternetStatus.NotConnected;
+                    internetConnectionStatus = InternetStatus.NotConnected;
                 }
                 else if (pingSamples.Count == maxPingSampleCount)
                 {
-                    averagePing = 0;
+                    averagePingTime = 0;
                     foreach (var val in pingSamples)
                     {
-                        averagePing += val;
+                        averagePingTime += val;
                     }
-                    averagePing /= maxPingSampleCount;
+                    averagePingTime /= maxPingSampleCount;
 
-                    if (averagePing == 1000)
+                    if (averagePingTime == 1000)
                     {
-                        internetStatus = InternetStatus.NotConnected;
+                        internetConnectionStatus = InternetStatus.NotConnected;
                     }
-                    else if (averagePing <= 100)
+                    else if (averagePingTime <= 100)
                     {
-                        internetStatus = InternetStatus.Excellent;
+                        internetConnectionStatus = InternetStatus.Excellent;
                     }
-                    else if (averagePing <= 200)
+                    else if (averagePingTime <= 200)
                     {
-                        internetStatus = InternetStatus.Good;
+                        internetConnectionStatus = InternetStatus.Good;
                     }
-                    else if (averagePing <= 400)
+                    else if (averagePingTime <= 400)
                     {
-                        internetStatus = InternetStatus.average;
+                        internetConnectionStatus = InternetStatus.average;
                     }
                     else
                     {
-                        internetStatus = InternetStatus.Bad;
+                        internetConnectionStatus = InternetStatus.Bad;
                     }
                 }
                 yield return waitForSecondsRealtime;
@@ -232,19 +232,19 @@ namespace com.Rummy.Network
 
                 if(fluctuationSampleTrueCounter > 0 && fluctuationSampleFalseCounter == 0)
                 {
-                    isInternetFluctuating = false;
+                    isInternetConnectionFluctuating = false;
                 }
                 else if (fluctuationSampleFalseCounter > 0 && fluctuationSampleTrueCounter == 0)
                 {
-                    isInternetFluctuating = true;
+                    isInternetConnectionFluctuating = true;
                 }
                 else if(fluctuationSampleTrueCounter / fluctuationSampleFalseCounter < 2.3f)
                 {
-                    isInternetFluctuating = true;
+                    isInternetConnectionFluctuating = true;
                 }
                 else
                 {
-                    isInternetFluctuating = false;
+                    isInternetConnectionFluctuating = false;
                 }
             }
         }
