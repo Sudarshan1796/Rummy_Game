@@ -6,7 +6,7 @@ namespace com.Rummy.Network
 {
     public enum InternetStatus : short
     {
-        None,
+        None, // Internet samples are still in processing state
         NotConnected,
         Excellent,
         Good,
@@ -16,6 +16,7 @@ namespace com.Rummy.Network
 
     public class InternetConnectionScanner : MonoBehaviour
     {
+        [SerializeField] private string ipAddress = "8.8.8.8";
         [SerializeField] private float minPingInterval = 0.20f;
         [SerializeField] private float pingTimeout = 1;
 
@@ -45,6 +46,16 @@ namespace com.Rummy.Network
             }
         }
 
+        internal void SetIp(string ip)
+        {
+            ipAddress = ip;
+        }
+
+        internal string GetIp()
+        {
+            return ipAddress;
+        }
+
         private void Start()
         {
             if (Application.internetReachability == NetworkReachability.NotReachable)
@@ -58,7 +69,7 @@ namespace com.Rummy.Network
 
         /// <summary>
         /// At most this ping request can consume approximately 1.15MB/Hour (if minPingInterval == 0.20ms)
-        /// 64/32 bytes/Ping request (we will consider worst case scenario i.e 64bytes/ping), we are calling each ping request in an interval of "minPingInterval" its default value is 0.2ms => 200ms.
+        /// 64 or 32 bytes/Ping request (we will consider worst case scenario i.e 64bytes/ping), we are calling each ping request in an interval of "minPingInterval" its default value is 0.2ms => 200ms.
         /// 64 bytes * 5 times pers second = 320 bytes/Second.
         /// 320 bytes * 60 seconds = 19200 bytes/Minutes.
         /// 19200 bytes * 60 minutes = 1152000bytes/Hour.
@@ -72,7 +83,7 @@ namespace com.Rummy.Network
         {
             while (true)
             {
-                Ping ping = new Ping("8.8.8.8"); // Google server
+                Ping ping = new Ping(ipAddress);
                 timer = pingTimeout;
                 while (!ping.isDone && timer > 0)
                 {
