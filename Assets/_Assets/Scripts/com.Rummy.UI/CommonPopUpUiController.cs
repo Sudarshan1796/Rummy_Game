@@ -5,7 +5,8 @@ using System;
 
 public class CommonPopUpUiController : MonoBehaviour
 {
-    [SerializeField] private GameObject uiHolder;
+    [SerializeField] private GameObject commonPopUpUiHolder;
+    [SerializeField] private GameObject internetAlertPopUpUiHolder;
     [SerializeField] private Transform fromObject;
     [SerializeField] private Transform toObject;
     [SerializeField] private TMP_Text popUpTitle;
@@ -25,16 +26,22 @@ public class CommonPopUpUiController : MonoBehaviour
 
     private void OnClickOkayButton()
     {
-        onClickOkayAction?.Invoke();
-        onClickOkayAction = null;
-        ClocePopUp();
+        if (!internetAlertPopUpUiHolder.activeSelf)
+        {
+            onClickOkayAction?.Invoke();
+            onClickOkayAction = null;
+            ClosePopUp();
+        }
     }
 
     private void OnClickCancelButton()
     {
-        onClickCancelAction?.Invoke();
-        onClickCancelAction = null;
-        ClocePopUp();
+        if (!internetAlertPopUpUiHolder.activeSelf)
+        {
+            onClickCancelAction?.Invoke();
+            onClickCancelAction = null;
+            ClosePopUp();
+        }
     }
 
     internal void ShowPopUp(string titleText, string messageText, bool enableOkayButton, bool enableCancelButton, Action onClickOkayButton = null, Action onClickCancelButton = null)
@@ -46,11 +53,25 @@ public class CommonPopUpUiController : MonoBehaviour
         onClickOkayAction = onClickOkayButton;
         onClickCancelAction = onClickCancelButton;
         transparentBg.gameObject.SetActive(true);
-        _ = LeanTween.move(uiHolder, toObject.transform.position, 1.0f).setEase(LeanTweenType.easeOutBounce);
+        commonPopUpUiHolder.SetActive(true);
+        _ = LeanTween.move(commonPopUpUiHolder, toObject.transform.position, 1.0f).setEase(LeanTweenType.easeOutBounce);
     }
 
-    internal void ClocePopUp()
+    internal void ClosePopUp()
     {
-        _ = LeanTween.move(uiHolder, fromObject.transform.position, 0.25f).setEase(LeanTweenType.linear).setOnComplete(()=> { transparentBg.gameObject.SetActive(false); });
+        _ = LeanTween.move(commonPopUpUiHolder, fromObject.transform.position, 0.25f).setEase(LeanTweenType.linear).setOnComplete(()=> { transparentBg.gameObject.SetActive(false); commonPopUpUiHolder.SetActive(false); });
+    }
+
+    internal void ShowInternetDisconnectedPopUp()
+    {
+        transparentBg.gameObject.SetActive(true);
+        internetAlertPopUpUiHolder.SetActive(true);
+        _ = LeanTween.move(internetAlertPopUpUiHolder, toObject.transform.position, 1.0f).setEase(LeanTweenType.easeOutBounce);
+    }
+
+    internal void CloseInternetDisconnectedPopUp()
+    {
+        _ = LeanTween.move(internetAlertPopUpUiHolder, fromObject.transform.position, 0.25f).setEase(LeanTweenType.linear).setOnComplete(() =>
+        { if(!commonPopUpUiHolder.activeSelf) transparentBg.gameObject.SetActive(false); internetAlertPopUpUiHolder.SetActive(false); });
     }
 }

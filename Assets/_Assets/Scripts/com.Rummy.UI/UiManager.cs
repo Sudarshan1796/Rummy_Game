@@ -37,6 +37,12 @@ namespace com.Rummy.Ui
         private Coroutine randomRoomOpenTableDataUpdatingCoroutine;
         private readonly WaitForSeconds waitForOneSecond = new WaitForSeconds(3);
         internal bool isOpenTablesInstantiated = false;
+        private bool isInternetDisconnectedPoUpEnabled = false;
+
+        private void Start()
+        {
+            StartCoroutine(checkForInternetConnectionStatus());
+        }
 
         #region LoadingUi
 
@@ -434,6 +440,29 @@ namespace com.Rummy.Ui
         {
             commonPopUpUiController.ShowPopUp(headingText, message, true, true, successAction, failureAction);
         }
+        #endregion
+
+        #region InternetConnectionpopUp
+
+        private IEnumerator checkForInternetConnectionStatus()
+        {
+            while(true)
+            {
+                if(!isInternetDisconnectedPoUpEnabled && InternetConnectionScanner.GetInstance.internetStatus == InternetStatus.NotConnected)
+                {
+                    commonPopUpUiController.ShowInternetDisconnectedPopUp();
+                    isInternetDisconnectedPoUpEnabled = true;
+                }
+                else if(isInternetDisconnectedPoUpEnabled && InternetConnectionScanner.GetInstance.internetStatus != InternetStatus.NotConnected)
+                {
+                    commonPopUpUiController.CloseInternetDisconnectedPopUp();
+                    isInternetDisconnectedPoUpEnabled = false;
+                }
+                yield return null;
+                yield return null;
+            }
+        }
+
         #endregion
     }
 }

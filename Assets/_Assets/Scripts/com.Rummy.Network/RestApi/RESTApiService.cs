@@ -50,7 +50,7 @@ namespace com.Rummy.Network
                     }
                     else
                     {
-                        Debug.Log($"<Color=blue>Url : {url} \n Error : {unityWebRequest.error}</Color>");
+                        Debug.LogError($"<Color=red>Url : {url} \n Error : {unityWebRequest.error}</Color>");
                     }
                 }
                 else
@@ -75,7 +75,7 @@ namespace com.Rummy.Network
                             }
                             else
                             {
-                                Debug.Log($"<Color=red>Url : {url} \n Response : Error Occurred! \n ResponseCode : {response.responseCode} \n ResponseMessage : {response.responseMessage}</Color>");
+                                Debug.LogError($"<Color=red>Url : {url} \n Response : Error Occurred! \n ResponseCode : {response.responseCode} \n ResponseMessage : {response.responseMessage}</Color>");
                             }
                         }
                     }
@@ -119,7 +119,7 @@ namespace com.Rummy.Network
                     }
                     else
                     {
-                        Debug.Log($"<Color=blue>Url : {url} \n Error : {unityWebRequest.error}</Color>");
+                        Debug.LogError($"<Color=red>Url : {url} \n Error : {unityWebRequest.error}</Color>");
                     }
                 }
                 else
@@ -144,7 +144,7 @@ namespace com.Rummy.Network
                             }
                             else
                             {
-                                Debug.Log($"<Color=red>Url : {baseUrl} \n Response : Error Occurred! \n ResponseCode : {response.responseCode} \n ResponseMessage : {response.responseMessage}</Color>");
+                                Debug.LogError($"<Color=red>Url : {baseUrl} \n Response : Error Occurred! \n ResponseCode : {response.responseCode} \n ResponseMessage : {response.responseMessage}</Color>");
                             }
                         }
                     }
