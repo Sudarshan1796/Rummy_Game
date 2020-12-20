@@ -139,7 +139,7 @@ namespace com.Rummy.Gameplay
         {
             createGroupPanel.SetActive(CanCreateGroup());
             cardGameObject.transform.SetParent(tempParemtObject.transform, false);
-            //DeactivateGroupText();
+            DeactivateGroupText();
         }
 
         /// <summary>
@@ -171,11 +171,13 @@ namespace com.Rummy.Gameplay
             RemoveAllSelectedCard();
             CheckForInActivaGroup();
             setGroupText();
+            GetGroupValidation();
         }
 
         private void setGroupText()
         {
             return;
+            
             List<Card> groupCards = new List<Card>();
             for (int i = 0; i < cardGroupGameobject.Count; i++)
             {
@@ -302,6 +304,8 @@ namespace com.Rummy.Gameplay
             {
                 createGroupBtn.gameObject.SetActive(CheckForMergeGroup());
             }
+
+            DeactivateGroupText();
         }
 
         /// <summary>
@@ -335,6 +339,7 @@ namespace com.Rummy.Gameplay
             CheckForInActivaGroup();
             RemoveAllSelectedCard();
             setGroupText();
+            GetGroupValidation();
         }
 
         private bool CanCreateGroup()
@@ -469,16 +474,17 @@ namespace com.Rummy.Gameplay
             var _clubDeck = new List<GameObject>();
             var _diamondDeck = new List<GameObject>();
             ReleaseAllGroup();
-            Debug.Log("COunt"+cards.Count);
+
             for (int i = 0; i < cards.Count; i++)
             {
                 Debug.Log(cards[i]);
                 SortDeck(_spadeDeck, _heartDeck, _clubDeck, _diamondDeck, i);
             }
-            CreateSortedDeck(_spadeDeck);
+
             CreateSortedDeck(_heartDeck);
-            CreateSortedDeck(_clubDeck);
             CreateSortedDeck(_diamondDeck);
+            CreateSortedDeck(_clubDeck);
+            CreateSortedDeck(_spadeDeck);
 
             sortCardBtn.gameObject.SetActive(false);
             setGroupText();
@@ -490,13 +496,14 @@ namespace com.Rummy.Gameplay
         /// <param name="deck"></param>
         private void CreateSortedDeck(List<GameObject> deck)
         {
-            deck = deck.OrderBy(o => o.GetComponent<Card>().cardValue).ToList();
+            deck = deck.OrderBy(o => o.GetComponent<Card>().cardValueIndex).ToList();
             if (deck.Count > 0)
             {
                 var _gObject = CreateGroup();
                 foreach (var item in deck)
                 {
-                    item.transform.SetParent(_gObject.transform, false);
+                    item.transform.SetParent(_gObject.transform);
+                    item.transform.SetSiblingIndex(_gObject.transform.childCount - 1);
                     childParentObject[item] = _gObject;
                 }
             }
@@ -949,31 +956,16 @@ namespace com.Rummy.Gameplay
             discardBtn.gameObject.SetActive(false);
             DeclareBtn.gameObject.SetActive(false);
             List<Network.CardGroup> groupList = new List<Network.CardGroup>();
-            foreach (var group in cardGroupGameobject)
-            {
-                if (!group.activeSelf)
-                {
-                    continue;
-                }
-                Network.CardGroup cardGroup = new Network.CardGroup()
-                {
-                    group_id = group.transform.GetSiblingIndex() + 1,
-                    card_set = new List<Network.Card>(),
-                };
-                for (int i = 0; i < group.transform.childCount; i++)
-                {
-                    var card = group.transform.GetChild(i).GetComponent<Card>().GetCard;
-                    if (selectedObject.Count > 0 &&
-                        (selectedObject.ElementAt(0).Value == group.transform.GetChild(i).gameObject))
-                    {
-                        continue;
-                    }
+            GetGroupData(groupList);
 
-                    cardGroup.card_set.Add(card);
-                }
-                groupList.Add(cardGroup);
-            }
+            var showCard = GetShowCard();
 
+            gameplayManager.PlayerDeclare(groupList, showCard);
+            gameplayManager.IsPlayerDeclare = true;
+        }
+
+        private Network.Card GetShowCard()
+        {
             Network.Card showCard = new Network.Card();
             if (selectedObject.Count > 0)
             {
@@ -984,10 +976,40 @@ namespace com.Rummy.Gameplay
             {
                 showCard = null;
             }
-            
-            gameplayManager.PlayerDeclare(groupList, showCard);
-            gameplayManager.IsPlayerDeclare = true;
+
+            return showCard;
         }
+
+        private void GetGroupData(List<Network.CardGroup> groupList)
+        {
+            foreach (var group in cardGroupGameobject)
+            {
+                if (!@group.activeSelf)
+                {
+                    continue;
+                }
+
+                Network.CardGroup cardGroup = new Network.CardGroup()
+                {
+                    group_id = @group.transform.GetSiblingIndex() + 1,
+                    card_set = new List<Network.Card>(),
+                };
+                for (int i = 0; i < @group.transform.childCount; i++)
+                {
+                    var card = @group.transform.GetChild(i).GetComponent<Card>().GetCard;
+                    if (selectedObject.Count > 0 &&
+                        (selectedObject.ElementAt(0).Value == @group.transform.GetChild(i).gameObject))
+                    {
+                        continue;
+                    }
+
+                    cardGroup.card_set.Add(card);
+                }
+
+                groupList.Add(cardGroup);
+            }
+        }
+
         #endregion
 
         internal void EnableOpenPile()
@@ -1002,6 +1024,39 @@ namespace com.Rummy.Gameplay
                 OpenTileCard.gameObject.SetActive(true);
                 OpenTileCard.Init(gameplayManager.discardedCard.cardValue, gameplayManager.discardedCard.suitValue);
             }
+        }
+
+        private void GetGroupValidation()
+        {
+            List<Network.CardGroup> groupList = new List<Network.CardGroup>();
+            GetGroupData(groupList);
+            gameplayManager.CardGroupValidation(groupList);
+        }
+
+        internal void ValidateGroupSequense(GroupValidationResponse response)
+        {
+            int i = 0;
+            foreach (var group in cardGroupGameobject)
+            {
+                if (!@group.activeSelf)
+                {
+                    continue;
+                }
+
+                var group_id = @group.transform.GetSiblingIndex() + 1;
+                var groupValidation = response.cardGroup.Find((GroupValidation x) => x.groupId == group_id);
+                SetGroupInfoText(group, groupSetText[i], groupValidation.handType);
+                i++;
+            }
+        }
+
+        private void SetGroupInfoText(GameObject parentObject, TMP_Text text, string message)
+        {
+            float _position = parentObject.transform.localPosition.x + 40.0f;// (parentObject.GetComponent<RectTransform>().rect.width / 4);
+            //_position += (parentObject.GetComponent<RectTransform>().rect.width);
+            text.transform.localPosition = new Vector3(_position, text.transform.localPosition.y, text.transform.localPosition.z);
+            text.text = message;
+            text.gameObject.SetActive(true);
         }
     }
 }

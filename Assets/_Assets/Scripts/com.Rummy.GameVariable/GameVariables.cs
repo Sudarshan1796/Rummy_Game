@@ -47,6 +47,7 @@ namespace com.Rummy.GameVariable
             playerLeft,
             drop,
             roomState,
+            handValidate,
         }
 
         public enum SocketResponseType : short
@@ -62,6 +63,7 @@ namespace com.Rummy.GameVariable
             dropRes,
             roomStateRes,
             roomClose,
+            handValidateRes,
         }
 
         public enum RESTApiType : short

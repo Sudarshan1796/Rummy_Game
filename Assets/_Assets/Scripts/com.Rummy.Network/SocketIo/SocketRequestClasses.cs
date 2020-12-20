@@ -62,4 +62,10 @@ namespace com.Rummy.Network
         public int user_id;
         public int room_id;
     }
+
+    public class CardGroupValidationRequest : SocketRequest
+    {
+        public int room_id;
+        public List<CardGroup> card_group;
+    }
 }

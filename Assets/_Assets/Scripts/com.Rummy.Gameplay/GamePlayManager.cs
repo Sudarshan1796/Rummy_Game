@@ -39,6 +39,9 @@ namespace com.Rummy.Gameplay
         internal bool isPlayerDropped;
         internal bool isCardDrawn = false;
 
+        //This used to keep track of all group validation request
+        private int groupValidationRequestCount = 0;
+
         public static GamePlayManager GetInstance
         {
             get
@@ -128,6 +131,8 @@ namespace com.Rummy.Gameplay
                     break;
                 case GameVariables.SocketResponseType.roomStateRes: OnRoomStatusResponse((RoomStatusResponse) response);
                     break;
+                case GameVariables.SocketResponseType.handValidateRes:OnGroupValidationResponse((GroupValidationResponse)response);
+                    break;
             }
         }
         #region Socket 
@@ -167,6 +172,7 @@ namespace com.Rummy.Gameplay
 
         private void GameStart(GameStartResponse response)
         {
+            groupValidationRequestCount = 0;
             _isPlayingGame = true;
             _isPlayerDeclare = false;
             playerCards.Clear();
@@ -294,6 +300,17 @@ namespace com.Rummy.Gameplay
             CardGroupController.GetInstance.EnableDropButton();
         }
 
+        private void OnGroupValidationResponse(GroupValidationResponse response)
+        {
+            groupValidationRequestCount--;
+            if (groupValidationRequestCount > 0)
+            {
+                return;
+            }
+            CardGroupController.GetInstance.ValidateGroupSequense(response);
+        }
+
+
         #endregion
 
         #region Client Event
@@ -367,7 +384,7 @@ namespace com.Rummy.Gameplay
             SocketConnectionManager.GetInstance.SendSocketRequest(GameVariables.SocketRequestType.declare, request);
         }
 
-        public void RoomStatus()
+        internal void RoomStatus()
         {
             RoomStatusRequest request = new RoomStatusRequest
             {
@@ -375,6 +392,17 @@ namespace com.Rummy.Gameplay
                 room_id = roomId,
             };
             SocketConnectionManager.GetInstance.SendSocketRequest(GameVariables.SocketRequestType.roomState, request);
+        }
+
+        internal void CardGroupValidation(List<Network.CardGroup> groupset)
+        {
+            CardGroupValidationRequest request = new CardGroupValidationRequest
+            {
+                room_id = roomId,
+                card_group = groupset,
+            };
+            SocketConnectionManager.GetInstance.SendSocketRequest(GameVariables.SocketRequestType.handValidate, request);
+            groupValidationRequestCount++;
         }
         #endregion
         #endregion
@@ -385,7 +413,9 @@ namespace com.Rummy.Gameplay
         {
             if (hasFocus && _isPlayingGame && SocketConnectionManager.GetInstance.IsConnected)
             {
-                RoomStatus();
+#if !UNITY_EDITOR
+                                RoomStatus();
+#endif
             }
         }
 

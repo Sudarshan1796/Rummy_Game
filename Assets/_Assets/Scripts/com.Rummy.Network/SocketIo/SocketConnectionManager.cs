@@ -123,8 +123,11 @@ namespace com.Rummy.Network
             socketManager.Socket.On(GameVariables.SocketResponseType.roomStateRes.ToString(), (Socket socket, Packet packet, object[] args) =>
             { QueueResponse(Deserialize<RoomStatusResponse>(GameVariables.SocketResponseType.roomStateRes, args[0] as string)); });
 
-           // socketManager.Socket.On(GameVariables.SocketResponseType.roomClose.ToString(), (Socket socket, Packet packet, object[] args) =>
-           // { QueueResponse(Deserialize<RoundCompleteResponse>(GameVariables.SocketResponseType.roomClose, args[0] as string)); });
+            socketManager.Socket.On(GameVariables.SocketResponseType.handValidateRes.ToString(), (Socket socket, Packet packet, object[] args) =>
+                { QueueResponse(Deserialize<GroupValidationResponse>(GameVariables.SocketResponseType.handValidateRes, args[0] as string)); });
+
+            // socketManager.Socket.On(GameVariables.SocketResponseType.roomClose.ToString(), (Socket socket, Packet packet, object[] args) =>
+            // { QueueResponse(Deserialize<RoundCompleteResponse>(GameVariables.SocketResponseType.roomClose, args[0] as string)); });
 
             socketManager.Open();
         }

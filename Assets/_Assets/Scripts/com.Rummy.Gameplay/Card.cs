@@ -24,6 +24,8 @@ namespace com.Rummy.Gameplay
         internal Network.Card card;
         internal GameVariables.SuitType suitType;
         internal GameVariables.CardType cardValue;
+        internal int cardValueIndex;
+
         internal int cardIndexInParent;
 
         public Network.Card GetCard
@@ -99,6 +101,14 @@ namespace com.Rummy.Gameplay
             cardImage.sprite = CardController.GetInstance.GetSprite(cardValue, suitType);
             wildCardJ.SetActive(GamePlayManager.GetInstance.wildCard.suitValue == suitType &&
                                            GamePlayManager.GetInstance.wildCard.cardValue == cardValue);
+            if (cardValue==GameVariables.CardType.Ace)
+            {
+                cardValueIndex = 14;
+            }
+            else
+            {
+                cardValueIndex = (int) cardValue;
+            }
         }
         /// <summary>
         /// OnClick Event

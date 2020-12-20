@@ -181,4 +181,17 @@ namespace com.Rummy.Network
         public List<Card> cardSet;
         public List<RoomInfo> roomInfo;
     }
+
+    [Serializable]
+    public class GroupValidation
+    {
+        public int groupId;
+        public string handType;
+    }
+
+    public class GroupValidationResponse : SocketResponse
+    {
+        public List<GroupValidation> cardGroup;
+    }
+
 }
