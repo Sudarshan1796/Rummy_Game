@@ -16,6 +16,9 @@ namespace com.Rummy.Ui
         [SerializeField] private Button addCashButton;
         [SerializeField] private Button pool101Button;
         [SerializeField] private TextMeshProUGUI phoneNumberText;
+        [SerializeField] private Image networkStatusIndicator;
+        [SerializeField] private Sprite onlineSprite;
+        [SerializeField] private Sprite offLineSprite;
         [Header("Pool 101 Panel")]
         [SerializeField] private TextMeshProUGUI pool101EntryFeeText;
         [SerializeField] private TextMeshProUGUI pool101PlayersOnlineText;
@@ -74,6 +77,18 @@ namespace com.Rummy.Ui
             else
             {
                 Debug.LogError("roomListResponse.practiceGameInfo is empty!");
+            }
+        }
+
+        internal void SetNetWorkStatusIndicator(bool isOnline)
+        {
+            if (isOnline)
+            {
+                networkStatusIndicator.sprite = onlineSprite;
+            }
+            else
+            {
+                networkStatusIndicator.sprite = offLineSprite;
             }
         }
     }

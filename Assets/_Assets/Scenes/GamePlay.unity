@@ -288,8 +288,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a393ec478c6f0476f9cb554e42765100, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  minPingInterval: 0.2
-  pingTimeout: 1
+  ipAddress: 8.8.8.8
+  minPingIntervalInSeconds: 0.2
+  averageExpectedPingTimeInMiliSeconds: 300
+  pingTimeoutInSeconds: 1
+  internetConnectionStatus: 5
+  averagePingTime: 0
+  isInternetConnectionFluctuating: 0
 --- !u!4 &286138866
 Transform:
   m_ObjectHideFlags: 0
@@ -459,7 +464,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 75, y: -22.66549}
+  m_AnchoredPosition: {x: 75, y: -22.665466}
   m_SizeDelta: {x: 107.93, y: 27.93}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &613945819
@@ -1641,7 +1646,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 64.493805, y: -31.962032}
+  m_AnchoredPosition: {x: 64.49365, y: -31.962036}
   m_SizeDelta: {x: 108.98761, y: 43.924065}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &986636893936137170
@@ -3101,6 +3106,10 @@ PrefabInstance:
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
       objectReference: {fileID: 1092237787}
+    - target: {fileID: 4091252762343234159, guid: 61bad59b0badf4e4eb3ec3e86f489885, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: SetActive
+      objectReference: {fileID: 0}
     - target: {fileID: 4598887823457889438, guid: 61bad59b0badf4e4eb3ec3e86f489885, type: 3}
       propertyPath: m_Name
       value: Canvas-MainMenu
@@ -3379,7 +3388,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 76.545, y: -22.66549}
+  m_AnchoredPosition: {x: 76.54492, y: -22.665466}
   m_SizeDelta: {x: 153.09, y: 27.93}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &6831263441674439683

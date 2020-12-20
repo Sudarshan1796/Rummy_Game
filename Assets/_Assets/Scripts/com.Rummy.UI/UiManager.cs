@@ -38,6 +38,7 @@ namespace com.Rummy.Ui
         private readonly WaitForSeconds waitForOneSecond = new WaitForSeconds(3);
         internal bool isOpenTablesInstantiated = false;
         private bool isInternetDisconnectedPoUpEnabled = false;
+        private bool isMainMenuNetworkIndicatorIsOnline = true;
 
         private void Start()
         {
@@ -448,15 +449,30 @@ namespace com.Rummy.Ui
         {
             while(true)
             {
-                if(!isInternetDisconnectedPoUpEnabled && InternetConnectionScanner.GetInstance.internetConnectionStatus == InternetStatus.NotConnected)
+                if (!isInternetDisconnectedPoUpEnabled && InternetConnectionScanner.GetInstance.internetConnectionStatus == InternetStatus.NotConnected)
                 {
                     commonPopUpUiController.ShowInternetDisconnectedPopUp();
+                    mainMenuUiController.SetNetWorkStatusIndicator(false);
                     isInternetDisconnectedPoUpEnabled = true;
                 }
-                else if(isInternetDisconnectedPoUpEnabled && InternetConnectionScanner.GetInstance.internetConnectionStatus != InternetStatus.NotConnected)
+                else if (isInternetDisconnectedPoUpEnabled && InternetConnectionScanner.GetInstance.internetConnectionStatus != InternetStatus.NotConnected)
                 {
                     commonPopUpUiController.CloseInternetDisconnectedPopUp();
+                    mainMenuUiController.SetNetWorkStatusIndicator(true);
                     isInternetDisconnectedPoUpEnabled = false;
+                }
+                else if (mainMenuUiController.gameObject.activeSelf)
+                {
+                    if (isMainMenuNetworkIndicatorIsOnline && !isInternetDisconnectedPoUpEnabled && InternetConnectionScanner.GetInstance.internetConnectionStatus != InternetStatus.NotConnected && InternetConnectionScanner.GetInstance.isInternetConnectionFluctuating)
+                    {
+                        mainMenuUiController.SetNetWorkStatusIndicator(false);
+                        isMainMenuNetworkIndicatorIsOnline = false;
+                    }
+                    else if (!isMainMenuNetworkIndicatorIsOnline && InternetConnectionScanner.GetInstance.internetConnectionStatus != InternetStatus.NotConnected && !InternetConnectionScanner.GetInstance.isInternetConnectionFluctuating)
+                    {
+                        mainMenuUiController.SetNetWorkStatusIndicator(true);
+                        isMainMenuNetworkIndicatorIsOnline = true;
+                    }
                 }
                 yield return null;
                 yield return null;
