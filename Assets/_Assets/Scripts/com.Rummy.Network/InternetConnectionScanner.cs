@@ -32,7 +32,6 @@ namespace com.Rummy.Network
         private readonly int maxFluctuationSampleCount = 10;
         private readonly Queue<int> pingSamples = new Queue<int>();
         private readonly Queue<bool> networkFluctuationSamples = new Queue<bool>();
-        private WaitForSecondsRealtime waitForSecondsRealtime = new WaitForSecondsRealtime(0.1f);
 
         private static InternetConnectionScanner instance;
         internal static InternetConnectionScanner GetInstance
@@ -64,7 +63,6 @@ namespace com.Rummy.Network
                 internetConnectionStatus = InternetStatus.NotConnected;
             }
             StartCoroutine(Ping());
-            StartCoroutine(PingSampleAnalyzer());
         }
 
         /// <summary>
@@ -149,48 +147,45 @@ namespace com.Rummy.Network
                         timer -= Time.unscaledDeltaTime;
                     }
                 }
+                CheckForInternetConnectionStatus();
             }
         }
 
-        private IEnumerator PingSampleAnalyzer()
+        private void CheckForInternetConnectionStatus()
         {
-            while (true)
+            if (Application.internetReachability == NetworkReachability.NotReachable)
             {
-                if (Application.internetReachability == NetworkReachability.NotReachable)
+                internetConnectionStatus = InternetStatus.NotConnected;
+            }
+            else if (pingSamples.Count == maxPingSampleCount)
+            {
+                averagePingTime = 0;
+                foreach (var val in pingSamples)
+                {
+                    averagePingTime += val;
+                }
+                averagePingTime /= maxPingSampleCount;
+
+                if (averagePingTime == 1000)
                 {
                     internetConnectionStatus = InternetStatus.NotConnected;
                 }
-                else if (pingSamples.Count == maxPingSampleCount)
+                else if (averagePingTime <= 100)
                 {
-                    averagePingTime = 0;
-                    foreach (var val in pingSamples)
-                    {
-                        averagePingTime += val;
-                    }
-                    averagePingTime /= maxPingSampleCount;
-
-                    if (averagePingTime == 1000)
-                    {
-                        internetConnectionStatus = InternetStatus.NotConnected;
-                    }
-                    else if (averagePingTime <= 100)
-                    {
-                        internetConnectionStatus = InternetStatus.Excellent;
-                    }
-                    else if (averagePingTime <= 200)
-                    {
-                        internetConnectionStatus = InternetStatus.Good;
-                    }
-                    else if (averagePingTime <= 400)
-                    {
-                        internetConnectionStatus = InternetStatus.average;
-                    }
-                    else
-                    {
-                        internetConnectionStatus = InternetStatus.Bad;
-                    }
+                    internetConnectionStatus = InternetStatus.Excellent;
                 }
-                yield return waitForSecondsRealtime;
+                else if (averagePingTime <= 200)
+                {
+                    internetConnectionStatus = InternetStatus.Good;
+                }
+                else if (averagePingTime <= 400)
+                {
+                    internetConnectionStatus = InternetStatus.average;
+                }
+                else
+                {
+                    internetConnectionStatus = InternetStatus.Bad;
+                }
             }
         }
 
