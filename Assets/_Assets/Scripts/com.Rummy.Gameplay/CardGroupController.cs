@@ -294,7 +294,7 @@ namespace com.Rummy.Gameplay
                 }
             }
             dropBtn.gameObject.SetActive(selectedObject.Count == 0 && gameplayManager.playerTurn == int.Parse(GameVariables.userId) && !gameplayManager.isCardDrawn);
-            discardBtn.gameObject.SetActive(selectedObject.Count == 1 && gameplayManager.playerTurn == int.Parse(GameVariables.userId) && gameplayManager.isCardDrawn);
+            discardBtn.gameObject.SetActive(selectedObject.Count == 1 && gameplayManager.playerTurn == int.Parse(GameVariables.userId) && gameplayManager.isCardDrawn && !gameplayManager.CanPlayerMakeCardMovement);
             DeclareBtn.gameObject.SetActive(selectedObject.Count == 1 && gameplayManager.playerTurn == int.Parse(GameVariables.userId) && gameplayManager.isCardDrawn);
             if (CanCreateGroup())
             {
@@ -487,7 +487,8 @@ namespace com.Rummy.Gameplay
             CreateSortedDeck(_spadeDeck);
 
             sortCardBtn.gameObject.SetActive(false);
-            setGroupText();
+            //setGroupText();
+            GetGroupValidation();
         }
 
         /// <summary>
@@ -943,6 +944,7 @@ namespace com.Rummy.Gameplay
                 dropBtn.gameObject.SetActive(true);
             }
         }
+
         #endregion
 
         #region Declare
@@ -1008,6 +1010,11 @@ namespace com.Rummy.Gameplay
 
                 groupList.Add(cardGroup);
             }
+        }
+
+        internal void UpdateDeclareButtonState(bool state)
+        {
+            DeclareBtn.gameObject.SetActive(state);
         }
 
         #endregion

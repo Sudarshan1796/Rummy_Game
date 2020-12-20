@@ -20,8 +20,9 @@ namespace com.Rummy.Gameplay
         private static GamePlayManager instance;
 
         private bool _isPlayerDeclare;
-
         private bool _isPlayingGame;
+        private bool _isOtherplayerDeclared;
+
         // This List hold the List of player in the current room
         internal List<Player> roomPlayers;
         internal List<PlayerCard> playerCards;
@@ -75,6 +76,14 @@ namespace com.Rummy.Gameplay
             set
             {
                 _isPlayingGame = value;
+            }
+        }
+
+        public bool CanPlayerMakeCardMovement
+        {
+            get
+            {
+                return _isOtherplayerDeclared;
             }
         }
         private void Awake()
@@ -172,6 +181,7 @@ namespace com.Rummy.Gameplay
 
         private void GameStart(GameStartResponse response)
         {
+            _isOtherplayerDeclared = false;
             groupValidationRequestCount = 0;
             _isPlayingGame = true;
             _isPlayerDeclare = false;
@@ -273,10 +283,12 @@ namespace com.Rummy.Gameplay
             }
             if (int.Parse(GameVariables.userId) != response.userId)
             {
+                _isOtherplayerDeclared = true;
                 GameplayController.GetInstance.SetShowCard(response.showCard);
                 UiManager.GetInstance.ConfirmationPoup("Are sure you want to Declare?", "Declare", Declare);
             }
             CardGroupController.GetInstance.EnableDropButton(true);
+            CardGroupController.GetInstance.UpdateDeclareButtonState(true);
         }
 
         private void Declare()
