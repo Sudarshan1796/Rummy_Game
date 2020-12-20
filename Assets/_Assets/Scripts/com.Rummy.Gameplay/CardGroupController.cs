@@ -25,7 +25,7 @@ namespace com.Rummy.Gameplay
         [SerializeField] private Button createGroupBtn, sortCardBtn, discardBtn, dropBtn, DeclareBtn;
         [SerializeField] private GameObject createGroupPanel;
         [SerializeField] private RectTransform[] parentReactTans;
-        [SerializeField] private TMP_Text[] groupSetText;
+        [SerializeField] private GameObject[] groupSetText;
         [SerializeField] private GameObject declarePanel;
         [SerializeField] private Transform openDeckTransform;
         [SerializeField] private Transform closedDeckTransform;
@@ -36,11 +36,13 @@ namespace com.Rummy.Gameplay
         [SerializeField] private Card backCardController;
         [SerializeField] private Card OpenTileCard;
         [SerializeField] private float cardLenght;
-        private List<GameObject> cardGameobject;
+        private List<GameObject> cardGameobject; 
         private List<Card> cards;
         private List<GameObject> inActiveGroups;
         private Dictionary<Card, GameObject> selectedObject;
         private Dictionary<GameObject, GameObject> childParentObject;
+        private List<TextValidationController> textValidation;
+
         private static CardGroupController instance;
 
         private GamePlayManager gameplayManager;
@@ -65,6 +67,12 @@ namespace com.Rummy.Gameplay
             childParentObject = new Dictionary<GameObject, GameObject>();
             inActiveGroups = new List<GameObject>();
             gameplayManager = GamePlayManager.GetInstance;
+            textValidation = new List<TextValidationController>();
+            foreach(var text in groupSetText)
+            {
+                var textVal = text.GetComponent<TextValidationController>();
+                textValidation.Add(textVal);
+            }
         }
 
         private void OnEnable()
@@ -191,7 +199,7 @@ namespace com.Rummy.Gameplay
                             groupCards.Add(card);
                         }
                     }
-                    SetGroupInfo(groupCards, cardGroupGameobject[i], groupSetText[i]);
+                   // SetGroupInfo(groupCards, cardGroupGameobject[i], groupSetText[i]);
                 }
             }
         }
@@ -1052,17 +1060,18 @@ namespace com.Rummy.Gameplay
 
                 var group_id = @group.transform.GetSiblingIndex() + 1;
                 var groupValidation = response.cardGroup.Find((GroupValidation x) => x.groupId == group_id);
-                SetGroupInfoText(group, groupSetText[i], groupValidation.handType);
+                SetGroupInfoText(group, groupSetText[i], groupValidation.handType, textValidation[i]);
                 i++;
             }
         }
 
-        private void SetGroupInfoText(GameObject parentObject, TMP_Text text, string message)
+        private void SetGroupInfoText(GameObject parentObject, GameObject text, string message, TextValidationController textVal)
         {
             float _position = parentObject.transform.localPosition.x + 40.0f;// (parentObject.GetComponent<RectTransform>().rect.width / 4);
             //_position += (parentObject.GetComponent<RectTransform>().rect.width);
             text.transform.localPosition = new Vector3(_position, text.transform.localPosition.y, text.transform.localPosition.z);
-            text.text = message;
+            //text.text = message;
+            textVal.SetDetails(message);
             text.gameObject.SetActive(true);
         }
     }
