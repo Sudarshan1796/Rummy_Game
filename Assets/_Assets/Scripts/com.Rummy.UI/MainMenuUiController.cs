@@ -15,6 +15,7 @@ namespace com.Rummy.Ui
         [SerializeField] private Button profileButton;
         [SerializeField] private Button addCashButton;
         [SerializeField] private Button pool101Button;
+        [SerializeField] private Button pool201Button;
         [SerializeField] private TextMeshProUGUI phoneNumberText;
         [SerializeField] private Image networkStatusIndicator;
         [SerializeField] private Sprite onlineSprite;
@@ -26,12 +27,19 @@ namespace com.Rummy.Ui
         private void Start()
         {
             pool101Button.onClick.AddListener(OnClickPool101Button);
+            pool201Button.onClick.AddListener(OnClickPool201Button);
         }
 
         private void OnClickPool101Button()
         {
             StopUpdatingGameTypeDynamicData();
             GameVariables.userSelectedGameMode = GameVariables.GameMode.Pool101;
+            UiManager.GetInstance.EnableRoomJoinUi();
+        }
+        private void OnClickPool201Button()
+        {
+            StopUpdatingGameTypeDynamicData();
+            GameVariables.userSelectedGameMode = GameVariables.GameMode.Pool201;
             UiManager.GetInstance.EnableRoomJoinUi();
         }
 
