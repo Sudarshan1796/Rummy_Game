@@ -20,10 +20,15 @@ namespace com.Rummy.Gameplay
             userName.text = player.userName;
             userId = player.userId;
             position = player.position;
+            gameObject.SetActive(true);
         }
 
         internal void SetTimer(int userId,float Timer,Action onComplete)
         {
+            if (!gameObject.activeInHierarchy)
+            {
+                return;
+            }
             if (userId == this.userId)
             {
                 timerController.Activate(Timer, onComplete);

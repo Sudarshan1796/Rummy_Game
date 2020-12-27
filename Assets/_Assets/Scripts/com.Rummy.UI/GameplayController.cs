@@ -206,7 +206,7 @@ namespace com.Rummy.UI
                 playerUiController.SetDetails(player);
                 if (!activePlayers.ContainsKey(player.userId))
                 {
-                    activePlayers.Add(player.userId, playerController);
+                    activePlayers.Add(player.userId, playerUiController);
                 }
             }
 
@@ -224,6 +224,10 @@ namespace com.Rummy.UI
                 index = index - 1;
             }
             gamePlayers[index].SetDetails(player);
+            if (!activePlayers.ContainsKey(player.userId))
+            {
+                activePlayers.Add(player.userId, gamePlayers[index]);
+            }
         }
 
 
@@ -271,6 +275,15 @@ namespace com.Rummy.UI
             playerController.SetTimer(id, timer, onComplete);
             //this is for the other player
             gamePlayers[0].SetTimer(id, timer, onComplete);
+            if (GamePlayManager.GetInstance.roomPlayers.Count < 2)
+            {
+                return;
+            }
+            gamePlayers[1].SetTimer(id, timer, onComplete);
+            gamePlayers[2].SetTimer(id, timer, onComplete);
+            gamePlayers[3].SetTimer(id, timer, onComplete);
+            gamePlayers[4].SetTimer(id, timer, onComplete);
+
         }
 
         internal void MoveDiscardedCard(PlayerCard playerCard, int userId)
