@@ -27,8 +27,8 @@ namespace com.Rummy.Ui
         [Header("Random Room Table Selection Screen")]
         public GameObject randomRoomTableSelectionScreen;
         public GameObject openTablePrefab;
-        public Transform twoPlayersScrollRectContent;
-        public Transform sixPlayersScrollRectContent;
+        public HorizontalLayoutGroup twoPlayersScrollRectContent;
+        public HorizontalLayoutGroup sixPlayersScrollRectContent;
 
         [SerializeField] private TextMeshProUGUI gameTypeText;
         [SerializeField] private Toggle twoPlayersToggle;
@@ -283,12 +283,12 @@ namespace com.Rummy.Ui
                                 {
                                     if (gameinfo.roomData[i].maxPlayers == 2)
                                     {
-                                        table = Instantiate(openTablePrefab, twoPlayersScrollRectContent);
+                                        table = Instantiate(openTablePrefab, twoPlayersScrollRectContent.transform);
                                         twoPlayersOpenTable.Add(table.GetComponent<Table>());
                                     }
                                     else
                                     {
-                                        table = Instantiate(openTablePrefab, sixPlayersScrollRectContent);
+                                        table = Instantiate(openTablePrefab, sixPlayersScrollRectContent.transform);
                                         sixPlayersOpenTable.Add(table.GetComponent<Table>());
                                     }
                                 }
@@ -300,14 +300,103 @@ namespace com.Rummy.Ui
                             {
                                 if (gameinfo.roomData[j].maxPlayers == 2)
                                 {
-                                    twoPlayersOpenTable[twoPlayersOpenTableCount].UpdateData(gameinfo.roomData[j].entryFee.ToString(), gameinfo.roomData[j].usersInTable, 2, gameinfo.roomData[j].activePlayers.ToString());
+                                    twoPlayersOpenTable[twoPlayersOpenTableCount].UpdateData(gameinfo.gameMode, gameinfo.roomData[j].entryFee.ToString(), gameinfo.roomData[j].usersInTable, 2, gameinfo.roomData[j].activePlayers.ToString());
                                     if (twoPlayersOpenTable[twoPlayersOpenTableCount].onClickPlayNowButton == null)
                                         twoPlayersOpenTable[twoPlayersOpenTableCount].onClickPlayNowButton += OnClickOpenTablePlayNowButton;
                                     twoPlayersOpenTableCount++;
                                 }
                                 else
                                 {
-                                    sixPlayersOpenTable[sixPlayersOpenTableCount].UpdateData(gameinfo.roomData[j].entryFee.ToString(), gameinfo.roomData[j].usersInTable, 6, gameinfo.roomData[j].activePlayers.ToString());
+                                    sixPlayersOpenTable[sixPlayersOpenTableCount].UpdateData(gameinfo.gameMode, gameinfo.roomData[j].entryFee.ToString(), gameinfo.roomData[j].usersInTable, 6, gameinfo.roomData[j].activePlayers.ToString());
+                                    if (sixPlayersOpenTable[sixPlayersOpenTableCount].onClickPlayNowButton == null)
+                                        sixPlayersOpenTable[sixPlayersOpenTableCount].onClickPlayNowButton += OnClickOpenTablePlayNowButton;
+                                    sixPlayersOpenTableCount++;
+                                }
+                            }
+
+                            if(twoPlayersOpenTableCount == 1)
+                            {
+                                twoPlayersScrollRectContent.padding.left = 235;
+                            }
+                            else if(twoPlayersOpenTableCount == 2)
+                            {
+                                twoPlayersScrollRectContent.padding.left = 160;
+                            }
+                            else if (twoPlayersOpenTableCount == 3)
+                            {
+                                twoPlayersScrollRectContent.padding.left = 80;
+                            }
+                            else
+                            {
+                                twoPlayersScrollRectContent.padding.left = 4;
+                            }
+
+                            if (sixPlayersOpenTableCount == 1)
+                            {
+                                sixPlayersScrollRectContent.padding.left = 235;
+                            }
+                            else if (sixPlayersOpenTableCount == 2)
+                            {
+                                sixPlayersScrollRectContent.padding.left = 160;
+                            }
+                            else if (sixPlayersOpenTableCount == 3)
+                            {
+                                sixPlayersScrollRectContent.padding.left = 80;
+                            }
+                            else
+                            {
+                                sixPlayersScrollRectContent.padding.left = 4;
+                            }
+
+                            if (!UiManager.GetInstance.isOpenTablesInstantiated)
+                            {
+                                UiManager.GetInstance.isOpenTablesInstantiated = true;
+                                UiManager.GetInstance.DisableLoadingUi();
+                            }
+                        }
+                    }
+                }
+            }
+            else if (roomListResponse.cashGameInfo != null)
+            {
+                if (randomRoomTableSelectionScreen.activeSelf)
+                {
+                    foreach (var gameinfo in roomListResponse.cashGameInfo)
+                    {
+                        if (userSelectedGameMode == gameinfo.gameMode)
+                        {
+                            if (!UiManager.GetInstance.isOpenTablesInstantiated)
+                            {
+                                GameObject table;
+                                for (int i = 0; i < gameinfo.roomData.Count; i++)
+                                {
+                                    if (gameinfo.roomData[i].maxPlayers == 2)
+                                    {
+                                        table = Instantiate(openTablePrefab, twoPlayersScrollRectContent.transform);
+                                        twoPlayersOpenTable.Add(table.GetComponent<Table>());
+                                    }
+                                    else
+                                    {
+                                        table = Instantiate(openTablePrefab, sixPlayersScrollRectContent.transform);
+                                        sixPlayersOpenTable.Add(table.GetComponent<Table>());
+                                    }
+                                }
+                            }
+
+                            int twoPlayersOpenTableCount = 0;
+                            int sixPlayersOpenTableCount = 0;
+                            for (int j = 0; j < gameinfo.roomData.Count; j++)
+                            {
+                                if (gameinfo.roomData[j].maxPlayers == 2)
+                                {
+                                    twoPlayersOpenTable[twoPlayersOpenTableCount].UpdateData(gameinfo.gameMode, gameinfo.roomData[j].entryFee.ToString(), gameinfo.roomData[j].usersInTable, 2, gameinfo.roomData[j].activePlayers.ToString());
+                                    if (twoPlayersOpenTable[twoPlayersOpenTableCount].onClickPlayNowButton == null)
+                                        twoPlayersOpenTable[twoPlayersOpenTableCount].onClickPlayNowButton += OnClickOpenTablePlayNowButton;
+                                    twoPlayersOpenTableCount++;
+                                }
+                                else
+                                {
+                                    sixPlayersOpenTable[sixPlayersOpenTableCount].UpdateData(gameinfo.gameMode, gameinfo.roomData[j].entryFee.ToString(), gameinfo.roomData[j].usersInTable, 6, gameinfo.roomData[j].activePlayers.ToString());
                                     if (sixPlayersOpenTable[sixPlayersOpenTableCount].onClickPlayNowButton == null)
                                         sixPlayersOpenTable[sixPlayersOpenTableCount].onClickPlayNowButton += OnClickOpenTablePlayNowButton;
                                     sixPlayersOpenTableCount++;
@@ -325,7 +414,7 @@ namespace com.Rummy.Ui
             }
             else
             {
-                Debug.LogError("roomListResponse.practiceGameInfo is empty!");
+                Debug.LogError("roomListResponse is empty!");
             }
         }
 

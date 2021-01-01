@@ -34,6 +34,7 @@ namespace com.Rummy.GameVariable
         public static string userId;
         public static string AccessToken;
         public static UserGetProfileResponse UserProfile;
+        public static CurrentUserMode currentUserMode;
         public static GameMode userSelectedGameMode;
         public static RoomType userSelectedRoomType;
         public static RoomSize userSelectedRoomSize;
@@ -103,6 +104,12 @@ namespace com.Rummy.GameVariable
             Jack,
             Queen,
             King
+        }
+
+        public enum CurrentUserMode : short
+        {
+            PracticeMode,
+            CashMode
         }
 
         public enum GameMode: short

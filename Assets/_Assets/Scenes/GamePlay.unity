@@ -154,7 +154,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ipAddress: 8.8.8.8
   minPingIntervalInSeconds: 0.2
-  averageExpectedPingTimeInMilliSeconds: 300
+  normalPingTimeInMilliSeconds: 300
   pingTimeoutInSeconds: 1
   internetConnectionStatus: 5
   averagePingTime: 0
@@ -1778,6 +1778,18 @@ PrefabInstance:
     - target: {fileID: 3295287953088212387, guid: e3cfe570ad4152d4fa088a540e4d2503, type: 3}
       propertyPath: m_Name
       value: Canvas-RoomSelectionScreen
+      objectReference: {fileID: 0}
+    - target: {fileID: 4065809445172799570, guid: e3cfe570ad4152d4fa088a540e4d2503, type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7072261692223194756, guid: e3cfe570ad4152d4fa088a540e4d2503, type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7072261692223194756, guid: e3cfe570ad4152d4fa088a540e4d2503, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: e3cfe570ad4152d4fa088a540e4d2503, type: 3}

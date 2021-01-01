@@ -595,7 +595,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0, g: 0, b: 0, a: 0.6}
+  m_Color: {r: 0, g: 0, b: 0, a: 0.78431374}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -1856,8 +1856,8 @@ MonoBehaviour:
   customRoomSizeSelectionScreenCloseButton: {fileID: 7143763087239494147}
   randomRoomTableSelectionScreen: {fileID: 7229171211039898839}
   openTablePrefab: {fileID: 3301815906713931652, guid: 94e4c351d6b80472e86202447646c87a, type: 3}
-  twoPlayersScrollRectContent: {fileID: 4065809445172799570}
-  sixPlayersScrollRectContent: {fileID: 5970044374969815852}
+  twoPlayersScrollRectContent: {fileID: 5229935530237103248}
+  sixPlayersScrollRectContent: {fileID: 166937155388614604}
   gameTypeText: {fileID: 8458009058299552426}
   twoPlayersToggle: {fileID: 5016391604238467687}
   sixPlayerToggle: {fileID: 6985087931801648435}
