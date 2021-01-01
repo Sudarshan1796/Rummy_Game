@@ -18,7 +18,7 @@ namespace com.Rummy.Network
     {
         [SerializeField] private string ipAddress = "8.8.8.8";
         [SerializeField] private float minPingIntervalInSeconds = 0.20f;
-        [SerializeField] private float averageExpectedPingTimeInMilliSeconds = 300;
+        [SerializeField] private float normalPingTimeInMilliSeconds = 300;
         [SerializeField] private float pingTimeoutInSeconds = 1;
 
         public InternetStatus internetConnectionStatus = InternetStatus.None;
@@ -191,7 +191,7 @@ namespace com.Rummy.Network
 
         private void CheckForInternetfluctuation(int pingTime)
         {
-            if(pingTime <= averageExpectedPingTimeInMilliSeconds)
+            if(pingTime <= normalPingTimeInMilliSeconds)
             {
                 CheckIfFluctuating(true);
             }
