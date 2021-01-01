@@ -18,7 +18,7 @@ namespace com.Rummy.Network
     {
         [SerializeField] private string ipAddress = "8.8.8.8";
         [SerializeField] private float minPingIntervalInSeconds = 0.20f;
-        [SerializeField] private float averageExpectedPingTimeInMiliSeconds = 300;
+        [SerializeField] private float averageExpectedPingTimeInMilliSeconds = 300;
         [SerializeField] private float pingTimeoutInSeconds = 1;
 
         public InternetStatus internetConnectionStatus = InternetStatus.None;
@@ -67,7 +67,7 @@ namespace com.Rummy.Network
 
         /// <summary>
         /// At most this ping request can consume approximately 1.15MB/Hour (if minPingIntervalInSeconds == 0.20ms)
-        /// 64 or 32 bytes/Ping request (we will consider worst case scenario i.e 64bytes/ping), we are calling each ping request approximately in an interval of "minPingIntervalInSeconds" its default value is 0.2ms => 200ms.
+        /// It will consume 64 or 32 bytes/Ping request (we will consider worst case scenario i.e 64bytes/ping), we are calling each ping request approximately in an interval of "minPingIntervalInSeconds" its default value is 0.2ms => 200ms.
         /// So in a second atmost 5 times we will ping server or atleast once becuase for any ping we will wait for atmost 1sec (pingTimeoutInSeconds = 1sec (default)).
         /// 64 bytes * 5 times pers second = 320 bytes/Second.
         /// 320 bytes * 60 seconds = 19200 bytes/Minutes.
@@ -76,7 +76,7 @@ namespace com.Rummy.Network
         ///
         /// High ping value can be because of 2 reasons
         /// Either your internet is very slow or you are trying to communicate to a server which is too far from your location or both.
-        /// But in both of the above cases outcome will be same that is packet loss if internet is slow / or very high RTT if you have very good internet but server is too far.
+        /// But in both of the above cases outcome will be same that is packet loss if internet connection is too slow or very high RTT because of server location is too far but internet connection is good.
         /// </summary>
         private IEnumerator Ping()
         {
@@ -191,7 +191,7 @@ namespace com.Rummy.Network
 
         private void CheckForInternetfluctuation(int pingTime)
         {
-            if(pingTime <= averageExpectedPingTimeInMiliSeconds)
+            if(pingTime <= averageExpectedPingTimeInMilliSeconds)
             {
                 CheckIfFluctuating(true);
             }
