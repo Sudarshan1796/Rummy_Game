@@ -59,24 +59,24 @@ namespace com.Rummy.Network
                                                                           payloadKeyValuePairs, successResponse, errorResponse));
         }
 
-        internal void RoomCreate<T>(bool isPractice, string gameMode, string maxPlayers, Action<T> successResponse = null, Action<string, string> errorResponse = null) where T : ResponseData
+        internal void RoomCreate<T>(string gameMode, string maxPlayers, Action<T> successResponse = null, Action<string, string> errorResponse = null) where T : ResponseData
         {
             payloadKeyValuePairs.Clear();
             payloadKeyValuePairs.Add(GameConstants.USER_ID, GameVariables.userId);
             payloadKeyValuePairs.Add(GameConstants.ACCESS_TOKEN, GameVariables.AccessToken);
-            payloadKeyValuePairs.Add(GameConstants.IS_PRACTICE, isPractice?"1":"0");
+            payloadKeyValuePairs.Add(GameConstants.IS_PRACTICE, ((short)GameVariables.currentUserMode).ToString());
             payloadKeyValuePairs.Add(GameConstants.GAME_MODE, gameMode);
             payloadKeyValuePairs.Add(GameConstants.MAX_PLAYERS, maxPlayers);
             _ = StartCoroutine(RESTApiService.UnityWebRequestInPostMethod(GameVariables.GetRestApiUrl(GameVariables.RESTApiType.roomCreate),
                                                                           payloadKeyValuePairs, successResponse, errorResponse));
         }
 
-        internal void RoomJoin<T>(bool isPractice, string gameMode, string maxPlayers, string roomCode, string entryFee, Action<T> successResponse = null, Action<string, string> errorResponse = null) where T : ResponseData
+        internal void RoomJoin<T>(string gameMode, string maxPlayers, string roomCode, string entryFee, Action<T> successResponse = null, Action<string, string> errorResponse = null) where T : ResponseData
         {
             payloadKeyValuePairs.Clear();
             payloadKeyValuePairs.Add(GameConstants.USER_ID, GameVariables.userId);
             payloadKeyValuePairs.Add(GameConstants.ACCESS_TOKEN, GameVariables.AccessToken);
-            payloadKeyValuePairs.Add(GameConstants.IS_PRACTICE, isPractice?"1":"0");
+            payloadKeyValuePairs.Add(GameConstants.IS_PRACTICE, ((short)GameVariables.currentUserMode).ToString());
             payloadKeyValuePairs.Add(GameConstants.GAME_MODE, gameMode);
             payloadKeyValuePairs.Add(GameConstants.MAX_PLAYERS, maxPlayers);
             payloadKeyValuePairs.Add(GameConstants.ROOM_CODE, roomCode);
@@ -90,6 +90,7 @@ namespace com.Rummy.Network
             payloadKeyValuePairs.Clear();
             payloadKeyValuePairs.Add(GameConstants.USER_ID, GameVariables.userId);
             payloadKeyValuePairs.Add(GameConstants.ACCESS_TOKEN, GameVariables.AccessToken);
+            payloadKeyValuePairs.Add(GameConstants.IS_PRACTICE, ((short)GameVariables.currentUserMode).ToString());
             _ = StartCoroutine(RESTApiService.UnityWebRequestInPostMethod(GameVariables.GetRestApiUrl(GameVariables.RESTApiType.roomList),
                                                                           payloadKeyValuePairs, successResponse, errorResponse, false));
         }

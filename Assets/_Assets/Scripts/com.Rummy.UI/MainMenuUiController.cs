@@ -20,6 +20,7 @@ namespace com.Rummy.Ui
         [SerializeField] private Image networkStatusIndicator;
         [SerializeField] private Sprite onlineSprite;
         [SerializeField] private Sprite offLineSprite;
+        [SerializeField] private GameObject[] practiceBadges;
         [Header("Pool 101 Panel")]
         [SerializeField] private TextMeshProUGUI pool101EntryFeeText;
         [SerializeField] private TextMeshProUGUI pool101PlayersOnlineText;
@@ -39,6 +40,7 @@ namespace com.Rummy.Ui
             pool201Button.onClick.AddListener(OnClickPool201Button);
             pointsButton.onClick.AddListener(OnClickPointsButton);
             dealsButton.onClick.AddListener(OnClickDealsButton);
+            SetActivePracticeBadge(GameVariables.currentUserMode == GameVariables.CurrentUserMode.PracticeMode);
         }
 
         private void OnClickPool101Button()
@@ -164,6 +166,14 @@ namespace com.Rummy.Ui
             else
             {
                 networkStatusIndicator.sprite = offLineSprite;
+            }
+        }
+
+        private void SetActivePracticeBadge(bool shouldEnable)
+        {
+            foreach(var badge in practiceBadges)
+            {
+                badge.SetActive(shouldEnable);
             }
         }
     }

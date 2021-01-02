@@ -24,6 +24,7 @@ namespace com.Rummy.GameCore
         {
             Application.targetFrameRate = Screen.currentResolution.refreshRate;
 
+            GameVariables.currentUserMode = (GameVariables.CurrentUserMode)PlayerPrefs.GetInt("isCashMode", 1);
             if (PlayerPrefs.GetInt("isLoggedIn", 0) == 0)
             {
                 SetScreenOrientation(ScreenOrientation.Portrait);

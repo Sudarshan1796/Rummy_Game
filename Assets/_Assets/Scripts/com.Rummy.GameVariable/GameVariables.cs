@@ -109,8 +109,8 @@ namespace com.Rummy.GameVariable
 
         public enum CurrentUserMode : short
         {
-            PracticeMode,
-            CashMode
+            CashMode = 0,
+            PracticeMode = 1
         }
 
         public enum GameMode: short
@@ -148,6 +148,7 @@ namespace com.Rummy.GameVariable
             InvalidOtp = 206,
             RoomIsActive = 216,
             InvalidRoomId = 219,
+            InvalidUserName = 223
         }
     }
 }

@@ -296,7 +296,7 @@ namespace com.Rummy.Ui
         {
             EnableLoadingUi();
             roomJoinUiController.PrintRoomJoinErrorMessage("");
-            RESTApiConnectionManager.GetInstance.RoomCreate<RoomCreateResponse>(true, ((short)GameVariables.userSelectedGameMode).ToString(), ((short)GameVariables.userSelectedRoomSize).ToString(), OnSuccessRoomCreate, OnFailRoomCreate);
+            RESTApiConnectionManager.GetInstance.RoomCreate<RoomCreateResponse>(((short)GameVariables.userSelectedGameMode).ToString(), ((short)GameVariables.userSelectedRoomSize).ToString(), OnSuccessRoomCreate, OnFailRoomCreate);
         }
 
         private void OnSuccessRoomCreate(RoomCreateResponse roomCreateResponse)
@@ -315,7 +315,7 @@ namespace com.Rummy.Ui
         internal void JoinRoom(string roomId, string entryFee, string maxPlayers)
         {
             EnableLoadingUi();
-            RESTApiConnectionManager.GetInstance.RoomJoin<RoomJoinResponse>(true, ((short)GameVariables.userSelectedGameMode).ToString(), maxPlayers, roomId, entryFee, OnSuccessRoomJoin, OnFailRoomJoin);
+            RESTApiConnectionManager.GetInstance.RoomJoin<RoomJoinResponse>(((short)GameVariables.userSelectedGameMode).ToString(), maxPlayers, roomId, entryFee, OnSuccessRoomJoin, OnFailRoomJoin);
         }
 
         private void OnSuccessRoomJoin(RoomJoinResponse roomJoinResponse)

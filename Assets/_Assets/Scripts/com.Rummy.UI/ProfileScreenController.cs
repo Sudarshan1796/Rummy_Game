@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
+using com.Rummy.GameVariable;
 
 namespace com.Rummy.Ui
 {
@@ -47,7 +48,35 @@ namespace com.Rummy.Ui
 
         private void OnDisable()
         {
-            UiManager.GetInstance.StartUpdatingMainMenuGameTypeDynamicDataInIntervals();
+            UiManager.GetInstance?.StartUpdatingMainMenuGameTypeDynamicDataInIntervals();
+        }
+
+        public void OnClickProfileOverViewButton(int buttonIndex)
+        {
+            switch(buttonIndex)
+            {
+                case 0: break;
+                case 1:
+                    if(string.IsNullOrEmpty(GameVariables.UserProfile.email))
+                    {
+                        emailInputField.text = GameVariables.UserProfile.temp_email;
+                    }
+                    else
+                    {
+                        emailInputField.text = GameVariables.UserProfile.email;
+                    }
+                    emailUpdateErrorText.text = "";
+                    break;
+                case 2:
+                    displayNameInputField.text = GameVariables.UserProfile.user_name;
+                    displayNameUpdateErrorText.text = "";
+                    break;
+                case 3:
+                    firstNameInputField.text = GameVariables.UserProfile.first_name;
+                    lastNameInputField.text = GameVariables.UserProfile.last_name;
+                    fullNameUpdateErrorText.text = "";
+                    break;
+            }
         }
 
         private void OnClickEmailSaveButton()
@@ -70,6 +99,11 @@ namespace com.Rummy.Ui
             if (string.IsNullOrEmpty(displayNameInputField.text))
             {
                 displayNameUpdateErrorText.text = "Please enter valid name";
+                return;
+            }
+            else if(displayNameInputField.text.Length < 3)
+            {
+                displayNameUpdateErrorText.text = "Min characters for username is 3";
                 return;
             }
             else
