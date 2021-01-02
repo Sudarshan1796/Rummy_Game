@@ -194,4 +194,16 @@ namespace com.Rummy.Network
         public List<GroupValidation> cardGroup;
     }
 
+    public class PlayerTurnResponse : SocketResponse
+    {
+        public int userId;
+        public int position;
+        public int roomId;
+        public int playerTurn;
+        public int eventTime;
+        public int remainingTime;
+    }
+
+
+
 }

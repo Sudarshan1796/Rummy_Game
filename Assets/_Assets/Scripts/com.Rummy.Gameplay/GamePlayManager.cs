@@ -142,6 +142,8 @@ namespace com.Rummy.Gameplay
                     break;
                 case GameVariables.SocketResponseType.handValidateRes:OnGroupValidationResponse((GroupValidationResponse)response);
                     break;
+                case GameVariables.SocketResponseType.changeTurn:OnPlayerTurmChangeResponse((PlayerTurnResponse)response);
+                    break;
             }
         }
         #region Socket 
@@ -306,7 +308,6 @@ namespace com.Rummy.Gameplay
         private void OnRoomStatusResponse(RoomStatusResponse response)
         {
             playerTurn = response.playerTurn;
-            playerTurn = response.playerTurn;
             remainingTime = response.remainingTime;
             UiManager.GetInstance.StartTimer(playerTurn, remainingTime, OnTimerComplete);
             CardGroupController.GetInstance.EnableDropButton();
@@ -320,6 +321,13 @@ namespace com.Rummy.Gameplay
                 return;
             }
             CardGroupController.GetInstance.ValidateGroupSequense(response);
+        }
+
+        private void OnPlayerTurmChangeResponse(PlayerTurnResponse response)
+        {
+            playerTurn = response.playerTurn;
+            remainingTime = response.remainingTime;
+            UiManager.GetInstance.StartTimer(playerTurn, remainingTime, OnTimerComplete);
         }
 
 

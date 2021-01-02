@@ -65,6 +65,7 @@ namespace com.Rummy.GameVariable
             roomStateRes,
             roomClose,
             handValidateRes,
+            changeTurn,
         }
 
         public enum RESTApiType : short

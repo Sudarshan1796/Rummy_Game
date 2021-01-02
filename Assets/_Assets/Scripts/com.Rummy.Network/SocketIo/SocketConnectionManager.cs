@@ -129,6 +129,9 @@ namespace com.Rummy.Network
             // socketManager.Socket.On(GameVariables.SocketResponseType.roomClose.ToString(), (Socket socket, Packet packet, object[] args) =>
             // { QueueResponse(Deserialize<RoundCompleteResponse>(GameVariables.SocketResponseType.roomClose, args[0] as string)); });
 
+            socketManager.Socket.On(GameVariables.SocketResponseType.changeTurn.ToString(), (Socket socket, Packet packet, object[] args) =>
+            { QueueResponse(Deserialize<PlayerTurnResponse>(GameVariables.SocketResponseType.changeTurn, args[0] as string)); });
+
             socketManager.Open();
         }
 
