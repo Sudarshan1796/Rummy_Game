@@ -155,6 +155,7 @@ namespace com.Rummy.Gameplay
         private void OnRoomJoin(OnRoomJoinResponse response)
         {
             ResetGameplay();
+            UiManager.GetInstance.DisablePlayerTimer();
             isJoinedRoom = true;
             roomPlayers.Clear();
             roomPlayers = response.players;
@@ -229,15 +230,8 @@ namespace com.Rummy.Gameplay
 
         private void OnCardDiscard(CardDiscardResResponse response)
         {
-            if (response.discardPile.suitValue==GameVariables.SuitType.Joker&&response.discardPile.cardValue==GameVariables.CardType.Joker)
-            {
-                discardedCard = null;
-            }
-            else
-            {
-                discardedCard = response.discardPile;
-            }
 
+            discardedCard = response.discardPile;
             playerTurn = response.playerTurn;
             closedCard = response.closedDeck;
             remainingTime = response.remainingTime;

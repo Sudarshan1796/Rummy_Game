@@ -23,6 +23,11 @@ namespace com.Rummy.Gameplay
             gameObject.SetActive(true);
         }
 
+        internal void DisableTimer()
+        {
+            gameObject.SetActive(false);
+        }
+
         internal void SetTimer(int userId,float Timer,Action onComplete)
         {
             if (!gameObject.activeInHierarchy)

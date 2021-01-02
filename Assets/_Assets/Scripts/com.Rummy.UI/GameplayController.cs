@@ -218,14 +218,15 @@ namespace com.Rummy.UI
         /// <param name="player"></param>
         internal void OnPlayerJoin(Player player)
         {
-            var index = activePlayers.Count;
-            if (index > 0)
-            {
-                index = index - 1;
-            }
-            gamePlayers[index].SetDetails(player);
             if (!activePlayers.ContainsKey(player.userId))
             {
+                var index = activePlayers.Count;
+                if (index > 0)
+                {
+                    index = index - 1;
+                }
+                gamePlayers[index].SetDetails(player);
+
                 activePlayers.Add(player.userId, gamePlayers[index]);
             }
         }
@@ -322,6 +323,13 @@ namespace com.Rummy.UI
         {
             showCardsCard.gameObject.SetActive(true);
             showCardsCard.SetDetail(card.cardValue, card.suitValue);
+        }
+        internal void DisablePlayerTimer()
+        {
+            foreach(var player in gamePlayers)
+            {
+                player.DisableTimer();
+            }
         }
     }
 }

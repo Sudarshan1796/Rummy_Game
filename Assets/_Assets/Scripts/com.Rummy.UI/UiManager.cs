@@ -375,6 +375,11 @@ namespace com.Rummy.Ui
             gameplayController.OnPlayerJoin(player);
         }
 
+        internal void DisablePlayerTimer()
+        {
+            gameplayController.DisablePlayerTimer();
+        }
+
         internal void EnableGameplayScreen()
         {
             GamePlayManager.GetInstance.IPlayinGame = true;
