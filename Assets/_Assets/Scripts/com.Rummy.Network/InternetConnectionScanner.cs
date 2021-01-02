@@ -11,7 +11,7 @@ namespace com.Rummy.Network
         average,
         Bad,
         NotConnected,
-        None, // Internet samples are still in processing state
+        None, // Ping samples are still in processing state
     }
 
     public class InternetConnectionScanner : MonoBehaviour
