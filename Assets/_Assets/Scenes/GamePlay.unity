@@ -123,56 +123,6 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
---- !u!1 &286138864
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 286138866}
-  - component: {fileID: 286138865}
-  m_Layer: 0
-  m_Name: InternetConnectionScanner
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &286138865
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 286138864}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a393ec478c6f0476f9cb554e42765100, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  ipAddress: 8.8.8.8
-  minPingIntervalInSeconds: 0.2
-  normalPingTimeInMilliSeconds: 300
-  pingTimeoutInSeconds: 1
-  internetConnectionStatus: 5
-  averagePingTime: 0
-  isInternetConnectionFluctuating: 0
---- !u!4 &286138866
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 286138864}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_RootOrder: 8
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &387641975
 GameObject:
   m_ObjectHideFlags: 0
@@ -214,7 +164,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 6
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &513267342
 GameObject:
@@ -311,7 +261,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 5
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &634668174
 GameObject:
@@ -342,7 +292,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 2
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &858873162
 GameObject:
@@ -419,7 +369,7 @@ Canvas:
   m_OverrideSorting: 0
   m_OverridePixelPerfect: 0
   m_SortingBucketNormalizedSize: 0
-  m_AdditionalShaderChannelsFlag: 25
+  m_AdditionalShaderChannelsFlag: 1
   m_SortingLayerID: 0
   m_SortingOrder: 0
   m_TargetDisplay: 0
@@ -442,7 +392,7 @@ RectTransform:
   - {fileID: 2596484168723236236}
   - {fileID: 7166874783670308728}
   m_Father: {fileID: 0}
-  m_RootOrder: 3
+  m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
@@ -540,7 +490,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 9
+  m_RootOrder: 8
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1049081227 stripped
 GameObject:
@@ -579,6 +529,7 @@ GameObject:
   - component: {fileID: 1105059517}
   - component: {fileID: 1105059516}
   - component: {fileID: 1105059518}
+  - component: {fileID: 1105059519}
   m_Layer: 0
   m_Name: NetworkManager
   m_TagString: Untagged
@@ -610,7 +561,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 7
+  m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1105059518
 MonoBehaviour:
@@ -624,6 +575,25 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9b4698ea6e2f9df4fb0358bfec6b2357, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &1105059519
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1105059515}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a393ec478c6f0476f9cb554e42765100, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ipAddress: 8.8.8.8
+  minPingIntervalInSeconds: 0.2
+  normalPingTimeInMilliSeconds: 300
+  pingTimeoutInSeconds: 1
+  internetConnectionStatus: 5
+  averagePingTime: 0
+  isInternetConnectionFluctuating: 0
 --- !u!1 &1744455182
 GameObject:
   m_ObjectHideFlags: 0
@@ -800,7 +770,7 @@ RectTransform:
   - {fileID: 4557708380415472133}
   - {fileID: 4565541660489830607}
   m_Father: {fileID: 0}
-  m_RootOrder: 4
+  m_RootOrder: 7
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
