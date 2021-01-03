@@ -24,12 +24,10 @@ namespace com.Rummy.Network
 
         private SocketManager socketManager;
         private readonly object lockResponseInputQ = new object();
-        private readonly List<SocketResponse> responseInputQ = new List<SocketResponse>();
-
-        internal event Action<SocketResponse> SocketResponse;
-
+        private readonly LinkedList<SocketResponse> responseInputQ = new LinkedList<SocketResponse>();
         private Action onSocketConnect;
 
+        internal event Action<SocketResponse> SocketResponse;
 
         #region  Properties
 
@@ -42,12 +40,8 @@ namespace com.Rummy.Network
         }
 
         #endregion
-        #region UnityCallbacks
 
-        void Start()
-        {
-            //ConnectToSocket();
-        }
+        #region UnityCallbacks
 
         private void Update()
         {
@@ -55,19 +49,17 @@ namespace com.Rummy.Network
             {
                 while (responseInputQ.Count > 0)
                 {
-                    if (responseInputQ[0] != null)
+                    if (responseInputQ.First.Value != null)
                     {
-                        OnSocketResponseReceived(responseInputQ[0]);
-                        responseInputQ.RemoveAt(0);
+                        OnSocketResponseReceived(responseInputQ.First.Value);
+                        responseInputQ.RemoveFirst();
                     }
                 }
             }
 
             void OnSocketResponseReceived(SocketResponse response)
             {
-
                 SocketResponse?.Invoke(response);
-                
             }
         }
 
@@ -80,11 +72,14 @@ namespace com.Rummy.Network
 
         internal void ConnectToSocket(Action onConnect)
         {
-            SocketOptions options = new SocketOptions();
-
-            options.AdditionalQueryParams = new PlatformSupport.Collections.ObjectModel.ObservableDictionary<string, string>();
-            options.AdditionalQueryParams.Add(GameConstants.USER_ID, GameVariables.userId);
-            options.AdditionalQueryParams.Add(GameConstants.ACCESS_TOKEN, GameVariables.AccessToken);
+            SocketOptions options = new SocketOptions
+            {
+                AdditionalQueryParams = new PlatformSupport.Collections.ObjectModel.ObservableDictionary<string, string>
+                {
+                    { GameConstants.USER_ID, GameVariables.userId },
+                    { GameConstants.ACCESS_TOKEN, GameVariables.AccessToken }
+                }
+            };
 
             onSocketConnect = onConnect;
             socketManager = new SocketManager(new Uri(GameVariables.GetSocketUrl()), options);
@@ -113,7 +108,6 @@ namespace com.Rummy.Network
             socketManager.Socket.On(GameVariables.SocketResponseType.roundComplete.ToString(), (Socket socket, Packet packet, object[] args) => 
             { QueueResponse(Deserialize<RoundCompleteResponse>(GameVariables.SocketResponseType.roundComplete, args[0] as string)); });
 
-            //added events
             socketManager.Socket.On(GameVariables.SocketResponseType.declareRes.ToString(), (Socket socket, Packet packet, object[] args) =>
             { QueueResponse(Deserialize<DeclarResponse>(GameVariables.SocketResponseType.declareRes, args[0] as string)); });
 
@@ -192,19 +186,14 @@ namespace com.Rummy.Network
         void QueueResponse(SocketResponse response)
         {
             lock (lockResponseInputQ)
-                responseInputQ.Add(response);
+                responseInputQ.AddLast(response);
         }
 
         internal void SendSocketRequest(GameVariables.SocketRequestType requestType, SocketRequest requestObject)
         {
-            Debug.Log("********** Send Request **********");
+            Debug.Log("********** Sending Socket Request **********");
             Debug.Log(requestType + ":" + JsonUtility.ToJson(requestObject));
-            socketManager.Socket.Emit(requestType.ToString(), Serialize(requestObject));
-
-            string Serialize(object o)
-            {
-                return JsonUtility.ToJson(o);
-            }
+            socketManager.Socket.Emit(requestType.ToString(), JsonUtility.ToJson(requestObject));
         }
     }
 }
