@@ -99,7 +99,7 @@ namespace com.Rummy.Ui
 
         internal void UpdateGameTypeDynamicData(RoomListResponse roomListResponse)
         {
-            if (roomListResponse.practiceGameInfo != null)
+            if (roomListResponse.practiceGameInfo.Count > 0)
             {
                 foreach (var gameinfo in roomListResponse.practiceGameInfo)
                 {
@@ -125,7 +125,7 @@ namespace com.Rummy.Ui
                     }
                 }
             }
-            else if (roomListResponse.cashGameInfo != null)
+            else if (roomListResponse.cashGameInfo.Count > 0)
             {
                 foreach (var gameinfo in roomListResponse.cashGameInfo)
                 {

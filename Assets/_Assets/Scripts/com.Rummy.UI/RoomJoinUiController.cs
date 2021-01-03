@@ -3,7 +3,6 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using static com.Rummy.GameVariable.GameVariables;
-using com.Rummy.GameVariable;
 using System.Collections.Generic;
 using com.Rummy.Network;
 
@@ -268,7 +267,7 @@ namespace com.Rummy.Ui
 
         internal void UpdateRandomRoomTablesData(RoomListResponse roomListResponse)
         {
-            if (roomListResponse.practiceGameInfo != null)
+            if (roomListResponse.practiceGameInfo.Count > 0)
             {
                 if (randomRoomTableSelectionScreen.activeSelf)
                 {
@@ -357,7 +356,7 @@ namespace com.Rummy.Ui
                     }
                 }
             }
-            else if (roomListResponse.cashGameInfo != null)
+            else if (roomListResponse.cashGameInfo.Count > 0)
             {
                 if (randomRoomTableSelectionScreen.activeSelf)
                 {
