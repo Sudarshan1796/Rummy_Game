@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
 namespace com.Rummy.Network
 {
@@ -21,10 +22,18 @@ namespace com.Rummy.Network
         [SerializeField] private float normalPingTimeInMilliSeconds = 300;
         [SerializeField] private float pingTimeoutInSeconds = 1;
 
+        [Header("Network Connection Stats")]
         public InternetStatus internetConnectionStatus = InternetStatus.None;
         public float averagePingTime;
         public bool isInternetConnectionFluctuating = false;
 
+        /// <summary>
+        /// True -> Connected
+        /// False -> Disconnected
+        /// </summary>
+        internal UnityAction<bool> onInternetConnected;
+
+        private bool isNetworkDisconnectionInformed = false;
         private float timer = 0;
         private float fluctuationSampleTrueCounter;
         private float fluctuationSampleFalseCounter;
@@ -61,8 +70,26 @@ namespace com.Rummy.Network
             if (Application.internetReachability == NetworkReachability.NotReachable)
             {
                 internetConnectionStatus = InternetStatus.NotConnected;
+                CheckInternetStaus();
             }
             StartCoroutine(Ping());
+        }
+
+        private void CheckInternetStaus()
+        {
+            if (onInternetConnected != null)
+            {
+                if (internetConnectionStatus == InternetStatus.NotConnected && !isNetworkDisconnectionInformed)
+                {
+                    onInternetConnected.Invoke(false);
+                    isNetworkDisconnectionInformed = true;
+                }
+                else if (internetConnectionStatus != InternetStatus.NotConnected && isNetworkDisconnectionInformed)
+                {
+                    onInternetConnected.Invoke(true);
+                    isNetworkDisconnectionInformed = false;
+                }
+            }
         }
 
         /// <summary>
@@ -187,6 +214,7 @@ namespace com.Rummy.Network
                     internetConnectionStatus = InternetStatus.Bad;
                 }
             }
+            CheckInternetStaus();
         }
 
         private void CheckForInternetfluctuation(int pingTime)
