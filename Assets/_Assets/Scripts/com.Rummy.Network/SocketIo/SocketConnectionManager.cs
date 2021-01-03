@@ -51,15 +51,10 @@ namespace com.Rummy.Network
                 {
                     if (responseInputQ.First.Value != null)
                     {
-                        OnSocketResponseReceived(responseInputQ.First.Value);
+                        SocketResponse?.Invoke(responseInputQ.First.Value);
                         responseInputQ.RemoveFirst();
                     }
                 }
-            }
-
-            void OnSocketResponseReceived(SocketResponse response)
-            {
-                SocketResponse?.Invoke(response);
             }
         }
 
@@ -113,12 +108,12 @@ namespace com.Rummy.Network
 
             socketManager.Socket.On(GameVariables.SocketResponseType.dropRes.ToString(), (Socket socket, Packet packet, object[] args) =>
             { QueueResponse(Deserialize<DropResponse>(GameVariables.SocketResponseType.dropRes, args[0] as string)); });
-           
+
             socketManager.Socket.On(GameVariables.SocketResponseType.roomStateRes.ToString(), (Socket socket, Packet packet, object[] args) =>
             { QueueResponse(Deserialize<RoomStatusResponse>(GameVariables.SocketResponseType.roomStateRes, args[0] as string)); });
 
             socketManager.Socket.On(GameVariables.SocketResponseType.handValidateRes.ToString(), (Socket socket, Packet packet, object[] args) =>
-                { QueueResponse(Deserialize<GroupValidationResponse>(GameVariables.SocketResponseType.handValidateRes, args[0] as string)); });
+            { QueueResponse(Deserialize<GroupValidationResponse>(GameVariables.SocketResponseType.handValidateRes, args[0] as string)); });
 
             // socketManager.Socket.On(GameVariables.SocketResponseType.roomClose.ToString(), (Socket socket, Packet packet, object[] args) =>
             // { QueueResponse(Deserialize<RoundCompleteResponse>(GameVariables.SocketResponseType.roomClose, args[0] as string)); });
