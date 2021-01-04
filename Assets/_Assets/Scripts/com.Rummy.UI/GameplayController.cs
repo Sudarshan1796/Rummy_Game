@@ -247,7 +247,12 @@ namespace com.Rummy.UI
 
         public void OnCardDraw(CardDrawRes response)
         {
-            cardGroupController.MoveCardDraw(response);
+            var player = playerController;
+            if (response.userId != int.Parse(GameVariables.userId))
+            {
+                player = gamePlayers.Find(x => x.userId == response.userId);
+            }
+            cardGroupController.MoveCardDraw(response, player.transform);
         }
 
         /// <summary>
@@ -302,7 +307,8 @@ namespace com.Rummy.UI
         {
             if (userId != int.Parse(GameVariables.userId))
             {
-                cardGroupController.MoveDiscardedCard(playerCard);
+                var player = gamePlayers.Find(x => x.userId == userId);
+                cardGroupController.MoveDiscardedCard(playerCard, player.transform);
             }
             else
             {

@@ -794,11 +794,11 @@ namespace com.Rummy.Gameplay
         /// On card draw
         /// </summary>
         /// <param name="response"></param>
-        public void MoveCardDraw(CardDrawRes response)
+        public void MoveCardDraw(CardDrawRes response,Transform destination)
         {
             if (response.userId != int.Parse(GameVariables.userId))
             {
-                MoveOtherPlayerSelectedCard(response);
+                MoveOtherPlayerSelectedCard(response, destination);
             }
             else
             {
@@ -810,14 +810,14 @@ namespace com.Rummy.Gameplay
         /// For other player selected card
         /// </summary>
         /// <param name="response"></param>
-        public void MoveOtherPlayerSelectedCard(CardDrawRes response)
+        public void MoveOtherPlayerSelectedCard(CardDrawRes response,Transform destinationTransform)
         {
             if (response.isFromDiscardPile)
             {
                 movingCardController.gameObject.transform.localPosition = openDeckTransform.localPosition;
                 movingCardController.Init(response.card.cardValue, response.card.suitValue);
                 movingCardController.Activate();
-                movingCardController.Move(prifileDestination.transform.position, OnOpenDeckMoveComplete, 0.70f);
+                movingCardController.Move(destinationTransform.transform.position, OnOpenDeckMoveComplete, 0.70f);
                 if (gameplayManager.discardedCard==null)
                 {
                     OpenTileCard.gameObject.SetActive(false);
@@ -834,7 +834,7 @@ namespace com.Rummy.Gameplay
 
                 backCardController.gameObject.SetActive(true);
                 backCardController.gameObject.transform.localPosition = closedDeckTransform.localPosition;
-                backCardController.Move(prifileDestination.transform.position, OnDrawMoveComplete, 0.70f);
+                backCardController.Move(destinationTransform.transform.position, OnDrawMoveComplete, 0.70f);
             }
         }
         /// <summary>
@@ -875,10 +875,10 @@ namespace com.Rummy.Gameplay
             movingCardController.Deactivate();
         }
 
-        public void MoveDiscardedCard(PlayerCard playerCard)
+        public void MoveDiscardedCard(PlayerCard playerCard,Transform initalposition=null)
         {
             discardeCard = playerCard;
-            movingCardController.gameObject.transform.localPosition = prifileDestination.transform.localPosition;
+            movingCardController.gameObject.transform.localPosition = initalposition.localPosition;
             movingCardController.Init(playerCard.cardValue, playerCard.suitValue);
             movingCardController.Activate();
             movingCardController.Move(openDeckTransform.transform.position, OnDicardMoveComplete, 0.70f);

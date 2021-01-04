@@ -66,6 +66,10 @@ namespace com.Rummy.UI
                     });
                 }
             }
+            for (int i = response.result.Count; i < resultPanels.Count; i++)
+            {
+                resultPanels[i].UpdateState(false);
+            }
         }
 
         public void OnDeclareComplete(DeclarResponse result)

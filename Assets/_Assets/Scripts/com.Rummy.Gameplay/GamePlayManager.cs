@@ -267,6 +267,7 @@ namespace com.Rummy.Gameplay
             playerTurn      = response.playerTurn;
             remainingTime   = response.remainingTime;
             isPlayerDropped = (response.userId == int.Parse(GameVariables.userId));
+            UiManager.GetInstance.EnableResultScreen();
             ResultScreen.GetInstance.UpdateNextMatchTimer(response.nextRoundStartTime);
             ResultScreen.GetInstance.UpdatePlayerPosition(response.gameResult);
 
