@@ -287,6 +287,17 @@ namespace com.Rummy.UI
 
         }
 
+        internal void OnPlayerLeft(int userid)
+        {
+            foreach(var player in gamePlayers)
+            {
+                if(player.userId==userid)
+                {
+                    player.GrayOutTimer();
+                }
+            }
+        }
+
         internal void MoveDiscardedCard(PlayerCard playerCard, int userId)
         {
             if (userId != int.Parse(GameVariables.userId))

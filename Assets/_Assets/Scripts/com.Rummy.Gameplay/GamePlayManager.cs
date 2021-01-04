@@ -250,9 +250,16 @@ namespace com.Rummy.Gameplay
         private void OnPlayerLeft(PlayerLeftResResponse response)
         {
             // this is the temp code
-            UiManager.GetInstance.EnableMainMenuUi();
-            UiManager.GetInstance.DisableGamplayScreen();
-            UiManager.GetInstance.LeaveSocketRoom();
+            if (response.userId == int.Parse(GameVariables.userId))
+            {
+                UiManager.GetInstance.EnableMainMenuUi();
+                UiManager.GetInstance.DisableGamplayScreen();
+                UiManager.GetInstance.LeaveSocketRoom();
+            }
+            else
+            {
+                UiManager.GetInstance.OnPlayerLeft(response.userId);
+            }
         }
 
         private void OnPlayerDrop(DropResponse response)
