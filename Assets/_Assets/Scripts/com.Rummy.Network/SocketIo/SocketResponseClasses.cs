@@ -152,6 +152,7 @@ namespace com.Rummy.Network
         public int eventTime;
         public int remainingTime;
         public int nextRoundStartTime;
+        public bool isLastRound;
         public List<GameResult> gameResult;
     }
 

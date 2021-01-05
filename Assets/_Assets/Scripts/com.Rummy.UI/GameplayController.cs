@@ -294,6 +294,11 @@ namespace com.Rummy.UI
 
         internal void OnPlayerLeft(int userid)
         {
+            if(userid==int.Parse(GameVariables.userId))
+            {
+                playerController.GrayOutTimer();
+                return;
+            }
             foreach(var player in gamePlayers)
             {
                 if(player.userId==userid)

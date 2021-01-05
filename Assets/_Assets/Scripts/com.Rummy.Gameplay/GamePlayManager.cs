@@ -267,10 +267,16 @@ namespace com.Rummy.Gameplay
             playerTurn      = response.playerTurn;
             remainingTime   = response.remainingTime;
             isPlayerDropped = (response.userId == int.Parse(GameVariables.userId));
-            UiManager.GetInstance.EnableResultScreen();
-            ResultScreen.GetInstance.UpdateNextMatchTimer(response.nextRoundStartTime);
-            ResultScreen.GetInstance.UpdatePlayerPosition(response.gameResult);
-
+            if (response.isLastRound)
+            {
+                UiManager.GetInstance.EnableResultScreen();
+                ResultScreen.GetInstance.UpdateNextMatchTimer(response.nextRoundStartTime);
+                ResultScreen.GetInstance.UpdatePlayerPosition(response.gameResult);
+            }
+            else
+            {
+                UiManager.GetInstance.OnPlayerLeft(response.userId);
+            }
             //Todo: Make the Player just Spectacle
         }
 
@@ -282,7 +288,7 @@ namespace com.Rummy.Gameplay
                 {
                     UiManager.GetInstance.SetDeclareScreeenData(response);
                 }
-                ResultScreen.GetInstance.UpdateNextMatchTimer(response.nextRoundStartTime);
+                ResultScreen.GetInstance?.UpdateNextMatchTimer(response.nextRoundStartTime);
                 return;
             }
             if (int.Parse(GameVariables.userId) != response.userId)

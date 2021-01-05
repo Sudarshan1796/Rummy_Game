@@ -103,7 +103,7 @@ namespace com.Rummy.Gameplay
             childParentObject.Clear();
             //OpenTileCard.gameObject.SetActive(false);
             inActiveGroups.Clear();
-
+            DeactivateGroupText();
             this.cards = _cards;
             this.cardGameobject = _cardObject;
             cardGroupGameobject[0].SetActive(true);

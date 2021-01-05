@@ -16,16 +16,19 @@ namespace com.Rummy.Gameplay
         internal int position;
 
         private Color greenColor = new Color(0, 0.2352941f, 0.07843138f, 1.0f);
+
+        private void OnEnable()
+        {
+            userProfileImage.color = greenColor;
+        }
+
         internal void SetDetails(Player player)
         {
             userName.text = player.userName;
             userId = player.userId;
             position = player.position;
+            userProfileImage.color = greenColor;
             gameObject.SetActive(true);
-            if(userId!=int.Parse(GameVariable.GameVariables.userId))
-            {
-                userProfileImage.color = greenColor;
-            }
         }
 
         internal void DisableTimer()
@@ -53,10 +56,8 @@ namespace com.Rummy.Gameplay
 
         internal void GrayOutTimer()
         {
-            if (userId != int.Parse(GameVariable.GameVariables.userId))
-            {
-                userProfileImage.color = Color.grey;
-            }
+            userProfileImage.color = Color.grey;
         }
+
     }
 }

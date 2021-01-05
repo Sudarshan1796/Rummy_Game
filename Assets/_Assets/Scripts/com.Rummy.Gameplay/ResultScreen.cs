@@ -4,6 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace com.Rummy.UI
 {
@@ -26,11 +27,14 @@ namespace com.Rummy.UI
         [SerializeField] private List<PlayerResultPanel> resultPanels;
 
         [SerializeField] private TMP_Text remainingTimeText;
+        [SerializeField] private Button homeButton;
 
         private int remaininMatchTime;
         private bool isTimerStarted;
+        private bool _isEliminated;
         private void Awake()
         {
+            homeButton.onClick.AddListener(OnHomeBtnClick);
         }
 
         private void OnDisable()
@@ -49,20 +53,23 @@ namespace com.Rummy.UI
 
         public void OnRoundComplete(RoundCompleteResponse response)
         {
+            _isEliminated = false;
+            homeButton.gameObject.SetActive(false);
             ResetPlayerPanel();
             for (int i = 0; i < response.result.Count; i++)
             {
                 resultPanels[i].UpdateState(true);
                 resultPanels[i].PlayerPanelReset();
                 resultPanels[i].SetDetails(response.result[i]);
-                if (response.result[i].isEliminated)
+                if (response.result[i].isEliminated && response.result[i].userId == int.Parse(GameVariable.GameVariables.userId))
                 {
+                    _isEliminated = true;
                     //CancelInvoke(nameof(UpdateNextTimer));
                     remaininMatchTime = 0;
                     remainingTimeText.text = "";
                     LeanTween.delayedCall(3.0f, () =>
                     {
-                        OnHomeBtnClick();
+                        homeButton.gameObject.SetActive(true);
                     });
                 }
             }
@@ -74,6 +81,8 @@ namespace com.Rummy.UI
 
         public void OnDeclareComplete(DeclarResponse result)
         {
+            homeButton.gameObject.SetActive(false);
+            _isEliminated = false;
             foreach (var resultPanel in resultPanels)
             {
                 if (resultPanel.GetUserId == result.userId)
@@ -85,15 +94,15 @@ namespace com.Rummy.UI
             }
 
             UpdatePlayerPosition(result.gameResult);
-
             if (result.isEliminated)
             {
                 //CancelInvoke(nameof(UpdateNextTimer));
+                _isEliminated = true;
                 remaininMatchTime = 0;
                 remainingTimeText.text = "";
                 LeanTween.delayedCall(3.0f, () =>
                 {
-                    OnHomeBtnClick();
+                    homeButton.gameObject.SetActive(true);
                 });
             }
         }
@@ -147,7 +156,10 @@ namespace com.Rummy.UI
             if (!isTimerStarted)
             {
                 isTimerStarted = true;
-                UpdateNextTimer();
+                if (!_isEliminated)
+                {
+                    UpdateNextTimer();
+                }
             }
         }
 
@@ -158,9 +170,11 @@ namespace com.Rummy.UI
             {
                 LeanTween.delayedCall(1.0f, () =>
                 {
-
                     remaininMatchTime--;
-                    UpdateNextTimer();
+                    if (!_isEliminated)
+                    {
+                        UpdateNextTimer();
+                    }
                 });
             }
             else
