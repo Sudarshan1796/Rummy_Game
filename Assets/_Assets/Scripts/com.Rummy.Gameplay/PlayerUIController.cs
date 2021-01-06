@@ -17,11 +17,6 @@ namespace com.Rummy.Gameplay
 
         private Color greenColor = new Color(0, 0.2352941f, 0.07843138f, 1.0f);
 
-        private void OnEnable()
-        {
-            userProfileImage.color = greenColor;
-        }
-
         internal void SetDetails(Player player)
         {
             userName.text = player.userName;
@@ -57,6 +52,11 @@ namespace com.Rummy.Gameplay
         internal void GrayOutTimer()
         {
             userProfileImage.color = Color.grey;
+        }
+
+        internal void ResetTimerColor()
+        {
+            userProfileImage.color = greenColor;
         }
 
     }

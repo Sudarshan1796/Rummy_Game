@@ -92,6 +92,19 @@ namespace com.Rummy.UI
         internal void Activate()
         {
             gameplayObject.SetActive(true);
+            ResetPlayerTimer();
+        }
+
+        private void ResetPlayerTimer()
+        {
+            playerController.ResetTimerColor();
+            foreach (var player in gamePlayers)
+            {
+                if (player.gameObject.activeSelf)
+                {
+                    player.ResetTimerColor();
+                }
+            }
         }
 
         /// <summary>
@@ -110,6 +123,7 @@ namespace com.Rummy.UI
             showCardsCard.gameObject.SetActive(false);
             Debug.Log(playerCards.Count);
             DestroyAllCards();
+            cardGroupController.DeactivateGroupText();
             for (int i = 0; i < playerCards.Count; i++)
             {
                 Debug.Log("player cards are" + playerCards[i].suitValue + "-" + playerCards[i].cardValue);

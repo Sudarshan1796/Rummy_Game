@@ -152,7 +152,6 @@ namespace com.Rummy.UI
         public void UpdateNextMatchTimer(int timer)
         {
             remaininMatchTime = timer;
-            //CancelInvoke(nameof(UpdateNextTimer));
             if (!isTimerStarted)
             {
                 isTimerStarted = true;

@@ -270,8 +270,8 @@ namespace com.Rummy.Gameplay
             if (response.isLastRound)
             {
                 UiManager.GetInstance.EnableResultScreen();
-                ResultScreen.GetInstance.UpdateNextMatchTimer(response.nextRoundStartTime);
-                ResultScreen.GetInstance.UpdatePlayerPosition(response.gameResult);
+                ResultScreen.GetInstance?.UpdateNextMatchTimer(response.nextRoundStartTime);
+                ResultScreen.GetInstance?.UpdatePlayerPosition(response.gameResult);
             }
             else
             {
@@ -289,6 +289,7 @@ namespace com.Rummy.Gameplay
                     UiManager.GetInstance.SetDeclareScreeenData(response);
                 }
                 ResultScreen.GetInstance?.UpdateNextMatchTimer(response.nextRoundStartTime);
+                ResultScreen.GetInstance?.UpdatePlayerPosition(response.gameResult);
                 return;
             }
             if (int.Parse(GameVariables.userId) != response.userId)
