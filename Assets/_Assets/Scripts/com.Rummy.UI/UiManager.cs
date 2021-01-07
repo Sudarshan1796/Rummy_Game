@@ -133,6 +133,7 @@ namespace com.Rummy.Ui
 
         internal void EnableMainMenuUi()
         {
+            GamePlayManager.GetInstance.IsPlayinGame = false;
             if (loginUiController.gameObject.activeSelf)
             {
                 loginUiController.DisableOtpInputPanel();
@@ -382,7 +383,7 @@ namespace com.Rummy.Ui
 
         internal void EnableGameplayScreen()
         {
-            GamePlayManager.GetInstance.IPlayinGame = true;
+            GamePlayManager.GetInstance.IsPlayinGame = true;
             gameplayController.Activate();
         }
 
@@ -413,7 +414,7 @@ namespace com.Rummy.Ui
 
         internal void DisableGamplayScreen()
         {
-            GamePlayManager.GetInstance.IPlayinGame = false;
+            GamePlayManager.GetInstance.IsPlayinGame = false;
             gameplayController.Deactivate();
         }
 
