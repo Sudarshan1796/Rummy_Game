@@ -121,12 +121,11 @@ namespace com.Rummy.UI
         private void createCard(List<PlayerCard> playerCards)
         {
             showCardsCard.gameObject.SetActive(false);
-            Debug.Log(playerCards.Count);
             DestroyAllCards();
             cardGroupController.DeactivateGroupText();
+            cardGroupController.DeactivateAllButtons();
             for (int i = 0; i < playerCards.Count; i++)
             {
-                Debug.Log("player cards are" + playerCards[i].suitValue + "-" + playerCards[i].cardValue);
                 var _gameObject = CardController.GetInstance.GetObject(cardInitPosition.transform);
                 var _card = _gameObject.GetComponent<Gameplay.Card>();
                 _card.Init(playerCards[i].cardValue, playerCards[i].suitValue);
@@ -135,7 +134,7 @@ namespace com.Rummy.UI
             }
             StartCoroutine(PlayCardAnimation(() =>
             {
-                CardGroupController.GetInstance.InitilizeGroup(cardgameObject, cards);
+                cardGroupController.InitilizeGroup(cardgameObject, cards);
             }));
         }
 

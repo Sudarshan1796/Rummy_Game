@@ -301,6 +301,10 @@ namespace com.Rummy.Gameplay
                     selectedObject.Remove(card);
                 }
             }
+            if (selectedObject.Count == 0)
+            {
+                GetGroupValidation();
+            }
             dropBtn.gameObject.SetActive(selectedObject.Count == 0 && gameplayManager.playerTurn == int.Parse(GameVariables.userId) && !gameplayManager.isCardDrawn);
             discardBtn.gameObject.SetActive(selectedObject.Count == 1 && gameplayManager.playerTurn == int.Parse(GameVariables.userId) && gameplayManager.isCardDrawn && !gameplayManager.CanPlayerMakeCardMovement);
             DeclareBtn.gameObject.SetActive(selectedObject.Count == 1 && gameplayManager.playerTurn == int.Parse(GameVariables.userId) && gameplayManager.isCardDrawn);
@@ -1051,14 +1055,18 @@ namespace com.Rummy.Gameplay
         internal void ValidateGroupSequense(GroupValidationResponse response)
         {
             int i = 0;
+            if(selectedObject.Count>0)
+            {
+                return;
+            }
             foreach (var group in cardGroupGameobject)
             {
-                if (!@group.activeSelf)
+                if (!group.activeSelf)
                 {
                     continue;
                 }
 
-                var group_id = @group.transform.GetSiblingIndex() + 1;
+                var group_id = group.transform.GetSiblingIndex() + 1;
                 var groupValidation = response.cardGroup.Find((GroupValidation x) => x.groupId == group_id);
                 SetGroupInfoText(group, groupSetText[i], groupValidation.handType, textValidation[i]);
                 i++;
@@ -1073,6 +1081,15 @@ namespace com.Rummy.Gameplay
             //text.text = message;
             textVal.SetDetails(message);
             text.gameObject.SetActive(true);
+        }
+
+        internal void DeactivateAllButtons()
+        {
+            createGroupBtn.gameObject.SetActive(false);
+            sortCardBtn.gameObject.SetActive(false);
+            discardBtn.gameObject.SetActive(false);
+            dropBtn.gameObject.SetActive(false);
+            DeclareBtn.gameObject.SetActive(false);
         }
     }
 }

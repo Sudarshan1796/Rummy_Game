@@ -4,6 +4,7 @@ using BestHTTP.SocketIO;
 using com.Rummy.GameVariable;
 using System.Collections.Generic;
 using com.Rummy.Constants;
+using com.Rummy.Gameplay;
 
 namespace com.Rummy.Network
 {
@@ -115,8 +116,8 @@ namespace com.Rummy.Network
             socketManager.Socket.On(GameVariables.SocketResponseType.handValidateRes.ToString(), (Socket socket, Packet packet, object[] args) =>
             { QueueResponse(Deserialize<GroupValidationResponse>(GameVariables.SocketResponseType.handValidateRes, args[0] as string)); });
 
-            // socketManager.Socket.On(GameVariables.SocketResponseType.roomClose.ToString(), (Socket socket, Packet packet, object[] args) =>
-            // { QueueResponse(Deserialize<RoundCompleteResponse>(GameVariables.SocketResponseType.roomClose, args[0] as string)); });
+            socketManager.Socket.On(GameVariables.SocketResponseType.roomClose.ToString(), (Socket socket, Packet packet, object[] args) =>
+            { QueueResponse(Deserialize<RoomCloseResponse>(GameVariables.SocketResponseType.roomClose, args[0] as string)); });
 
             socketManager.Socket.On(GameVariables.SocketResponseType.changeTurn.ToString(), (Socket socket, Packet packet, object[] args) =>
             { QueueResponse(Deserialize<PlayerTurnResponse>(GameVariables.SocketResponseType.changeTurn, args[0] as string)); });
@@ -128,6 +129,10 @@ namespace com.Rummy.Network
         {
             Debug.Log("<color=green>Socket Connected Successfully!</color>");
             onSocketConnect?.Invoke();
+            if(onSocketConnect==null&& GamePlayManager.GetInstance.IsPlayinGame)
+            {
+                //GamePlayManager.GetInstance.JoinDisconnectRoom();
+            }
             onSocketConnect = null;
         }
 

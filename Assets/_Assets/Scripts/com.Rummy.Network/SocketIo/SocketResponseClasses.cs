@@ -205,6 +205,9 @@ namespace com.Rummy.Network
         public int remainingTime;
     }
 
-
+    public class RoomCloseResponse : SocketResponse
+    {
+        public int roomId;
+    }
 
 }

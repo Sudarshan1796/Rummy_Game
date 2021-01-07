@@ -67,7 +67,7 @@ namespace com.Rummy.Gameplay
             }
         }
 
-        public bool IPlayinGame
+        public bool IsPlayinGame
         {
             get
             {
@@ -113,6 +113,14 @@ namespace com.Rummy.Gameplay
         }
 
         /// <summary>
+        /// For discconnect senario
+        /// </summary>
+        internal void JoinDisconnectRoom()
+        {
+            SocketRoomJoin(roomId);
+        }
+
+        /// <summary>
         /// OnSocket response received 
         /// </summary>
         /// <param name="response"></param>
@@ -143,6 +151,8 @@ namespace com.Rummy.Gameplay
                 case GameVariables.SocketResponseType.handValidateRes:OnGroupValidationResponse((GroupValidationResponse)response);
                     break;
                 case GameVariables.SocketResponseType.changeTurn:OnPlayerTurmChangeResponse((PlayerTurnResponse)response);
+                    break;
+                case GameVariables.SocketResponseType.roomClose: OnRoomClose((RoomCloseResponse)response);
                     break;
             }
         }
@@ -249,7 +259,6 @@ namespace com.Rummy.Gameplay
 
         private void OnPlayerLeft(PlayerLeftResResponse response)
         {
-            // this is the temp code
             if (response.userId == int.Parse(GameVariables.userId))
             {
                 UiManager.GetInstance.EnableMainMenuUi();
@@ -337,6 +346,12 @@ namespace com.Rummy.Gameplay
             playerTurn = response.playerTurn;
             remainingTime = response.remainingTime;
             UiManager.GetInstance.StartTimer(playerTurn, remainingTime, OnTimerComplete);
+        }
+
+        private void OnRoomClose(RoomCloseResponse response)
+        {
+            _isPlayingGame = false;
+            UiManager.GetInstance.EnableNoMatchFoundPopUp();
         }
 
 
