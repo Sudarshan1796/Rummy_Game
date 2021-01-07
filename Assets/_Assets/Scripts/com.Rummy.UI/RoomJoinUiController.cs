@@ -150,6 +150,11 @@ namespace com.Rummy.Ui
             twoPlayersScrollRect.gameObject.SetActive(!status);
         }
 
+        internal void CloseRoomJoinWaitingScreen()
+        {
+            OnClickRoomJoinWaitingScreenCloseButton();
+        }
+
         internal void OnClickOpenTablePlayNowButton(string entryFee, string maxPlayers)
         {
             UiManager.GetInstance.JoinRoom(null, entryFee, maxPlayers);

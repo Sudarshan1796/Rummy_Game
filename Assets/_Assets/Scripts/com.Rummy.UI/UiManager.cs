@@ -362,6 +362,11 @@ namespace com.Rummy.Ui
             }
         }
 
+        internal void EnableNoMatchFoundPopUp()
+        {
+            commonPopUpUiController.ShowPopUp("Oops!", "No Match Found, Please Try Again.", true, false,()=> { roomJoinUiController.CloseRoomJoinWaitingScreen(); },null);
+        }
+
         #endregion
 
         #region GameplayUI
