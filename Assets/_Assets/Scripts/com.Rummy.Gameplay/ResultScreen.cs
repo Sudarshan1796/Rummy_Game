@@ -61,7 +61,7 @@ namespace com.Rummy.UI
                 resultPanels[i].UpdateState(true);
                 resultPanels[i].PlayerPanelReset();
                 resultPanels[i].SetDetails(response.result[i]);
-                if (response.result[i].isEliminated && response.result[i].userId == int.Parse(GameVariable.GameVariables.userId))
+                if (response.result[i].isEliminated && response.result[i].userId == int.Parse(GameVariable.GameVariables.userId) || response.roundOver)
                 {
                     _isEliminated = true;
                     //CancelInvoke(nameof(UpdateNextTimer));
@@ -94,7 +94,7 @@ namespace com.Rummy.UI
             }
 
             UpdatePlayerPosition(result.gameResult);
-            if (result.isEliminated)
+            if (result.isLastRound)
             {
                 //CancelInvoke(nameof(UpdateNextTimer));
                 _isEliminated = true;

@@ -1,4 +1,5 @@
-﻿using com.Rummy.GameVariable;
+﻿using com.Rummy.Constants;
+using com.Rummy.GameVariable;
 using com.Rummy.Network;
 using com.Rummy.Ui;
 using com.Rummy.UI;
@@ -22,6 +23,7 @@ namespace com.Rummy.Gameplay
         private bool _isPlayerDeclare;
         private bool _isPlayingGame;
         private bool _isOtherplayerDeclared;
+        private bool _shouldgetRoomStatus;
 
         // This List hold the List of player in the current room
         internal List<Player> roomPlayers;
@@ -186,10 +188,13 @@ namespace com.Rummy.Gameplay
                 userName = response.userName,
                 position = response.position
             };
-            roomPlayers.Add(_player);
-            UiManager.GetInstance.OnPlayerJoinRoom(_player);
-            UiManager.GetInstance.PrintRoomJoinedPlayersCount(roomPlayers.Count);
-            UiManager.GetInstance.PrintRoomJoinedPlayerRoom(response.userName);
+            if (!roomPlayers.Contains(_player))
+            {
+                roomPlayers.Add(_player);
+                UiManager.GetInstance.OnPlayerJoinRoom(_player);
+                UiManager.GetInstance.PrintRoomJoinedPlayersCount(roomPlayers.Count);
+                UiManager.GetInstance.PrintRoomJoinedPlayerRoom(response.userName);
+            }
         }
 
         private void GameStart(GameStartResponse response)
@@ -225,15 +230,7 @@ namespace com.Rummy.Gameplay
         {
             //Move card to player position
             closedCard = response.closedDeck;
-            if (response.discardPile.suitValue == GameVariables.SuitType.Joker && response.discardPile.cardValue == GameVariables.CardType.Joker)
-            {
-                discardedCard = null;
-            }
-            else
-            {
-                discardedCard = response.discardPile;
-
-            }
+            discardedCard = response.discardPile;
             selectedCard = response.card;
             UiManager.GetInstance.OnCardDraw(response);
         }
@@ -285,6 +282,7 @@ namespace com.Rummy.Gameplay
             else
             {
                 UiManager.GetInstance.OnPlayerLeft(response.userId);
+                UiManager.GetInstance.StartTimer(playerTurn, remainingTime, OnTimerComplete);
             }
             //Todo: Make the Player just Spectacle
         }
@@ -350,8 +348,11 @@ namespace com.Rummy.Gameplay
 
         private void OnRoomClose(RoomCloseResponse response)
         {
-            _isPlayingGame = false;
-            UiManager.GetInstance.EnableNoMatchFoundPopUp();
+            if (response.roundCount == GameConstants.ROOM_JOIN_CLOSE)
+            {
+                _isPlayingGame = false;
+                UiManager.GetInstance.EnableNoMatchFoundPopUp();
+            }
         }
 
 
@@ -370,6 +371,9 @@ namespace com.Rummy.Gameplay
                     access_token = GameVariables.AccessToken
                 };
                 SocketConnectionManager.GetInstance.SendSocketRequest(GameVariables.SocketRequestType.roomJoin, socketRequest);
+                Debug.Log(_shouldgetRoomStatus);
+
+                Invoke(nameof(RoomStatus), 0.1f);
             });
         }
 
@@ -436,6 +440,7 @@ namespace com.Rummy.Gameplay
                 room_id = roomId,
             };
             SocketConnectionManager.GetInstance.SendSocketRequest(GameVariables.SocketRequestType.roomState, request);
+            _shouldgetRoomStatus = false;
         }
 
         internal void CardGroupValidation(List<Network.CardGroup> groupset)
@@ -455,6 +460,7 @@ namespace com.Rummy.Gameplay
 
         private void OnApplicationFocus(bool hasFocus)
         {
+            _shouldgetRoomStatus = true;
             if (hasFocus && _isPlayingGame && SocketConnectionManager.GetInstance.IsConnected)
             {
 #if !UNITY_EDITOR
@@ -465,6 +471,7 @@ namespace com.Rummy.Gameplay
 
         private void OnApplicationPause(bool pauseStatus)
         {
+            _shouldgetRoomStatus = true;
             if (!pauseStatus && _isPlayingGame && SocketConnectionManager.GetInstance.IsConnected)
             {
                 RoomStatus();

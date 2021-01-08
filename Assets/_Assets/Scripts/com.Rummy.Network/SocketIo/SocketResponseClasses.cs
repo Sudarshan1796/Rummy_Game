@@ -100,6 +100,7 @@ namespace com.Rummy.Network
     {
         public int roomId;
         public List<Result> result;
+        public bool roundOver;
     }
 
     [Serializable]
@@ -125,6 +126,7 @@ namespace com.Rummy.Network
         public Card showCard;
         public bool isWinner;
         public bool isEliminated;
+        public bool isLastRound;
         public List<GameResult> gameResult;
 
     }
@@ -208,6 +210,7 @@ namespace com.Rummy.Network
     public class RoomCloseResponse : SocketResponse
     {
         public int roomId;
+        public int roundCount;
     }
 
 }

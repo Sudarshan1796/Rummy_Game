@@ -305,9 +305,7 @@ namespace com.Rummy.Gameplay
             {
                 GetGroupValidation();
             }
-            dropBtn.gameObject.SetActive(selectedObject.Count == 0 && gameplayManager.playerTurn == int.Parse(GameVariables.userId) && !gameplayManager.isCardDrawn);
-            discardBtn.gameObject.SetActive(selectedObject.Count == 1 && gameplayManager.playerTurn == int.Parse(GameVariables.userId) && gameplayManager.isCardDrawn && !gameplayManager.CanPlayerMakeCardMovement);
-            DeclareBtn.gameObject.SetActive(selectedObject.Count == 1 && gameplayManager.playerTurn == int.Parse(GameVariables.userId) && gameplayManager.isCardDrawn);
+            EnableCardSelction();
             if (CanCreateGroup())
             {
                 createGroupBtn.gameObject.SetActive(selectedObject.Count > 1);
@@ -318,6 +316,13 @@ namespace com.Rummy.Gameplay
             }
 
             DeactivateGroupText();
+        }
+
+        private void EnableCardSelction()
+        {
+            dropBtn.gameObject.SetActive(selectedObject.Count == 0 && gameplayManager.playerTurn == int.Parse(GameVariables.userId) && !gameplayManager.isCardDrawn);
+            discardBtn.gameObject.SetActive(selectedObject.Count == 1 && gameplayManager.playerTurn == int.Parse(GameVariables.userId) && gameplayManager.isCardDrawn && !gameplayManager.CanPlayerMakeCardMovement);
+            DeclareBtn.gameObject.SetActive(selectedObject.Count == 1 && gameplayManager.playerTurn == int.Parse(GameVariables.userId) && gameplayManager.isCardDrawn);
         }
 
         /// <summary>
@@ -808,6 +813,7 @@ namespace com.Rummy.Gameplay
             {
                 MoveSelectedCard(response);
             }
+            EnableCardSelction();
         }
 
         /// <summary>

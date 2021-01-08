@@ -73,10 +73,7 @@ namespace com.Rummy.UI
             }
             for (int i = 0; i < result.cardGroup.Count; i++)
             {
-
-
                 groupObject[i].SetActive(true);
-
                 for (int j = 0; j < result.cardGroup[i].card_set.Count; j++)
                 {
                     var gObject = Instantiate(cardGameObject);

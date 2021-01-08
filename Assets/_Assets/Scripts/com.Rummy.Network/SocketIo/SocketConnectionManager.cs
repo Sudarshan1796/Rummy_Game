@@ -129,11 +129,11 @@ namespace com.Rummy.Network
         {
             Debug.Log("<color=green>Socket Connected Successfully!</color>");
             onSocketConnect?.Invoke();
-            if(onSocketConnect==null&& GamePlayManager.GetInstance.IsPlayinGame)
-            {
-                //GamePlayManager.GetInstance.JoinDisconnectRoom();
-            }
-            onSocketConnect = null;
+            //if (onSocketConnect == null && GamePlayManager.GetInstance.IsPlayinGame)
+            //{
+            //   // GamePlayManager.GetInstance.JoinDisconnectRoom();
+            //}
+            //onSocketConnect = null;
         }
 
         private void OndisConnect(Socket socket, Packet packet, params object[] args)

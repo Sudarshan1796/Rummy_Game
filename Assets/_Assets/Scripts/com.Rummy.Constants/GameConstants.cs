@@ -8,6 +8,7 @@
         internal const string SOCKET_PORT_NUMBER   = "3000";
         internal const string SOCKET_URL_SUFFIX    = "/socket.io/";
         internal const string SOCKET_URL_SEPARATOR = ":";
+        internal const int ROOM_JOIN_CLOSE         = 0;
         #endregion
 
         #region RESTApiConstants
