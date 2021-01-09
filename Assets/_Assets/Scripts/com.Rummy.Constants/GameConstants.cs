@@ -9,7 +9,12 @@
         internal const string SOCKET_URL_SUFFIX    = "/socket.io/";
         internal const string SOCKET_URL_SEPARATOR = ":";
         internal const int ROOM_JOIN_CLOSE         = 0;
-        #endregion
+        internal const int ROOM_PLAYER_ACTIVE      = 1;
+//exports.ROOM_PLAYER_DISCONNECT = 2;
+//exports.ROOM_PLAYER_MATCH_COMPLETE = 3;
+//exports.ROOM_PLAYER_FORCE_QUIT = 4;
+//exports.ROOM_PLAYER_ELIMINATED = 5;
+            #endregion
 
         #region RESTApiConstants
 

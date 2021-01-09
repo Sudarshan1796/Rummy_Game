@@ -1,4 +1,5 @@
-﻿using com.Rummy.Gameplay;
+﻿using com.Rummy.Constants;
+using com.Rummy.Gameplay;
 using com.Rummy.GameVariable;
 using com.Rummy.Network;
 using com.Rummy.Ui;
@@ -212,6 +213,7 @@ namespace com.Rummy.UI
                 }
                 else
                 {
+                    int index = players[i].position - GamePlayManager.GetInstance.playerPosition;
                     AddPlayer(players[i], gamePlayers[_opponentPlayerCount]);
                     _opponentPlayerCount++;
                 }
@@ -373,6 +375,36 @@ namespace com.Rummy.UI
         internal void UpdateDropPanel(bool value)
         {
             dropPanel.SetActive(value);
+        }
+
+        internal void SetPlayerLeftStatus(RoomStatusResponse response)
+        {
+            //GameConstants.SOCKET_URL_PREFIX;
+            foreach (var player in response.roomInfo)
+            {
+                PlayerUIController v_Player = null;
+                if (player.userId == int.Parse(GameVariables.userId))
+                {
+                    v_Player = playerController;
+                }
+                else
+                {
+                    v_Player = gamePlayers.Find(x => x.userId == player.userId);
+                }
+                if(v_Player== null)
+                {
+                    Debug.LogError("Setting Player status null error");
+                    continue;
+                }
+                if (player.status == GameConstants.ROOM_PLAYER_ACTIVE)
+                {
+                    v_Player.ResetTimerColor();
+                }
+                else
+                {
+                    v_Player.GrayOutTimer();
+                }
+            }
         }
     }
 }

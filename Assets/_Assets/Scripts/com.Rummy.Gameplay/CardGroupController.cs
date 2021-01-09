@@ -964,10 +964,10 @@ namespace com.Rummy.Gameplay
         internal void EnableDropButton(bool isGamestart = false)
         {
             dropBtn.gameObject.SetActive(selectedObject.Count == 0 && gameplayManager.playerTurn == int.Parse(GameVariables.userId) && !gameplayManager.isCardDrawn);
-            if(isGamestart)
-            {
-                dropBtn.gameObject.SetActive(true);
-            }
+            //if(isGamestart)
+            //{
+            //    dropBtn.gameObject.SetActive(selectedObject.Count == 0 && gameplayManager.playerTurn == int.Parse(GameVariables.userId) && !gameplayManager.isCardDrawn);
+            //}
         }
 
         #endregion

@@ -12,6 +12,9 @@ namespace com.Rummy.Gameplay
         [SerializeField] private Image userProfileImage;
         [SerializeField] private TimerController timerController;
 
+        //for setting proper pos
+        [SerializeField] public int uiIndexId;
+
         internal int userId;
         internal int position;
 

@@ -198,5 +198,10 @@ namespace com.Rummy.Network
             Debug.Log(requestType + ":" + JsonUtility.ToJson(requestObject));
             socketManager.Socket.Emit(requestType.ToString(), JsonUtility.ToJson(requestObject));
         }
+
+        internal void DisconnectSocket()
+        {
+            socketManager.Close();
+        }
     }
 }

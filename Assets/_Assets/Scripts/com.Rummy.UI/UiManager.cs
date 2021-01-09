@@ -361,6 +361,7 @@ namespace com.Rummy.Ui
                 SocketConnectionManager.GetInstance.SendSocketRequest(GameVariables.SocketRequestType.playerLeft, playerLeftRequest);
                 GamePlayManager.GetInstance.isJoinedRoom = false;
             }
+            SocketConnectionManager.GetInstance.DisconnectSocket();
         }
 
         internal void EnableNoMatchFoundPopUp()
@@ -444,6 +445,11 @@ namespace com.Rummy.Ui
         internal void StartTimer(int userId,float timer,Action OnComplete)
         {
             gameplayController.StartPlayerTimer(userId, timer, OnComplete);
+        }
+
+        internal void UpdatePlayerStatus(RoomStatusResponse response)
+        {
+            gameplayController.SetPlayerLeftStatus(response);
         }
 
         internal void OnPlayerLeft(int userid)

@@ -46,6 +46,7 @@ public class TimerController : MonoBehaviour
         isCriticalColorSet = false;
 
         timerCompleteAction = _action;
+        timeCount.text = remainingTime.ToString("N0");
         gameObject.SetActive(true);
     }
 
