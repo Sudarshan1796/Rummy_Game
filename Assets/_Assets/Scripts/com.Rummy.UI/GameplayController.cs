@@ -213,9 +213,22 @@ namespace com.Rummy.UI
                 }
                 else
                 {
-                    int index = players[i].position - GamePlayManager.GetInstance.playerPosition;
-                    AddPlayer(players[i], gamePlayers[_opponentPlayerCount]);
-                    _opponentPlayerCount++;
+                    if (GameVariables.userSelectedRoomSize == GameVariables.RoomSize.Players6)
+                    {
+                        int index = players[i].position - GamePlayManager.GetInstance.playerPosition;
+                        if (index <= 0)
+                        {
+                            index += (int)GameVariables.RoomSize.Players6;//Here 6 is the number of pplayer in the room
+                        }
+                        var v_playerUI = gamePlayers.Find(x => x.uiIndexId == index);
+                        AddPlayer(players[i], v_playerUI);
+                        _opponentPlayerCount++;
+                    }
+                    else
+                    {
+                        AddPlayer(players[i], gamePlayers[_opponentPlayerCount]);
+                        _opponentPlayerCount++;
+                    }
                 }
             }
 
@@ -238,14 +251,27 @@ namespace com.Rummy.UI
         {
             if (!activePlayers.ContainsKey(player.userId))
             {
-                var index = activePlayers.Count;
-                if (index > 0)
+                if (GameVariables.userSelectedRoomSize == GameVariables.RoomSize.Players6)
                 {
-                    index = index - 1;
+                    var index = player.position - GamePlayManager.GetInstance.playerPosition;
+                    if (index <= 0)
+                    {
+                        index += (int)GameVariables.RoomSize.Players6;//Here 6 is the number of pplayer in the room
+                    }
+                    var v_playerUI = gamePlayers.Find(x => x.uiIndexId == index);
+                    v_playerUI.SetDetails(player);
+                    activePlayers.Add(player.userId, gamePlayers[index]);
                 }
-                gamePlayers[index].SetDetails(player);
-
-                activePlayers.Add(player.userId, gamePlayers[index]);
+                else
+                {
+                    var index = activePlayers.Count;
+                    if (index > 0)
+                    {
+                        index = index - 1;
+                    }
+                    gamePlayers[index].SetDetails(player);
+                    activePlayers.Add(player.userId, gamePlayers[index]);
+                }
             }
         }
 

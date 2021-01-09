@@ -359,6 +359,7 @@ namespace com.Rummy.Gameplay
             RemoveAllSelectedCard();
             setGroupText();
             GetGroupValidation();
+            EnableDropButton();
         }
 
         private bool CanCreateGroup()
