@@ -120,6 +120,7 @@ namespace com.Rummy.Gameplay
                 inActiveGroups.Add(cardGroupGameobject[i]);
             }
             sortCardBtn.gameObject.SetActive(true);
+            GetGroupValidation();
         }
 
         public void AddCardToGroup(GameObject cardGameObj, Card cardController)
@@ -815,6 +816,7 @@ namespace com.Rummy.Gameplay
                 MoveSelectedCard(response);
             }
             EnableCardSelction();
+            GetGroupValidation();
         }
 
         /// <summary>
@@ -898,6 +900,7 @@ namespace com.Rummy.Gameplay
         void OnDrawMoveComplete()
         {
             backCardController.gameObject.SetActive(false);
+            GetGroupValidation();
         }
 
         private void OnCardDiscard()
@@ -1065,10 +1068,10 @@ namespace com.Rummy.Gameplay
         internal void ValidateGroupSequense(GroupValidationResponse response)
         {
             int i = 0;
-            if(selectedObject.Count>0)
-            {
-                return;
-            }
+            //if(selectedObject.Count>0)
+            //{
+            //    return;
+            //}
             foreach (var group in cardGroupGameobject)
             {
                 if (!group.activeSelf)
