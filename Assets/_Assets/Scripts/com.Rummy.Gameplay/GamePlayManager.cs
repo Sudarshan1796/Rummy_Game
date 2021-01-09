@@ -90,11 +90,17 @@ namespace com.Rummy.Gameplay
                 return _isOtherplayerDeclared;
             }
         }
+
         private void Awake()
         {
             roomPlayers = new List<Player>();
             playerCards = new List<PlayerCard>();
             //discardedPile = new DiscardPile();
+        }
+
+        private void Start()
+        {
+            HapticFeedback.SetVibrationOn(true);
         }
 
         private void OnEnable()
