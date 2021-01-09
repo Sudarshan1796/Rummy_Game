@@ -148,7 +148,9 @@ namespace com.Rummy.GameVariable
             InvalidEmail = 205,
             InvalidOtp = 206,
             RoomIsActive = 216,
+            RoomIsClosed = 217,
             InvalidRoomId = 219,
+            CannotJoinRoom = 220,
             InvalidUserName = 223
         }
     }
