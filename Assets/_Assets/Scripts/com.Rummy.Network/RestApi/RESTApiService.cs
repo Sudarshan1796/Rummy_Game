@@ -52,6 +52,7 @@ namespace com.Rummy.Network
                     {
                         Debug.LogError($"<Color=red>Url : {url} \n Error : {unityWebRequest.error}</Color>");
                     }
+                    unityWebRequest.Dispose();
                 }
                 else
                 {
@@ -78,11 +79,13 @@ namespace com.Rummy.Network
                                 Debug.LogError($"<Color=red>Url : {url} \n Response : Error Occurred! \n ResponseCode : {response.responseCode} \n ResponseMessage : {response.responseMessage}</Color>");
                             }
                         }
+                        unityWebRequest.Dispose();
                     }
                     else
                     {
                         Debug.LogError($"Null Response!! \n Url : {url} \n Request : {bodyJsonString} \n Response : {unityWebRequest.downloadHandler.text}");
                         Debug.LogError($"Recalling {url} API again");
+                        unityWebRequest.Dispose();
                         goto recall;
                     }
                 }
@@ -121,6 +124,7 @@ namespace com.Rummy.Network
                     {
                         Debug.LogError($"<Color=red>Url : {url} \n Error : {unityWebRequest.error}</Color>");
                     }
+                    unityWebRequest.Dispose();
                 }
                 else
                 {
@@ -147,11 +151,13 @@ namespace com.Rummy.Network
                                 Debug.LogError($"<Color=red>Url : {baseUrl} \n Response : Error Occurred! \n ResponseCode : {response.responseCode} \n ResponseMessage : {response.responseMessage}</Color>");
                             }
                         }
+                        unityWebRequest.Dispose();
                     }
                     else
                     {
                         Debug.LogError($"Null Response!! \n Url : {url} \n Request : {url} \n Response : {unityWebRequest.downloadHandler.text}");
                         Debug.LogError($"Recalling {url} API again");
+                        unityWebRequest.Dispose();
                         goto recall;
                     }
                 }
