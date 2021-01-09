@@ -43,6 +43,12 @@ namespace com.Rummy.Gameplay
             if (userId == this.userId)
             {
                 timerController.Activate(Timer, onComplete);
+                if (userId == int.Parse(GameVariable.GameVariables.userId))
+                {
+#if UNITY_ANDROID && !UNITY_EDITOR
+                    AndroidVibrationPlugin.Vibrate(3, 1);
+#endif
+                }
                 ////gameObject.SetActive(true);
             }
             else
