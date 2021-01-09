@@ -325,8 +325,8 @@ namespace com.Rummy.Gameplay
         {
             playerTurn = response.playerTurn;
             remainingTime = response.remainingTime;
-            UiManager.GetInstance.StartTimer(playerTurn, remainingTime, OnTimerComplete);
-            CardGroupController.GetInstance.EnableDropButton();
+            UiManager.GetInstance?.StartTimer(playerTurn, remainingTime, OnTimerComplete);
+            CardGroupController.GetInstance?.EnableDropButton();
         }
 
         private void OnGroupValidationResponse(GroupValidationResponse response)
