@@ -19,6 +19,8 @@ namespace com.Rummy.UI
         [SerializeField] private GameObject[] cardPosition;
         [SerializeField] private GameObject cardInitPosition;
         [SerializeField] private Button btnDrop, btnExit;
+        [SerializeField] private GameObject dropPanel;
+
         //this is for the first person this will be our player
         [SerializeField] private PlayerUIController playerController;
         //this contains all other players
@@ -124,6 +126,7 @@ namespace com.Rummy.UI
             DestroyAllCards();
             cardGroupController.DeactivateGroupText();
             cardGroupController.DeactivateAllButtons();
+            UpdateDropPanel(false);
             for (int i = 0; i < playerCards.Count; i++)
             {
                 var _gameObject = CardController.GetInstance.GetObject(cardInitPosition.transform);
@@ -365,6 +368,11 @@ namespace com.Rummy.UI
             {
                 player.DisableTimer();
             }
+        }
+
+        internal void UpdateDropPanel(bool value)
+        {
+            dropPanel.SetActive(value);
         }
     }
 }

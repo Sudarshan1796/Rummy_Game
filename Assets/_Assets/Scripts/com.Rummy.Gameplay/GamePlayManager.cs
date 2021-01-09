@@ -156,6 +156,8 @@ namespace com.Rummy.Gameplay
                     break;
                 case GameVariables.SocketResponseType.roomClose: OnRoomClose((RoomCloseResponse)response);
                     break;
+                case GameVariables.SocketResponseType.matchComplete:OnMatchComplete((MatchCloseResponse)response);
+                    break;
             }
         }
         #region Socket 
@@ -166,15 +168,18 @@ namespace com.Rummy.Gameplay
         /// </summary>
         private void OnRoomJoin(OnRoomJoinResponse response)
         {
-            ResetGameplay();
-            UiManager.GetInstance.DisablePlayerTimer();
-            isJoinedRoom = true;
-            roomPlayers.Clear();
-            roomPlayers = response.players;
-            roomId = response.roomId;
-            Debug.Log(roomId + ":" + response.roomId);
-            UiManager.GetInstance.SetRoomJoinDetails(response.players);
-            UiManager.GetInstance.PrintRoomJoinedPlayersCount(response.players.Count);
+            if (!IsPlayinGame)
+            {
+                ResetGameplay();
+                UiManager.GetInstance.DisablePlayerTimer();
+                isJoinedRoom = true;
+                roomPlayers.Clear();
+                roomPlayers = response.players;
+                roomId = response.roomId;
+                Debug.Log(roomId + ":" + response.roomId);
+                UiManager.GetInstance.SetRoomJoinDetails(response.players);
+                UiManager.GetInstance.PrintRoomJoinedPlayersCount(response.players.Count);
+            }
         }
 
         /// <summary>
@@ -188,7 +193,8 @@ namespace com.Rummy.Gameplay
                 userName = response.userName,
                 position = response.position
             };
-            if (!roomPlayers.Contains(_player))
+            var v_player = roomPlayers.Find(x => x.userId == response.userId);
+            if (v_player == null)
             {
                 roomPlayers.Add(_player);
                 UiManager.GetInstance.OnPlayerJoinRoom(_player);
@@ -270,25 +276,22 @@ namespace com.Rummy.Gameplay
 
         private void OnPlayerDrop(DropResponse response)
         {
-            playerTurn      = response.playerTurn;
-            remainingTime   = response.remainingTime;
+            playerTurn = response.playerTurn;
+            remainingTime = response.remainingTime;
             isPlayerDropped = (response.userId == int.Parse(GameVariables.userId));
+            UiManager.GetInstance.OnPlayerLeft(response.userId);
+            UiManager.GetInstance.StartTimer(playerTurn, remainingTime, OnTimerComplete);
             if (response.isLastRound)
             {
                 UiManager.GetInstance.EnableResultScreen();
                 ResultScreen.GetInstance?.UpdateNextMatchTimer(response.nextRoundStartTime);
                 ResultScreen.GetInstance?.UpdatePlayerPosition(response.gameResult);
             }
-            else
-            {
-                UiManager.GetInstance.OnPlayerLeft(response.userId);
-                UiManager.GetInstance.StartTimer(playerTurn, remainingTime, OnTimerComplete);
-            }
-            //Todo: Make the Player just Spectacle
         }
 
         private void OnDeclarePlayer(DeclarResponse response)
         {
+            playerTurn = response.playerTurn;
             if (_isPlayerDeclare)
             {
                 if (int.Parse(GameVariables.userId) != response.userId)
@@ -299,14 +302,14 @@ namespace com.Rummy.Gameplay
                 ResultScreen.GetInstance?.UpdatePlayerPosition(response.gameResult);
                 return;
             }
-            if (int.Parse(GameVariables.userId) != response.userId)
+            if (int.Parse(GameVariables.userId) == playerTurn)
             {
                 _isOtherplayerDeclared = true;
                 GameplayController.GetInstance.SetShowCard(response.showCard);
                 UiManager.GetInstance.ConfirmationPoup("Are sure you want to Declare?", "Declare", Declare);
+                CardGroupController.GetInstance.UpdateDeclareButtonState(true);
+                CardGroupController.GetInstance.EnableDropButton(true);
             }
-            CardGroupController.GetInstance.EnableDropButton(true);
-            CardGroupController.GetInstance.UpdateDeclareButtonState(true);
         }
 
         private void Declare()
@@ -355,6 +358,13 @@ namespace com.Rummy.Gameplay
             }
         }
 
+        private void OnMatchComplete(MatchCloseResponse response)
+        {
+            if(response.userId==int.Parse(GameVariables.userId))
+            {
+                ResultScreen.GetInstance.MatchComplete();
+            }
+        }
 
         #endregion
 
@@ -460,6 +470,7 @@ namespace com.Rummy.Gameplay
 
         private void OnApplicationFocus(bool hasFocus)
         {
+            UiManager.GetInstance.CLoseCommonPopup();
             _shouldgetRoomStatus = true;
             if (hasFocus && _isPlayingGame && SocketConnectionManager.GetInstance.IsConnected)
             {
@@ -471,6 +482,7 @@ namespace com.Rummy.Gameplay
 
         private void OnApplicationPause(bool pauseStatus)
         {
+            UiManager.GetInstance.CLoseCommonPopup();
             _shouldgetRoomStatus = true;
             if (!pauseStatus && _isPlayingGame && SocketConnectionManager.GetInstance.IsConnected)
             {

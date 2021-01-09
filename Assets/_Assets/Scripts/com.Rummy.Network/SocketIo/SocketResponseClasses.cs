@@ -213,4 +213,10 @@ namespace com.Rummy.Network
         public int roundCount;
     }
 
+    public class MatchCloseResponse : SocketResponse
+    {
+        public int userId;
+        public int roomId;
+
+    }
 }

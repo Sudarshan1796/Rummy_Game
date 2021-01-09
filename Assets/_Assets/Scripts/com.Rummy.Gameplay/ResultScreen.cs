@@ -37,6 +37,11 @@ namespace com.Rummy.UI
             homeButton.onClick.AddListener(OnHomeBtnClick);
         }
 
+        private void OnEnable()
+        {
+            homeButton.gameObject.SetActive(false);
+        }
+
         private void OnDisable()
         {
             isTimerStarted = false;
@@ -54,24 +59,16 @@ namespace com.Rummy.UI
         public void OnRoundComplete(RoundCompleteResponse response)
         {
             _isEliminated = false;
-            homeButton.gameObject.SetActive(false);
             ResetPlayerPanel();
             for (int i = 0; i < response.result.Count; i++)
             {
                 resultPanels[i].UpdateState(true);
                 resultPanels[i].PlayerPanelReset();
                 resultPanels[i].SetDetails(response.result[i]);
-                if (response.result[i].isEliminated && response.result[i].userId == int.Parse(GameVariable.GameVariables.userId) || response.roundOver)
-                {
-                    _isEliminated = true;
-                    //CancelInvoke(nameof(UpdateNextTimer));
-                    remaininMatchTime = 0;
-                    remainingTimeText.text = "";
-                    LeanTween.delayedCall(3.0f, () =>
-                    {
-                        homeButton.gameObject.SetActive(true);
-                    });
-                }
+                //if (response.result[i].isEliminated && response.result[i].userId == int.Parse(GameVariable.GameVariables.userId) || response.roundOver)
+                //{
+                //    OnPlayerRemove();
+                //}
             }
             for (int i = response.result.Count; i < resultPanels.Count; i++)
             {
@@ -81,7 +78,6 @@ namespace com.Rummy.UI
 
         public void OnDeclareComplete(DeclarResponse result)
         {
-            homeButton.gameObject.SetActive(false);
             _isEliminated = false;
             foreach (var resultPanel in resultPanels)
             {
@@ -94,17 +90,22 @@ namespace com.Rummy.UI
             }
 
             UpdatePlayerPosition(result.gameResult);
-            if (result.isLastRound)
+            //if (result.isLastRound)
+            //{
+            //    //CancelInvoke(nameof(UpdateNextTimer));
+            //    OnPlayerRemove();
+            //}
+        }
+
+        internal void MatchComplete()
+        {
+            _isEliminated = true;
+            remaininMatchTime = 0;
+            remainingTimeText.text = "";
+            LeanTween.delayedCall(3.0f, () =>
             {
-                //CancelInvoke(nameof(UpdateNextTimer));
-                _isEliminated = true;
-                remaininMatchTime = 0;
-                remainingTimeText.text = "";
-                LeanTween.delayedCall(3.0f, () =>
-                {
-                    homeButton.gameObject.SetActive(true);
-                });
-            }
+                homeButton.gameObject.SetActive(true);
+            });
         }
 
         public void UpdatePlayerPosition(List<GameResult> gameResult)

@@ -1,6 +1,7 @@
 ﻿using com.Rummy.GameVariable;
 using com.Rummy.Network;
 using com.Rummy.Ui;
+using com.Rummy.UI;
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
@@ -909,7 +910,7 @@ namespace com.Rummy.Gameplay
             gameplayManager.DiscardCard(card);
             discardBtn.gameObject.SetActive(false);
             DeclareBtn.gameObject.SetActive(false);
-
+            GetGroupValidation();
         }
 
         public void MoveUserCard(PlayerCard playerCard)
@@ -952,6 +953,9 @@ namespace com.Rummy.Gameplay
         private void DropCard()
         {
             gameplayManager.PlayerDrop();
+            dropBtn.gameObject.SetActive(false);
+            GameplayController.GetInstance.UpdateDropPanel(true);
+            DeactivateGroupText();
         }
 
         internal void EnableDropButton(bool isGamestart = false)
