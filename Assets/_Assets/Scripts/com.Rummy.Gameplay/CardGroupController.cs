@@ -815,9 +815,9 @@ namespace com.Rummy.Gameplay
             else
             {
                 MoveSelectedCard(response);
+                GetGroupValidation();
             }
             EnableCardSelction();
-            GetGroupValidation();
         }
 
         /// <summary>
@@ -901,7 +901,6 @@ namespace com.Rummy.Gameplay
         void OnDrawMoveComplete()
         {
             backCardController.gameObject.SetActive(false);
-            GetGroupValidation();
         }
 
         private void OnCardDiscard()
@@ -914,7 +913,6 @@ namespace com.Rummy.Gameplay
             gameplayManager.DiscardCard(card);
             discardBtn.gameObject.SetActive(false);
             DeclareBtn.gameObject.SetActive(false);
-            GetGroupValidation();
         }
 
         public void MoveUserCard(PlayerCard playerCard)
@@ -927,6 +925,7 @@ namespace com.Rummy.Gameplay
             onCardDiscard?.Invoke(selectedObject.Keys.First());
             MoveCardToOpenPile(playerCard, _cardPosition);
             RemoveAllSelectedCard();
+            GetGroupValidation();
         }
 
         PlayerCard discardeCard;

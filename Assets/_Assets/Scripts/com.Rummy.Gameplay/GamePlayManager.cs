@@ -244,6 +244,7 @@ namespace com.Rummy.Gameplay
             discardedCard = response.discardPile;
             selectedCard = response.card;
             UiManager.GetInstance.OnCardDraw(response);
+            CardGroupController.GetInstance.EnableDropButton(true);
         }
 
         private void OnCardDiscard(CardDiscardResResponse response)
@@ -292,6 +293,13 @@ namespace com.Rummy.Gameplay
                 ResultScreen.GetInstance?.UpdateNextMatchTimer(response.nextRoundStartTime);
                 ResultScreen.GetInstance?.UpdatePlayerPosition(response.gameResult);
             }
+            if (response.isDeclared && int.Parse(GameVariables.userId) == playerTurn)
+            {
+                _isOtherplayerDeclared = true;
+                UiManager.GetInstance.ConfirmationPoup("Are you sure you want to Declare?", "Declare", Declare);
+                CardGroupController.GetInstance.UpdateDeclareButtonState(true);
+                CardGroupController.GetInstance.EnableDropButton(true);
+            }
         }
 
         private void OnDeclarePlayer(DeclarResponse response)
@@ -299,6 +307,7 @@ namespace com.Rummy.Gameplay
             playerTurn = response.playerTurn;
             remainingTime = response.remainingTime;
             UiManager.GetInstance.StartTimer(playerTurn, remainingTime, OnTimerComplete);
+            GameplayController.GetInstance.SetShowCard(response.showCard);
             if (_isPlayerDeclare)
             {
                 if (int.Parse(GameVariables.userId) != response.userId)
@@ -312,7 +321,6 @@ namespace com.Rummy.Gameplay
             if (int.Parse(GameVariables.userId) == playerTurn)
             {
                 _isOtherplayerDeclared = true;
-                GameplayController.GetInstance.SetShowCard(response.showCard);
                 UiManager.GetInstance.ConfirmationPoup("Are you sure you want to Declare?", "Declare", Declare);
                 CardGroupController.GetInstance.UpdateDeclareButtonState(true);
                 CardGroupController.GetInstance.EnableDropButton(true);
@@ -379,7 +387,7 @@ namespace com.Rummy.Gameplay
         #region Client Event
 
         internal void SocketRoomJoin(int roomId)
-        {
+        { 
             SocketConnectionManager.GetInstance.ConnectToSocket(() =>
             {
                 RoomJoinRequest socketRequest = new RoomJoinRequest

@@ -260,7 +260,7 @@ namespace com.Rummy.UI
                     }
                     var v_playerUI = gamePlayers.Find(x => x.uiIndexId == index);
                     v_playerUI.SetDetails(player);
-                    activePlayers.Add(player.userId, gamePlayers[index]);
+                    activePlayers.Add(player.userId, v_playerUI);
                 }
                 else
                 {
@@ -284,9 +284,15 @@ namespace com.Rummy.UI
 
         private void OnRoomExit()
         {
+            UiManager.GetInstance.ConfirmationPoup("Are you sure you want to Leave the Room?", "Leave", LeaveRoom);
+        }
+
+        private void LeaveRoom()
+        {
             UiManager.GetInstance.EnableMainMenuUi();
             UiManager.GetInstance.DisableGamplayScreen();
             UiManager.GetInstance.LeaveSocketRoom();
+
         }
 
         public void OnCardDraw(CardDrawRes response)
@@ -387,8 +393,11 @@ namespace com.Rummy.UI
 
         internal void SetShowCard(Card card)
         {
-            showCardsCard.gameObject.SetActive(true);
-            showCardsCard.SetDetail(card.cardValue, card.suitValue);
+            if (card != null)
+            {
+                showCardsCard.gameObject.SetActive(true);
+                showCardsCard.SetDetail(card.cardValue, card.suitValue);
+            }
         }
         internal void DisablePlayerTimer()
         {

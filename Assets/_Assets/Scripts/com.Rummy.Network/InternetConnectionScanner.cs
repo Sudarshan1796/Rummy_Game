@@ -94,7 +94,8 @@ namespace com.Rummy.Network
 
         /// <summary>
         /// At most this ping request can consume approximately 1.15MB/Hour (if minPingIntervalInSeconds == 0.20ms)
-        /// It will consume 64 or 32 bytes/Ping request (we will consider worst case scenario i.e 64bytes/ping), we are calling each ping request approximately in an interval of "minPingIntervalInSeconds" its default value is 0.2ms => 200ms.
+        /// It will consume 64 or 32 bytes/Ping request (we will consider worst case scenario i.e 64bytes/ping), 
+        /// we are calling each ping request approximately in an interval of "minPingIntervalInSeconds" its default value is 0.2ms => 200ms.
         /// So in a second atmost 5 times we will ping server or atleast once becuase for any ping we will wait for atmost 1sec (pingTimeoutInSeconds = 1sec (default)).
         /// 64 bytes * 5 times pers second = 320 bytes/Second.
         /// 320 bytes * 60 seconds = 19200 bytes/Minutes.
