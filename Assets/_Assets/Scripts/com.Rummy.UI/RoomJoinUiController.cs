@@ -97,6 +97,7 @@ namespace com.Rummy.Ui
             if (string.IsNullOrEmpty(roomIdInput.text) || string.IsNullOrWhiteSpace(roomIdInput.text))
             {
                 PrintRoomJoinErrorMessage("Please enter a room id");
+                return;
             }
             else
             {
@@ -107,6 +108,8 @@ namespace com.Rummy.Ui
 
         private void OnClickCustomRoomSizeSelectionScreenCloseButton()
         {
+            PrintRoomJoinErrorMessage("");
+            roomIdInput.text = "";
             roomTypeSelectionScreen.SetActive(true);
             customRoomSizeSelectionScreen.SetActive(false);
         }
@@ -208,6 +211,8 @@ namespace com.Rummy.Ui
             roomJoinWaitingScreen.SetActive(true);
             if (userSelectedRoomType == RoomType.CustomRoom)
             {
+                PrintRoomJoinErrorMessage("");
+                roomIdInput.text = "";
                 customRoomSizeSelectionScreen.SetActive(false);
             }
             else

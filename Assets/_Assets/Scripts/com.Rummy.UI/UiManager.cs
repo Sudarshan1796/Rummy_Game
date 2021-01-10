@@ -309,7 +309,7 @@ namespace com.Rummy.Ui
 
         private void OnFailRoomCreate(string url, string errorMessage)
         {
-            roomJoinUiController.PrintRoomJoinErrorMessage("Failed to join room!, Please try again.");
+            roomJoinUiController.PrintRoomJoinErrorMessage("Failed to create room!, Please try again.");
             DisableLoadingUi();
         }
 
@@ -321,14 +321,26 @@ namespace com.Rummy.Ui
 
         private void OnSuccessRoomJoin(RoomJoinResponse roomJoinResponse)
         {
-            Debug.Log(roomJoinResponse.room_id+":"+roomJoinResponse.time_remaining);
-            roomJoinUiController.EnableRoomJoinWaitingScreen(false);
-            GamePlayManager.GetInstance.SocketRoomJoin(roomJoinResponse.room_id);
+            Debug.Log("room_id "+roomJoinResponse.room_id+" : "+ "time_remaining "+roomJoinResponse.time_remaining);
+            if (roomJoinResponse.code == 0)
+            {
+                roomJoinUiController.EnableRoomJoinWaitingScreen(false);
+                GamePlayManager.GetInstance.SocketRoomJoin(roomJoinResponse.room_id);
+            }
+            else if (roomJoinResponse.code == GameVariables.CodeType.InvalidRoomId)
+            {
+                roomJoinUiController.PrintRoomJoinErrorMessage("Entered room id is invalid.");
+            }
+            else if(roomJoinResponse.code == GameVariables.CodeType.CannotJoinRoom || roomJoinResponse.code == GameVariables.CodeType.RoomIsActive || roomJoinResponse.code == GameVariables.CodeType.RoomIsClosed)
+            {
+                roomJoinUiController.PrintRoomJoinErrorMessage("Cannot join room!, Match has already started or finished.");
+            }
             DisableLoadingUi();
         }
 
         private void OnFailRoomJoin(string url, string errorMessage)
         {
+            roomJoinUiController.PrintRoomJoinErrorMessage("Failed to join room!, Please try again.");
             Debug.Log(url + "\n" + errorMessage);
             DisableLoadingUi();
         }

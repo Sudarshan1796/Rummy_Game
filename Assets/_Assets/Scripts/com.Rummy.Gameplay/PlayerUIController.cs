@@ -46,7 +46,7 @@ namespace com.Rummy.Gameplay
                 if (userId == int.Parse(GameVariable.GameVariables.userId))
                 {
 #if UNITY_ANDROID && !UNITY_EDITOR
-                    AndroidVibrationPlugin.Vibrate(3, 1);
+                    AndroidVibrationPlugin.Vibrate(255, 255);
 #endif
                 }
                 ////gameObject.SetActive(true);
