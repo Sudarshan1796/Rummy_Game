@@ -426,12 +426,12 @@ namespace com.Rummy.UI
                 {
                     v_Player = gamePlayers.Find(x => x.userId == player.userId);
                 }
-                if(v_Player== null)
+                if (v_Player == null)
                 {
-                    Debug.LogError("Setting Player status null error");
+                    Debug.LogError("Setting Player status null error" + player.userId + ":" + player.userName);
                     continue;
                 }
-                if (player.status == GameConstants.ROOM_PLAYER_ACTIVE)
+                if (player.status == GameConstants.ROOM_PLAYER_ACTIVE && !player.isDropped)
                 {
                     v_Player.ResetTimerColor();
                 }

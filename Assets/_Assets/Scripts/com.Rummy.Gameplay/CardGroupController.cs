@@ -957,7 +957,6 @@ namespace com.Rummy.Gameplay
         {
             gameplayManager.PlayerDrop();
             dropBtn.gameObject.SetActive(false);
-            GameplayController.GetInstance.UpdateDropPanel(true);
             DeactivateGroupText();
         }
 

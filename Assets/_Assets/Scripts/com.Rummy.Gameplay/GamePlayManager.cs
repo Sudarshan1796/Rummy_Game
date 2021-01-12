@@ -24,6 +24,7 @@ namespace com.Rummy.Gameplay
         private bool _isPlayingGame;
         private bool _isOtherplayerDeclared;
         private bool _shouldgetRoomStatus;
+        private bool _shouldShowLeftRoomPopup;
 
         // This List hold the List of player in the current room
         internal List<Player> roomPlayers;
@@ -293,6 +294,11 @@ namespace com.Rummy.Gameplay
             isPlayerDropped = (response.userId == int.Parse(GameVariables.userId));
             UiManager.GetInstance.OnPlayerLeft(response.userId);
             UiManager.GetInstance.StartTimer(playerTurn, remainingTime, OnTimerComplete);
+            CardGroupController.GetInstance.EnableDropButton(true);
+            if (response.userId==int.Parse(GameVariables.userId))
+            {
+                GameplayController.GetInstance?.UpdateDropPanel(true);
+            }
             if (response.isLastRound)
             {
                 // UiManager.GetInstance.EnableResultScreen();
@@ -304,7 +310,6 @@ namespace com.Rummy.Gameplay
                 _isOtherplayerDeclared = true;
                 UiManager.GetInstance.ConfirmationPoup("Are you sure you want to Declare?", "Declare", Declare);
                 CardGroupController.GetInstance.UpdateDeclareButtonState(true);
-                CardGroupController.GetInstance.EnableDropButton(true);
             }
         }
 
@@ -314,6 +319,7 @@ namespace com.Rummy.Gameplay
             remainingTime = response.remainingTime;
             UiManager.GetInstance.StartTimer(playerTurn, remainingTime, OnTimerComplete);
             GameplayController.GetInstance.SetShowCard(response.showCard);
+            CardGroupController.GetInstance.EnableDropButton(true);
             if (_isPlayerDeclare)
             {
                 if (int.Parse(GameVariables.userId) != response.userId)
@@ -329,7 +335,6 @@ namespace com.Rummy.Gameplay
                 _isOtherplayerDeclared = true;
                 UiManager.GetInstance.ConfirmationPoup("Are you sure you want to Declare?", "Declare", Declare);
                 CardGroupController.GetInstance.UpdateDeclareButtonState(true);
-                CardGroupController.GetInstance.EnableDropButton(true);
             }
         }
 
@@ -362,6 +367,7 @@ namespace com.Rummy.Gameplay
                 return;
             }
             CardGroupController.GetInstance.ValidateGroupSequense(response);
+            CardGroupController.GetInstance.EnableDropButton(true);
         }
 
         private void OnPlayerTurmChangeResponse(PlayerTurnResponse response)
@@ -492,7 +498,6 @@ namespace com.Rummy.Gameplay
 
         private void OnApplicationFocus(bool hasFocus)
         {
-            UiManager.GetInstance.CLoseCommonPopup();
             _shouldgetRoomStatus = true;
             if (hasFocus && _isPlayingGame && SocketConnectionManager.GetInstance.IsConnected)
             {
@@ -504,12 +509,35 @@ namespace com.Rummy.Gameplay
 
         private void OnApplicationPause(bool pauseStatus)
         {
-            UiManager.GetInstance.CLoseCommonPopup();
-            _shouldgetRoomStatus = true;
-            if (!pauseStatus && _isPlayingGame && SocketConnectionManager.GetInstance.IsConnected)
+            if (!_shouldShowLeftRoomPopup)
             {
-                RoomStatus();
+                //UiManager.GetInstance.CLoseCommonPopup();
             }
+            _shouldgetRoomStatus = true;
+            if (!pauseStatus )
+            {
+                if (SocketConnectionManager.GetInstance.IsConnected && _isPlayingGame)
+                {
+                    RoomStatus();
+                }
+                else if (_shouldShowLeftRoomPopup)
+                {
+                    UiManager.GetInstance.AlertPopup("You have been Removed from the last room due to leaving app", "Game Ended!");
+                    _shouldShowLeftRoomPopup = false;
+                }
+            }
+            if (pauseStatus && _isPlayingGame)
+            {
+                MakePlayerDrop();
+            }
+        }
+
+        private void MakePlayerDrop()
+        {
+            _shouldShowLeftRoomPopup = true;
+            UiManager.GetInstance.EnableMainMenuUi();
+            UiManager.GetInstance.DisableGamplayScreen();
+            UiManager.GetInstance.LeaveSocketRoom();
         }
 
         #endregion

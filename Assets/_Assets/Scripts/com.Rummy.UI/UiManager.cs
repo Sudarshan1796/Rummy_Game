@@ -480,6 +480,12 @@ namespace com.Rummy.Ui
         {
             commonPopUpUiController.ShowPopUp(headingText, message, true, true, successAction, failureAction);
         }
+
+        internal void AlertPopup(string message, string headingText, Action successAction = null, Action failureAction = null)
+        {
+            commonPopUpUiController.ShowPopUp(headingText, message, true, false, successAction, failureAction);
+        }
+
         #endregion
 
         #region InternetConnectionpopUp
